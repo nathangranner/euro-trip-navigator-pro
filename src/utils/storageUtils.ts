@@ -1,5 +1,4 @@
-
-import { TripDay, TripData } from "@/data/tripData";
+import { TripDay } from "@/data/tripData";
 import { Expense } from "@/components/ExpenseTracker";
 import { Purchase } from "@/components/PurchaseTracker";
 

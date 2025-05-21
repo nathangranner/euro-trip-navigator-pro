@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { TravelBuddySelector } from "@/components/TravelBuddySelector";
-import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance } from "lucide-react";
+import { TranslationTool } from "@/components/TranslationTool";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 
 const TravelBuddyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -52,10 +54,10 @@ const TravelBuddyPage: React.FC = () => {
           
           <Card className="p-4 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
             <div className="flex items-center mb-2">
-              <Navigation className="h-5 w-5 mr-2 text-amber-600" />
-              <h3 className="font-semibold">Local Recommendations</h3>
+              <Languages className="h-5 w-5 mr-2 text-amber-600" />
+              <h3 className="font-semibold">Language Translation</h3>
             </div>
-            <p className="text-sm text-gray-700">Find the best dining spots, attractions, and hidden gems</p>
+            <p className="text-sm text-gray-700">Translate phrases and get pronunciation help with Gemini Pro</p>
           </Card>
 
           <Card className="p-4 bg-gradient-to-br from-red-50 to-red-100 border-red-200">
@@ -67,9 +69,20 @@ const TravelBuddyPage: React.FC = () => {
           </Card>
         </div>
         
-        <Card className="p-6">
-          <TravelBuddySelector onOpenChat={handleOpenChat} isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
-        </Card>
+        <Tabs defaultValue="assistant" className="mb-8">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="assistant">Travel Assistant</TabsTrigger>
+            <TabsTrigger value="translator">Translator</TabsTrigger>
+          </TabsList>
+          <TabsContent value="assistant">
+            <Card className="p-6">
+              <TravelBuddySelector onOpenChat={handleOpenChat} isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
+            </Card>
+          </TabsContent>
+          <TabsContent value="translator">
+            <TranslationTool />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
