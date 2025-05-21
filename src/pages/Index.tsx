@@ -1,79 +1,151 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Plane, Map, Calendar, Globe } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const parallaxRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  // Parallax effect on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (parallaxRef.current && titleRef.current) {
+        const scrollPosition = window.scrollY;
+        parallaxRef.current.style.transform = `translateY(${scrollPosition * 0.4}px)`;
+        titleRef.current.style.transform = `translateY(${scrollPosition * -0.2}px)`;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16 md:py-32">
-        <div className="flex flex-col items-center text-center mb-16">
-          <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mb-4">
-            Europe Trip 2025
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl">
-            Your complete travel companion for your upcoming European adventure.
-            Plan, organize, and enjoy your journey with ease.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
-          <div className="group cursor-pointer" onClick={() => navigate("/planner")}>
-            <div className="bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-              <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                <Calendar className="text-white h-16 w-16" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Trip Planner</h3>
-                <p className="text-gray-600">
-                  View your detailed day-by-day itinerary, manage activities, and track expenses throughout your journey.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="group cursor-pointer" onClick={() => navigate("/travel-buddy")}>
-            <div className="bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-              <div className="h-48 bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center">
-                <Globe className="text-white h-16 w-16" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">AI Travel Buddy</h3>
-                <p className="text-gray-600">
-                  Get personalized recommendations, translations, and cultural insights from your AI travel companions.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center gap-4 mt-8">
-          <Button 
-            size="lg" 
-            onClick={() => navigate("/planner")} 
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            View Trip Details
-          </Button>
-          <Button 
-            size="lg" 
-            variant="outline" 
-            onClick={() => navigate("/travel-buddy")} 
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
-          >
-            Open Travel Buddy
-          </Button>
-        </div>
-
-        <div className="mt-20 text-center">
-          <div className="inline-block bg-white/70 backdrop-blur-sm px-6 py-3 rounded-full text-sm text-gray-500 shadow-sm">
-            Europe Trip: June 5-26, 2025 • 21 Days • 7 Countries
-          </div>
-        </div>
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
+      {/* Hero Background with Parallax */}
+      <div 
+        className="absolute inset-0 w-full h-full z-0" 
+        ref={parallaxRef}
+      >
+        <div 
+          className="absolute inset-0 w-full h-[120vh]"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2000&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "brightness(0.6) contrast(1.1)"
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
+
+      {/* Content */}
+      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col">
+        {/* Header with luxury brand style */}
+        <header className="pt-12 pb-8 flex justify-between items-center">
+          <div className="text-2xl font-light tracking-[0.3em] uppercase">Europa</div>
+          <div className="text-sm tracking-wider uppercase">Summer 2025</div>
+        </header>
+
+        {/* Main Title Section */}
+        <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
+          <h1 
+            ref={titleRef}
+            className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect"
+            style={{ letterSpacing: "0.15em" }}
+          >
+            EUROPE<span className="font-thin">25</span>
+          </h1>
+          
+          <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90">
+            Your exclusive journey through Europe's most coveted destinations. 
+            An experience designed for the discerning traveler.
+          </p>
+
+          <div className="mt-12">
+            <Button 
+              onClick={() => navigate("/planner")} 
+              className="bg-transparent border border-white/60 rounded-none px-10 py-6 text-lg hover:bg-white hover:text-black transition-all duration-500 uppercase tracking-widest font-light"
+            >
+              Explore Collection <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Bottom navigation */}
+        <div className="mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 max-w-4xl mx-auto">
+            <div 
+              className="group cursor-pointer relative overflow-hidden" 
+              onClick={() => navigate("/planner")}
+            >
+              <div className="h-72 overflow-hidden">
+                <div 
+                  className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110"
+                  style={{
+                    backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')",
+                    backgroundSize: "cover", 
+                    backgroundPosition: "center"
+                  }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
+                <div>
+                  <h3 className="text-xl uppercase tracking-wider font-light mb-1">Itinerary</h3>
+                  <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
+                  <p className="text-sm text-white/80">Day-by-day curated experiences</p>
+                </div>
+              </div>
+            </div>
+            
+            <div 
+              className="group cursor-pointer relative overflow-hidden" 
+              onClick={() => navigate("/travel-buddy")}
+            >
+              <div className="h-72 overflow-hidden">
+                <div 
+                  className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110"
+                  style={{
+                    backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')",
+                    backgroundSize: "cover", 
+                    backgroundPosition: "center"
+                  }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
+                <div>
+                  <h3 className="text-xl uppercase tracking-wider font-light mb-1">Concierge</h3>
+                  <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
+                  <p className="text-sm text-white/80">AI-powered travel assistance</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="py-8 border-t border-white/20">
+          <div className="flex flex-col md:flex-row justify-between items-center text-white/70">
+            <div className="text-xs tracking-widest mb-4 md:mb-0">
+              JUNE 5-26, 2025 · 21 DAYS · 7 DESTINATIONS
+            </div>
+            <div className="text-xs tracking-wider">
+              DESIGNED FOR THE EXTRAORDINARY
+            </div>
+          </div>
+        </footer>
+      </div>
+
+      {/* Visual effects - animated borders */}
+      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-white/0 via-white/30 to-white/0"></div>
+      <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-white/0 via-white/30 to-white/0"></div>
+      <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white/0 via-white/30 to-white/0"></div>
     </div>
   );
 };
