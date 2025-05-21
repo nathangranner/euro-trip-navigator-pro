@@ -1,10 +1,22 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Chart } from "@/components/ui/chart";
+import { 
+  ChartContainer as Chart,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@/components/ui/chart";
+import { 
+  BarChart,
+  Bar,
+  PieChart, 
+  Pie, 
+  Cell, 
+  ResponsiveContainer, 
+  Tooltip 
+} from "recharts";
 import { europeTrip, TripDay } from "@/data/tripData";
 import { Expense } from "@/components/ExpenseTracker";
 import { Purchase } from "@/components/PurchaseTracker";
@@ -142,6 +154,17 @@ const TripSummary: React.FC = () => {
     value: amount
   }));
 
+  // Chart configuration for categories
+  const CHART_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+  
+  const chartConfig = expenseChartData.reduce((acc, item, index) => {
+    acc[item.name] = {
+      label: item.name,
+      color: CHART_COLORS[index % CHART_COLORS.length],
+    };
+    return acc;
+  }, {});
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
@@ -243,12 +266,29 @@ const TripSummary: React.FC = () => {
               <Card className="p-4 mb-4">
                 <h3 className="text-lg font-semibold mb-4">Expenses by Category</h3>
                 <div className="h-80">
-                  <Chart 
-                    type="pie"
-                    data={expenseChartData}
-                    dataKey="value"
-                    nameKey="name"
-                  />
+                  <Chart config={chartConfig}>
+                    <PieChart>
+                      <Pie
+                        data={expenseChartData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        label={(entry) => entry.name}
+                      >
+                        {expenseChartData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={CHART_COLORS[index % CHART_COLORS.length]} 
+                          />
+                        ))}
+                      </Pie>
+                      <ChartTooltip 
+                        content={<ChartTooltipContent />} 
+                      />
+                    </PieChart>
+                  </Chart>
                 </div>
               </Card>
               
