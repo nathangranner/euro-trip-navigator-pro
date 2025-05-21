@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import { Bot, User, Loader2, Send } from "lucide-react";
+import { Loader2, MessageCircle, User, Send } from "lucide-react";
+import { saveApiKey, getApiKey } from "@/utils/storageUtils";
 
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
@@ -56,6 +57,18 @@ export const TravelBuddySelector: React.FC = () => {
   const [messages, setMessages] = useState<TravelBuddyMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [apiKey, setApiKey] = useState<string>("");
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+
+  useEffect(() => {
+    const storedApiKey = getApiKey("openrouter");
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+    } else {
+      // Show API key modal if no key is found
+      setShowApiKeyModal(true);
+    }
+  }, []);
 
   const handleSelectBuddy = (buddy: TravelBuddy) => {
     setSelectedBuddy(buddy);
@@ -69,6 +82,11 @@ export const TravelBuddySelector: React.FC = () => {
   };
 
   const handleStartChat = () => {
+    if (!apiKey) {
+      setShowApiKeyModal(true);
+      return;
+    }
+    
     if (selectedBuddy) {
       setChatOpen(true);
     } else {
@@ -76,8 +94,18 @@ export const TravelBuddySelector: React.FC = () => {
     }
   };
 
+  const handleSaveApiKey = () => {
+    if (apiKey.trim()) {
+      saveApiKey("openrouter", apiKey.trim());
+      setShowApiKeyModal(false);
+      toast.success("OpenRouter API key saved");
+    } else {
+      toast.error("Please enter a valid API key");
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !selectedBuddy) return;
+    if (!inputMessage.trim() || !selectedBuddy || !apiKey) return;
     
     const userMessage = { role: "user" as const, content: inputMessage };
     setMessages([...messages, userMessage]);
@@ -93,13 +121,13 @@ export const TravelBuddySelector: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY || ''}`, // This would need to be set in your environment
+          'Authorization': `Bearer ${apiKey}`,
           'HTTP-Referer': window.location.origin,
           'X-Title': 'Europe Trip Planner'
         },
         body: JSON.stringify({
           model: selectedBuddy.model,
-          messages: apiMessages
+          messages: apiMessages.filter(msg => msg.role !== "system" || msg.role === "system" && apiMessages.indexOf(msg) === 0)
         }),
       });
 
@@ -116,12 +144,12 @@ export const TravelBuddySelector: React.FC = () => {
       setMessages([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error communicating with travel buddy:', error);
-      toast.error("Couldn't connect with your travel buddy. You may need to set up an OpenRouter API key.");
+      toast.error("Couldn't connect with your travel buddy. Please check your API key.");
       
       // Fallback response if API call fails
       const fallbackMessage = {
         role: "assistant" as const,
-        content: "I'm having trouble connecting right now. To chat with your travel buddy, you'll need to set up an OpenRouter API key. Check the console for more information."
+        content: "I'm having trouble connecting right now. Please check your OpenRouter API key and try again."
       };
       
       setMessages([...messages, userMessage, fallbackMessage]);
@@ -169,6 +197,35 @@ export const TravelBuddySelector: React.FC = () => {
           Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
         </Button>
       </div>
+
+      {/* API Key Modal */}
+      <Modal
+        isOpen={showApiKeyModal}
+        onClose={() => setShowApiKeyModal(false)}
+        title="Set OpenRouter API Key"
+        footer={
+          <Button onClick={handleSaveApiKey} className="ml-auto">
+            Save API Key
+          </Button>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            To use the travel buddy feature, you need an OpenRouter API key. 
+            Get your key at <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">openrouter.ai</a>.
+          </p>
+          <Input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="sk-or-v1-xxxxxxxx"
+            className="w-full"
+          />
+          <p className="text-xs text-gray-500">
+            Your API key is stored locally in your browser and never sent to our servers.
+          </p>
+        </div>
+      </Modal>
 
       {/* Chat Modal */}
       <Modal
