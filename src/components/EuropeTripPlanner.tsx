@@ -8,70 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar } from 'lucide-react';
-
-// Create a type for accommodation to fix TypeScript errors
-type Accommodation = {
-  name: string;
-  image: string;
-  wifi: string;
-  address?: string;
-  checkin?: string;
-  code?: string;
-  parking?: string;
-  contact?: string;
-};
-
-// Define types for activities and other data structures
-type Activity = {
-  id: string;
-  time: string;
-  activity: string;
-  type: string;
-  icon: string;
-  image: string;
-  note?: string;
-  checklist?: string[];
-  suggestions?: string[];
-  completed: boolean;
-  contactInfo?: string;
-  flightInfo?: string;
-  tip?: string;
-  culturalNote?: string;
-  location?: string;
-  mustTry?: boolean;
-  booked?: boolean;
-  importance?: string;
-  duration?: string;
-  playlist?: string;
-};
-
-type Warning = {
-  type: string;
-  message: string;
-  fine?: string;
-  times?: string;
-  image: string;
-};
-
-type Weather = {
-  temp: string;
-  icon: string;
-  condition: string;
-};
-
-type TripDay = {
-  date: string;
-  city: string;
-  title: string;
-  bgImage: string;
-  bgGradient: string;
-  activities: Activity[];
-  warnings?: Warning[];
-  accommodation?: Accommodation;
-  weather?: Weather;
-  specialEvent?: boolean;
-  encouragement?: string;
-};
+import { europeTrip, TripDay, Activity } from '@/data/tripData';
 
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
@@ -84,323 +21,7 @@ export const EuropeTripPlanner: React.FC = () => {
     icon: '📌',
     note: ''
   });
-  const [tripDays, setTripDays] = useState<TripDay[]>([
-    {
-      date: '2025-06-05',
-      city: 'Los Angeles',
-      title: 'Departure Day',
-      bgImage: 'https://images.unsplash.com/photo-1544413660-299165566b1d?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      bgGradient: 'from-blue-500 to-sky-600',
-      activities: [
-        { 
-          id: '1-1',
-          time: '10:00', 
-          activity: 'Pick up rental car at Santa Maria Airport', 
-          type: 'logistics',
-          icon: '🚗',
-          image: 'https://images.unsplash.com/photo-1650472576213-1e7ae623c6fa?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Volkswagen Jetta (Automatic), Reservation #L1, Budget Fastbreak Counter',
-          checklist: ['Booking confirmation', 'Driver\'s license', 'Credit card (Visa *4592)'],
-          completed: false,
-          contactInfo: 'Budget: (1) 805-922-3113'
-        },
-        { 
-          id: '1-2',
-          time: '12:00', 
-          activity: 'Final packing & docs check', 
-          type: 'logistics',
-          icon: '📋',
-          image: 'https://images.unsplash.com/photo-1581553673739-c4906b5d0de1?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          checklist: ['Passports', 'AAA International DL', 'Travel insurance', 'Suitcase & backpack'],
-          completed: false
-        },
-        { 
-          id: '1-3',
-          time: '14:00', 
-          activity: 'Return rental car at LAX', 
-          type: 'travel',
-          icon: '🚗',
-          image: 'https://images.unsplash.com/photo-1592859600972-1b0834d83747?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Budget return at LAX, follow signs for rental car return',
-          contactInfo: 'Budget LAX: (1) 310-642-4500',
-          completed: false
-        },
-        { 
-          id: '1-4',
-          time: '18:40', 
-          activity: 'Flight LAX → Milan', 
-          type: 'travel',
-          icon: '✈️',
-          image: 'https://images.unsplash.com/photo-1532299033752-9376aa1fed37?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          flightInfo: 'Lufthansa #8900 • Arrive 18:00+1',
-          completed: false
-        }
-      ]
-    },
-    {
-      date: '2025-06-06',
-      city: 'Milan',
-      title: 'Arrival in Milan',
-      bgImage: 'https://images.unsplash.com/photo-1610016302534-6f67f1c968d8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      bgGradient: 'from-red-500 to-orange-500',
-      weather: { temp: '22°C', icon: '☀️', condition: 'Sunny' },
-      activities: [
-        { 
-          id: '2-1',
-          time: '06:00', 
-          activity: 'Land at Milan MXP', 
-          type: 'travel',
-          icon: '🛬',
-          image: 'https://images.unsplash.com/photo-1588179579529-3fde7293eace?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          completed: false
-        },
-        { 
-          id: '2-2',
-          time: '09:00', 
-          activity: 'Collect rental car', 
-          type: 'logistics',
-          icon: '🚗',
-          image: 'https://images.unsplash.com/photo-1650472576213-1e7ae623c6fa?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Remember: Drive on right side!',
-          completed: false
-        },
-        { 
-          id: '2-3',
-          time: '12:00', 
-          activity: 'Check into Airbnb', 
-          type: 'accommodation',
-          icon: '🏠',
-          image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          completed: false
-        },
-        { 
-          id: '2-4',
-          time: '14:00', 
-          activity: 'First Italian lunch', 
-          type: 'meal',
-          icon: '🍝',
-          image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          suggestions: ['Risotto alla milanese', 'Cotoletta'],
-          completed: false
-        },
-        { 
-          id: '2-5',
-          time: '16:00', 
-          activity: 'Visit Duomo Cathedral', 
-          type: 'sightseeing',
-          icon: '⛪',
-          image: 'https://images.unsplash.com/photo-1595831220477-5d0a83bd859c?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          tip: 'Look up at the Gothic spires!',
-          completed: false
-        }
-      ],
-      warnings: [
-        { 
-          type: 'critical', 
-          message: 'AVOID HISTORIC CENTER ZTL',
-          fine: '€80+',
-          image: 'https://images.unsplash.com/photo-1567951473648-c605f56d42c8?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
-        }
-      ],
-      accommodation: {
-        name: 'Milano City Center',
-        image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-        checkin: '15:00',
-        wifi: 'MilanoGuest2025'
-      }
-    },
-    {
-      date: '2025-06-19',
-      city: 'Stuttgart',
-      title: 'Pre-Audition Day',
-      bgImage: 'https://images.unsplash.com/photo-1564028702218-ee7e9e97c7cb?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      bgGradient: 'from-indigo-500 to-purple-600',
-      activities: [
-        { 
-          id: '19-1',
-          time: '09:00', 
-          activity: 'Staatsoper Rehearsal (TBC)', 
-          type: 'preparation',
-          icon: '🎵',
-          image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Possible rehearsal opportunity - confirm ahead of time',
-          completed: false
-        },
-        { 
-          id: '19-2',
-          time: '12:00', 
-          activity: 'Light lunch', 
-          type: 'meal',
-          icon: '🥗',
-          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Nothing too heavy day before audition',
-          completed: false
-        },
-        { 
-          id: '19-3',
-          time: '14:00', 
-          activity: 'Voice rest', 
-          type: 'rest',
-          icon: '😴',
-          image: 'https://images.unsplash.com/photo-1572424117831-005b5f17e260?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          completed: false
-        },
-        { 
-          id: '19-4',
-          time: '16:00', 
-          activity: 'Light practice', 
-          type: 'preparation',
-          icon: '🎭',
-          image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Final run-through of pieces',
-          completed: false
-        },
-        { 
-          id: '19-5',
-          time: '18:00', 
-          activity: 'Early dinner', 
-          type: 'meal',
-          icon: '🍽️',
-          image: 'https://images.unsplash.com/photo-1488992783499-418eb1f62d08?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          completed: false
-        },
-        { 
-          id: '19-6',
-          time: '20:00', 
-          activity: 'Early bedtime', 
-          type: 'rest',
-          icon: '🛌',
-          image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Get good rest!',
-          completed: false
-        }
-      ],
-      accommodation: {
-        name: 'Adina Apartment Hotel Stuttgart',
-        address: 'Kriegsbergstraße 24, 70174 Stuttgart',
-        image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-        wifi: 'AdinaGuest'
-      }
-    },
-    {
-      date: '2025-06-20',
-      city: 'Stuttgart',
-      title: 'AUDITION DAY!',
-      bgImage: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      bgGradient: 'from-purple-600 to-indigo-600',
-      specialEvent: true,
-      encouragement: "🎯 Break a leg, Nathan! This is your moment to shine! 🦵✨",
-      activities: [
-        { 
-          id: '20-1',
-          time: '08:00', 
-          activity: 'Light breakfast', 
-          type: 'meal',
-          icon: '🥐',
-          image: 'https://images.unsplash.com/photo-1495214783159-3503fd1b572d?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Not too heavy before singing',
-          completed: false
-        },
-        { 
-          id: '20-2',
-          time: '09:30', 
-          activity: 'Vocal warm-up', 
-          type: 'preparation',
-          icon: '🎵',
-          image: 'https://images.unsplash.com/photo-1519682577862-22b62b24e493?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          completed: false
-        },
-        { 
-          id: '20-3',
-          time: '11:00', 
-          activity: '🎭 STAATSOPER STUTTGART AUDITION', 
-          type: 'audition',
-          icon: '🎭',
-          image: 'https://images.unsplash.com/photo-1525857369227-d7d5146c9bbe?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'MAJOR EVENT!',
-          completed: false
-        },
-        { 
-          id: '20-4',
-          time: '14:00', 
-          activity: 'Celebration lunch', 
-          type: 'meal',
-          icon: '🥂',
-          image: 'https://images.unsplash.com/photo-1587899897387-091ebd01a6b2?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Traditional Swabian cuisine',
-          completed: false
-        },
-        { 
-          id: '20-5',
-          time: '16:00', 
-          activity: 'Relax & unwind', 
-          type: 'rest',
-          icon: '🧘',
-          image: 'https://images.unsplash.com/photo-1517164850305-99a3e65bb47e?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          completed: false
-        },
-        { 
-          id: '20-6',
-          time: '19:30', 
-          activity: 'Opera performance (optional)', 
-          type: 'entertainment',
-          icon: '🎼',
-          image: 'https://images.unsplash.com/photo-1519123439567-e9b22b701766?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'If not too tired',
-          completed: false
-        }
-      ],
-      accommodation: {
-        name: 'Adina Apartment Hotel Stuttgart',
-        address: 'Kriegsbergstraße 24, 70174 Stuttgart',
-        image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-        wifi: 'AdinaGuest'
-      }
-    },
-    // Adding the return trip day with car rental details
-    {
-      date: '2025-06-26',
-      city: 'Los Angeles',
-      title: 'Return Trip',
-      bgImage: 'https://images.unsplash.com/photo-1515896769750-31548aa180ed?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      bgGradient: 'from-blue-600 to-purple-500',
-      activities: [
-        { 
-          id: '26-1',
-          time: '01:30', 
-          activity: 'Pick up rental car at LAX', 
-          type: 'logistics',
-          icon: '🚗',
-          image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Toyota Corolla (Automatic), Confirmation #23786281US1, Reservation #J5, Budget Fastbreak Counter',
-          checklist: ['Booking confirmation', 'Driver\'s license', 'Credit card (Visa *4592)'],
-          completed: false,
-          contactInfo: 'Budget LAX: (1) 310-642-4500'
-        },
-        { 
-          id: '26-2',
-          time: '02:30', 
-          activity: 'Drive to Santa Maria', 
-          type: 'travel',
-          icon: '🚗',
-          image: 'https://images.unsplash.com/photo-1566202546954-b0200d9c7482?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'Approximately 3 hours drive',
-          completed: false
-        },
-        { 
-          id: '26-3',
-          time: '23:30', 
-          activity: 'Return rental car at Santa Maria Airport', 
-          type: 'travel',
-          icon: '🚗',
-          image: 'https://images.unsplash.com/photo-1592859600972-1b0834d83747?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          note: 'After-hours drop-off, key-drop box available',
-          contactInfo: 'Budget Santa Maria: (1) 805-922-3113',
-          completed: false
-        }
-      ]
-    }
-  ]);
+  const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
   
   // Helper function to format dates
   const formatDate = (dateString: string) => {
@@ -470,7 +91,7 @@ export const EuropeTripPlanner: React.FC = () => {
       ...newActivity,
       image: 'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       completed: false
-    };
+    } as Activity;
     
     // Update the current day's activities
     const updatedTripDays = [...tripDays];
@@ -510,7 +131,8 @@ export const EuropeTripPlanner: React.FC = () => {
       shopping: '🛍️',
       rest: '😴',
       audition: '🎭',
-      preparation: '🔄'
+      preparation: '🔄',
+      arrival: '🏡'
     };
     return icons[type] || '📌';
   };
@@ -571,11 +193,11 @@ export const EuropeTripPlanner: React.FC = () => {
             </Button>
             
             <div className="text-center">
-              <div className="text-sm text-gray-500">Day {currentDay + 1} of {tripDays.length}</div>
+              <div className="text-sm text-gray-500">Day {currentDayData.dayNumber} of {tripDays.length}</div>
               <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto mt-1">
                 <div 
                   className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${((currentDay + 1) / tripDays.length) * 100}%` }}
+                  style={{ width: `${(currentDayData.dayNumber / tripDays.length) * 100}%` }}
                 ></div>
               </div>
             </div>
@@ -595,7 +217,7 @@ export const EuropeTripPlanner: React.FC = () => {
       {/* Warnings */}
       {currentDayData.warnings && currentDayData.warnings.length > 0 && (
         <div className="container mx-auto px-4 py-4">
-          {currentDayData.warnings.map((warning: any, index: number) => (
+          {currentDayData.warnings.map((warning, index) => (
             <div 
               key={index} 
               className={`mb-4 p-4 rounded-lg flex items-center bg-white shadow-md ${
@@ -606,7 +228,9 @@ export const EuropeTripPlanner: React.FC = () => {
                     : 'border-l-4 border-orange-500'
               }`}
             >
-              <img src={warning.image} alt="Warning" className="w-20 h-16 rounded mr-4 object-cover" />
+              {warning.image && (
+                <img src={warning.image} alt="Warning" className="w-20 h-16 rounded mr-4 object-cover" />
+              )}
               <div className="flex-1">
                 <div className={`font-semibold ${
                   warning.type === 'critical' 
@@ -622,6 +246,52 @@ export const EuropeTripPlanner: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Route Information */}
+      {currentDayData.route && (
+        <div className="container mx-auto px-4 py-4">
+          <Card className="p-4 mb-4 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <h3 className="text-lg font-semibold mb-2">🗺️ Today's Route</h3>
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="font-medium">{currentDayData.route.start}</span>
+              <span className="text-gray-500">→</span>
+              <span className="font-medium">{currentDayData.route.end}</span>
+              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm ml-2">
+                {currentDayData.route.distance}
+              </span>
+              <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">
+                {currentDayData.route.duration}
+              </span>
+            </div>
+            {currentDayData.route.stops && currentDayData.route.stops.length > 0 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">Stops: {currentDayData.route.stops.join(' • ')}</p>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+      
+      {/* Parking Tips */}
+      {currentDayData.parkingTips && currentDayData.parkingTips.length > 0 && (
+        <div className="container mx-auto px-4">
+          <Card className="p-4 mb-4 bg-gradient-to-r from-green-50 to-emerald-50">
+            <h3 className="text-lg font-semibold mb-2">🅿️ Parking Tips</h3>
+            <div className="space-y-2">
+              {currentDayData.parkingTips.map((tip, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <span className="font-medium">{tip.name}</span>
+                  <span className={`px-2 py-1 rounded text-sm ${
+                    tip.price.includes('FREE') ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {tip.price}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       )}
 
@@ -723,7 +393,7 @@ export const EuropeTripPlanner: React.FC = () => {
           {currentDayData.activities && currentDayData.activities.length > 0 ? (
             currentDayData.activities
               .sort((a, b) => a.time.localeCompare(b.time))
-              .map((activity: any, index: number) => (
+              .map((activity, index) => (
                 <Card 
                   key={activity.id}
                   className={`overflow-hidden transition-all duration-200 ${
@@ -748,11 +418,13 @@ export const EuropeTripPlanner: React.FC = () => {
                       </div>
                       
                       <div className="hidden sm:block">
-                        <img 
-                          src={activity.image} 
-                          alt={activity.activity}
-                          className="w-16 h-16 rounded-lg object-cover mr-4"
-                        />
+                        {activity.image && (
+                          <img 
+                            src={activity.image} 
+                            alt={activity.activity}
+                            className="w-16 h-16 rounded-lg object-cover mr-4"
+                          />
+                        )}
                       </div>
                       
                       <div className="flex-1">
@@ -787,12 +459,17 @@ export const EuropeTripPlanner: React.FC = () => {
                           {activity.tip && <p className="text-blue-700"><strong>💡 Tip:</strong> {activity.tip}</p>}
                           {activity.culturalNote && <p className="text-purple-700"><strong>🎭 Culture:</strong> {activity.culturalNote}</p>}
                           {activity.location && <p className="text-green-700"><strong>📍 Location:</strong> {activity.location}</p>}
+                          {activity.contact && <p className="text-blue-700"><strong>📞 Contact:</strong> {activity.contact}</p>}
                           {activity.contactInfo && <p className="text-blue-700"><strong>📞 Contact:</strong> {activity.contactInfo}</p>}
+                          {activity.carDetails && <p className="text-indigo-700"><strong>🔢 Details:</strong> {activity.carDetails}</p>}
+                          {activity.warning && <p className="text-red-700"><strong>⚠️ Warning:</strong> {activity.warning}</p>}
+                          {activity.sentiment && <p className="text-green-700"><strong>💭 Note:</strong> {activity.sentiment}</p>}
+                          
                           {activity.checklist && (
                             <div className="mt-2">
                               <strong>Checklist:</strong>
                               <ul className="list-disc list-inside text-sm mt-1 space-y-1">
-                                {activity.checklist.map((item: string, i: number) => (
+                                {activity.checklist.map((item, i) => (
                                   <li key={i}>{item}</li>
                                 ))}
                               </ul>
@@ -803,13 +480,30 @@ export const EuropeTripPlanner: React.FC = () => {
                               <strong>🍽️ Try:</strong> {activity.suggestions.join(', ')}
                             </div>
                           )}
+                          {activity.sites && (
+                            <div className="mt-2">
+                              <strong>🏛️ Sites:</strong> {activity.sites.join(', ')}
+                            </div>
+                          )}
+                          {activity.highlights && (
+                            <div className="mt-2">
+                              <strong>✨ Highlights:</strong> {activity.highlights.join(', ')}
+                            </div>
+                          )}
+                          {activity.areas && (
+                            <div className="mt-2">
+                              <strong>📍 Areas:</strong> {activity.areas.join(', ')}
+                            </div>
+                          )}
                         </div>
                         <div className="text-center">
-                          <img 
-                            src={activity.image} 
-                            alt={activity.activity}
-                            className="w-full h-32 rounded-lg object-cover mb-2"
-                          />
+                          {activity.image && (
+                            <img 
+                              src={activity.image} 
+                              alt={activity.activity}
+                              className="w-full h-32 rounded-lg object-cover mb-2"
+                            />
+                          )}
                           {activity.playlist && (
                             <div className="bg-green-100 rounded p-2">
                               <span className="text-sm">🎵 {activity.playlist}</span>
@@ -818,6 +512,11 @@ export const EuropeTripPlanner: React.FC = () => {
                           {activity.flightInfo && (
                             <div className="bg-blue-100 rounded p-2">
                               <span className="text-sm">✈️ {activity.flightInfo}</span>
+                            </div>
+                          )}
+                          {activity.distance && (
+                            <div className="bg-indigo-100 rounded p-2">
+                              <span className="text-sm">🛣️ {activity.distance}</span>
                             </div>
                           )}
                         </div>
@@ -846,27 +545,41 @@ export const EuropeTripPlanner: React.FC = () => {
           <h3 className="text-xl font-semibold mb-3">🏨 Tonight's Stay</h3>
           <Card className="p-4">
             <div className="flex flex-col sm:flex-row items-center">
-              <img 
-                src={currentDayData.accommodation.image} 
-                alt={currentDayData.accommodation.name}
-                className="w-full sm:w-24 h-48 sm:h-20 rounded mr-0 sm:mr-4 mb-4 sm:mb-0 object-cover" 
-              />
+              {currentDayData.accommodation.image && (
+                <img 
+                  src={currentDayData.accommodation.image} 
+                  alt={currentDayData.accommodation.name}
+                  className="w-full sm:w-24 h-48 sm:h-20 rounded mr-0 sm:mr-4 mb-4 sm:mb-0 object-cover" 
+                />
+              )}
               <div className="flex-1">
                 <h4 className="font-semibold text-lg">{currentDayData.accommodation.name}</h4>
                 {currentDayData.accommodation.address && (
                   <p className="text-gray-600 text-sm mb-1">{currentDayData.accommodation.address}</p>
                 )}
-                {currentDayData.accommodation.contact && (
-                  <p className="text-blue-600 mb-1">📞 {currentDayData.accommodation.contact}</p>
+                {currentDayData.accommodation.contactPhone && (
+                  <p className="text-blue-600 mb-1">📞 {currentDayData.accommodation.contactPhone}</p>
                 )}
-                {currentDayData.accommodation.code && (
-                  <p className="text-green-600 font-mono mb-1">🔑 {currentDayData.accommodation.code}</p>
+                {currentDayData.accommodation.confirmationNumber && (
+                  <p className="text-green-600 font-mono mb-1">🔢 Confirmation: {currentDayData.accommodation.confirmationNumber}</p>
+                )}
+                {currentDayData.accommodation.confirmationCode && (
+                  <p className="text-green-600 font-mono mb-1">🔢 Confirmation: {currentDayData.accommodation.confirmationCode}</p>
+                )}
+                {currentDayData.accommodation.checkin && (
+                  <p className="text-purple-600 mb-1">⏰ Check-in: {currentDayData.accommodation.checkin}</p>
+                )}
+                {currentDayData.accommodation.checkout && (
+                  <p className="text-purple-600 mb-1">⏰ Check-out: {currentDayData.accommodation.checkout}</p>
                 )}
                 {currentDayData.accommodation.wifi && (
                   <p className="text-purple-600 mb-1">📶 WiFi: {currentDayData.accommodation.wifi}</p>
                 )}
                 {currentDayData.accommodation.parking && (
-                  <p className="text-orange-600">🅿️ {currentDayData.accommodation.parking}</p>
+                  <p className="text-orange-600 mb-1">🅿️ {currentDayData.accommodation.parking}</p>
+                )}
+                {currentDayData.accommodation.totalPrice && (
+                  <p className="text-green-600 mb-1">💰 {currentDayData.accommodation.totalPrice}</p>
                 )}
               </div>
             </div>
@@ -933,7 +646,7 @@ export const EuropeTripPlanner: React.FC = () => {
       )}
 
       {/* Return Trip Car Rental Details for June 26 */}
-      {currentDay === 4 && (
+      {currentDayData.date === '2025-06-26' && (
         <div className="container mx-auto px-4 pb-8">
           <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
             <Car className="h-5 w-5" /> Return Trip Rental Car Details
