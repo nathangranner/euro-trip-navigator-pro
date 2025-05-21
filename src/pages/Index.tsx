@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +56,7 @@ const Index = () => {
           </p>
 
           <div className="mt-12">
-            <Button onClick={() => navigate("/planner")} className="explore itinerary\n">
+            <Button onClick={() => navigate("/planner")} className="explore-itinerary">
               Explore Collection <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
