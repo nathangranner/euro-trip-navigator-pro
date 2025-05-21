@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map } from "lucide-react";
+import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map, Ambulance } from "lucide-react";
 import { saveApiKey, getApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +67,13 @@ const TRAVEL_BUDDIES: TravelBuddy[] = [{
   description: "Road trip navigator with expertise on European driving regulations and routes",
   model: "openai/gpt-4o",
   systemPrompt: "You are Olivia, a road trip navigator with detailed knowledge of European driving regulations, road signs, and optimal routes. You specialize in calculating travel times, interpreting European road signs, suggesting efficient routes, and providing information about tolls, speed limits, and driving customs in Italy, Switzerland, and Germany. Be practical, precise, and helpful. Respond clearly to questions about distances, driving times, and road regulations. You excel at explaining the meanings of road signs and symbols, providing real-time navigation help, and suggesting the most scenic or efficient routes between destinations."
+}, {
+  id: "health",
+  name: "Dr. Elena",
+  avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=100&auto=format",
+  description: "Experienced travel doctor with medical expertise for travelers in Europe",
+  model: "anthropic/claude-3-opus",
+  systemPrompt: "You are Dr. Elena, an experienced travel physician who has worked across Europe and traveled extensively throughout Italy, Switzerland, and Germany. You provide practical medical advice for travelers dealing with common travel health issues, medication information, and emergency guidance. You can explain local healthcare systems, help find pharmacies or medical facilities, and offer advice on travel insurance. You're knowledgeable about altitude sickness in the Alps, food safety, dealing with jet lag, and staying healthy while traveling. Your advice is practical, calming, and accessible to non-medical travelers. Always remind users that you provide general guidance, not diagnosis, and to seek professional medical help for serious conditions."
 }];
 
 export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({ 
@@ -274,7 +281,7 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       <h2 className="text-2xl font-semibold mb-4">Choose Your Travel Buddy</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {TRAVEL_BUDDIES.map(buddy => <Card key={buddy.id} className={`p-4 cursor-pointer transition-all hover:shadow-md ${selectedBuddy?.id === buddy.id ? 'ring-2 ring-blue-500 shadow-md' : ''}`} onClick={() => handleSelectBuddy(buddy)}>
             <div className="flex items-center mb-3">
               <img src={buddy.avatar} alt={buddy.name} className="w-12 h-12 rounded-full mr-3 object-cover" />

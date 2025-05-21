@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { TravelBuddySelector } from "@/components/TravelBuddySelector";
-import { ChevronLeft, Route, Navigation, Map, MessageCircle } from "lucide-react";
+import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance } from "lucide-react";
 
 const TravelBuddyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,10 +30,10 @@ const TravelBuddyPage: React.FC = () => {
 
       <div className="mb-6">
         <p className="text-gray-600 mb-4">
-          Get personalized recommendations, language help, trip adaptations, and navigation assistance from your AI travel companions
+          Get personalized recommendations, language help, trip adaptations, and assistance from your AI travel companions
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <div className="flex items-center mb-2">
               <Map className="h-5 w-5 mr-2 text-blue-600" />
@@ -56,6 +56,14 @@ const TravelBuddyPage: React.FC = () => {
               <h3 className="font-semibold">Local Recommendations</h3>
             </div>
             <p className="text-sm text-gray-700">Find the best dining spots, attractions, and hidden gems</p>
+          </Card>
+
+          <Card className="p-4 bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+            <div className="flex items-center mb-2">
+              <Ambulance className="h-5 w-5 mr-2 text-red-600" />
+              <h3 className="font-semibold">Travel Health</h3>
+            </div>
+            <p className="text-sm text-gray-700">Medical advice, finding pharmacies, and health guidance abroad</p>
           </Card>
         </div>
         
