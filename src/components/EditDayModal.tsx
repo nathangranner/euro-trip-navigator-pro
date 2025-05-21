@@ -17,18 +17,18 @@ interface EditDayModalProps {
 export const EditDayModal: React.FC<EditDayModalProps> = ({ isOpen, onClose, day, onSave }) => {
   const [formData, setFormData] = useState<Partial<TripDay>>({
     city: day.city,
-    title: day.title,
+    title: day.title || "",
     encouragement: day.encouragement || "",
   });
 
   const [accommodation, setAccommodation] = useState({
-    name: day.accommodation?.name || "",
-    address: day.accommodation?.address || "",
-    wifi: day.accommodation?.wifi || "",
-    checkin: day.accommodation?.checkin || "",
-    checkout: day.accommodation?.checkout || "",
-    contactPhone: day.accommodation?.contactPhone || "",
-    totalPrice: day.accommodation?.totalPrice || "",
+    name: day.accommodation?.name || day.accommodationName || "",
+    address: day.accommodation?.address || day.accommodationAddress || "",
+    wifi: day.accommodation?.wifi || day.accommodationWifi || "",
+    checkin: day.accommodation?.checkin || day.accommodationCheckIn || "",
+    checkout: day.accommodation?.checkout || day.accommodationCheckOut || "",
+    contactPhone: day.accommodation?.contactPhone || day.accommodationContact || "",
+    totalPrice: day.accommodation?.totalPrice || (day.accommodationPrice ? day.accommodationPrice.toString() : ""),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -45,17 +45,16 @@ export const EditDayModal: React.FC<EditDayModalProps> = ({ isOpen, onClose, day
     const updatedDay: TripDay = {
       ...day,
       ...formData,
-      accommodation: day.accommodation 
-        ? { 
-            ...day.accommodation, 
-            ...accommodation 
-          }
-        : accommodation.name 
-          ? { 
-              ...accommodation, 
-              image: day.accommodation?.image || "" 
-            }
-          : day.accommodation
+      accommodation: {
+        name: accommodation.name,
+        address: accommodation.address,
+        wifi: accommodation.wifi,
+        checkin: accommodation.checkin,
+        checkout: accommodation.checkout,
+        contactPhone: accommodation.contactPhone,
+        totalPrice: accommodation.totalPrice,
+        image: day.accommodation?.image || ""
+      }
     };
     onSave(updatedDay);
     onClose();
