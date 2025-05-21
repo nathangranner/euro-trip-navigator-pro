@@ -8,22 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { 
-  ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, 
-  MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText,
-  MessageCircle
-} from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText, MessageCircle } from 'lucide-react';
 import { europeTrip, TripDay, Activity } from '@/data/tripData';
 import { EditDayModal } from './EditDayModal';
 import { ExpenseTracker, Expense } from './ExpenseTracker';
 import { PurchaseTracker, Purchase } from './PurchaseTracker';
 import { EditActivityModal } from './EditActivityModal';
 import { TravelBuddySelector } from './TravelBuddySelector';
-import { 
-  loadStoredData, saveTripDays, saveExpenses, savePurchases, 
-  loadExpenses, loadPurchases, exportTripData, importTripData 
-} from '@/utils/storageUtils';
-
+import { loadStoredData, saveTripDays, saveExpenses, savePurchases, loadExpenses, loadPurchases, exportTripData, importTripData } from '@/utils/storageUtils';
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
@@ -36,7 +28,6 @@ export const EuropeTripPlanner: React.FC = () => {
   const [importExportOpen, setImportExportOpen] = useState(false);
   const [exportData, setExportData] = useState('');
   const [importData, setImportData] = useState('');
-  
   const [newActivity, setNewActivity] = useState({
     time: '',
     activity: '',
@@ -44,38 +35,34 @@ export const EuropeTripPlanner: React.FC = () => {
     icon: '📌',
     note: ''
   });
-  
   const [tripDays, setTripDays] = useState<TripDay[]>([]);
   const [expensesByDay, setExpensesByDay] = useState<Record<string, Expense[]>>({});
   const [purchasesByDay, setPurchasesByDay] = useState<Record<string, Purchase[]>>({});
-  
+
   // Load data on component mount
   useEffect(() => {
     const storedData = loadStoredData();
-    
     if (storedData.tripDays && storedData.tripDays.length > 0) {
       setTripDays(storedData.tripDays);
     } else {
       setTripDays(europeTrip.days);
     }
-    
     if (storedData.expenses) {
       setExpensesByDay(storedData.expenses);
     }
-    
     if (storedData.purchases) {
       setPurchasesByDay(storedData.purchases);
     }
   }, []);
-  
+
   // Helper function to format dates
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -94,7 +81,6 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.info(`Switched to ${tripDays[nextDayIndex].city} - ${tripDays[nextDayIndex].title}`);
     }
   };
-
   const prevDay = () => {
     if (currentDay > 0) {
       const prevDayIndex = currentDay - 1;
@@ -112,32 +98,24 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.info(`Switched to ${tripDays[dayIndex].city} - ${tripDays[dayIndex].title}`);
     }
   };
-
   const toggleActivity = (index: number) => {
     setExpandedActivity(expandedActivity === index ? null : index);
   };
-
   const handleEditActivity = (activity: Activity) => {
     setCurrentEditActivity(activity);
     setEditActivityModalOpen(true);
   };
-
   const handleUpdateActivity = (updatedActivity: Activity) => {
-    const updatedActivities = currentDayData.activities.map(activity => 
-      activity.id === updatedActivity.id ? updatedActivity : activity
-    );
-    
+    const updatedActivities = currentDayData.activities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity);
     const updatedTripDays = [...tripDays];
     updatedTripDays[currentDay] = {
       ...currentDayData,
       activities: updatedActivities
     };
-    
     setTripDays(updatedTripDays);
     saveTripDays(updatedTripDays);
     toast.success(`Updated: ${updatedActivity.activity}`);
   };
-
   const handleActivityToggle = (id: string) => {
     const updatedActivities = currentDayData.activities.map(activity => {
       if (activity.id === id) {
@@ -148,27 +126,27 @@ export const EuropeTripPlanner: React.FC = () => {
         } else {
           toast.info(`Unmarked: ${activity.activity}`);
         }
-        return { ...activity, completed };
+        return {
+          ...activity,
+          completed
+        };
       }
       return activity;
     });
-    
     const updatedTripDays = [...tripDays];
     updatedTripDays[currentDay] = {
       ...currentDayData,
       activities: updatedActivities
     };
-    
     setTripDays(updatedTripDays);
     saveTripDays(updatedTripDays);
   };
-
   const handleAddActivity = () => {
     if (!newActivity.activity || !newActivity.time) {
       toast.error('Please provide both time and activity name');
       return;
     }
-    
+
     // Create a new activity object
     const activity = {
       id: `${currentDay}-${Date.now()}`,
@@ -176,19 +154,19 @@ export const EuropeTripPlanner: React.FC = () => {
       image: 'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       completed: false
     } as Activity;
-    
+
     // Update the current day's activities
     const updatedTripDays = [...tripDays];
     updatedTripDays[currentDay] = {
       ...currentDayData,
       activities: [...currentDayData.activities, activity]
     };
-    
+
     // Update state
     setTripDays(updatedTripDays);
     saveTripDays(updatedTripDays);
     toast.success(`Added: ${newActivity.activity}`);
-    
+
     // Reset form
     setNewActivity({
       time: '',
@@ -197,59 +175,53 @@ export const EuropeTripPlanner: React.FC = () => {
       icon: '📌',
       note: ''
     });
-    
     setShowAddActivity(false);
   };
-  
   const handleSaveExpenses = (expenses: Expense[]) => {
-    setExpensesByDay(prev => ({ ...prev, [dayId]: expenses }));
+    setExpensesByDay(prev => ({
+      ...prev,
+      [dayId]: expenses
+    }));
     saveExpenses(dayId, expenses);
   };
-  
   const handleSavePurchases = (purchases: Purchase[]) => {
-    setPurchasesByDay(prev => ({ ...prev, [dayId]: purchases }));
+    setPurchasesByDay(prev => ({
+      ...prev,
+      [dayId]: purchases
+    }));
     savePurchases(dayId, purchases);
   };
-  
   const handleUpdateDay = (updatedDay: TripDay) => {
     const updatedTripDays = [...tripDays];
     updatedTripDays[currentDay] = updatedDay;
-    
     setTripDays(updatedTripDays);
     saveTripDays(updatedTripDays);
     toast.success(`Updated day information for ${updatedDay.city}`);
   };
-  
   const handleExport = () => {
     const data = exportTripData();
     setExportData(data);
     toast.success("Data prepared for export");
   };
-  
   const handleImport = () => {
     if (!importData.trim()) {
       toast.error("Please paste in export data");
       return;
     }
-    
     try {
       const success = importTripData(importData);
       if (success) {
         // Reload data after import
         const storedData = loadStoredData();
-        
         if (storedData.tripDays) {
           setTripDays(storedData.tripDays);
         }
-        
         if (storedData.expenses) {
           setExpensesByDay(storedData.expenses);
         }
-        
         if (storedData.purchases) {
           setPurchasesByDay(storedData.purchases);
         }
-        
         toast.success("Data imported successfully");
         setImportExportOpen(false);
       } else {
@@ -259,7 +231,6 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.error("Invalid import data format");
     }
   };
-  
   const handlePrintView = () => {
     // Open a new window with just the purchases data formatted for customs
     const printWindow = window.open('', '_blank');
@@ -267,13 +238,13 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.error("Pop-up blocked. Please allow pop-ups for this site.");
       return;
     }
-    
+
     // Combine all purchases for customs
     const allPurchases: Purchase[] = [];
     Object.values(purchasesByDay).forEach(dayPurchases => {
       allPurchases.push(...dayPurchases.filter(p => p.forCustoms));
     });
-    
+
     // Group by country
     const purchasesByCountry: Record<string, Purchase[]> = {};
     allPurchases.forEach(purchase => {
@@ -282,14 +253,12 @@ export const EuropeTripPlanner: React.FC = () => {
       }
       purchasesByCountry[purchase.country].push(purchase);
     });
-    
+
     // Calculate totals by currency
     const calculateTotal = (purchases: Purchase[], currency: string): number => {
-      return purchases
-        .filter(p => p.currency === currency)
-        .reduce((total, p) => total + p.price, 0);
+      return purchases.filter(p => p.currency === currency).reduce((total, p) => total + p.price, 0);
     };
-    
+
     // Format the content
     let content = `
       <html>
@@ -316,7 +285,7 @@ export const EuropeTripPlanner: React.FC = () => {
           <p>Trip Period: ${formatDate(europeTrip.startDate)} to ${formatDate(europeTrip.endDate)}</p>
           <button onclick="window.print();" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; margin: 20px 0;">Print this page</button>
     `;
-    
+
     // Add each country's purchases
     Object.entries(purchasesByCountry).forEach(([country, purchases]) => {
       content += `
@@ -333,15 +302,9 @@ export const EuropeTripPlanner: React.FC = () => {
             </thead>
             <tbody>
       `;
-      
       purchases.forEach(purchase => {
         const purchaseDate = purchase.date ? formatDate(purchase.date) : 'N/A';
-        const currencySymbol = 
-          purchase.currency === 'EUR' ? '€' : 
-          purchase.currency === 'USD' ? '$' : 
-          purchase.currency === 'GBP' ? '£' : 
-          'CHF ';
-          
+        const currencySymbol = purchase.currency === 'EUR' ? '€' : purchase.currency === 'USD' ? '$' : purchase.currency === 'GBP' ? '£' : 'CHF ';
         content += `
           <tr>
             <td>${purchase.item}</td>
@@ -351,53 +314,40 @@ export const EuropeTripPlanner: React.FC = () => {
           </tr>
         `;
       });
-      
+
       // Country totals by currency
       content += `
             </tbody>
           </table>
           <div class="totals">
       `;
-      
       ['EUR', 'USD', 'GBP', 'CHF'].forEach(currency => {
         const total = calculateTotal(purchases, currency);
         if (total > 0) {
-          const currencySymbol = 
-            currency === 'EUR' ? '€' : 
-            currency === 'USD' ? '$' : 
-            currency === 'GBP' ? '£' : 
-            'CHF ';
+          const currencySymbol = currency === 'EUR' ? '€' : currency === 'USD' ? '$' : currency === 'GBP' ? '£' : 'CHF ';
           content += `<div>${country} Total (${currency}): ${currencySymbol}${total.toFixed(2)}</div>`;
         }
       });
-      
       content += `</div></div>`;
     });
-    
+
     // Grand totals
     content += `
       <div class="grand-total">
         <div>Grand Totals:</div>
     `;
-    
     ['EUR', 'USD', 'GBP', 'CHF'].forEach(currency => {
       const total = calculateTotal(allPurchases, currency);
       if (total > 0) {
-        const currencySymbol = 
-          currency === 'EUR' ? '€' : 
-          currency === 'USD' ? '$' : 
-          currency === 'GBP' ? '£' : 
-          'CHF ';
+        const currencySymbol = currency === 'EUR' ? '€' : currency === 'USD' ? '$' : currency === 'GBP' ? '£' : 'CHF ';
         content += `<div>Total ${currency}: ${currencySymbol}${total.toFixed(2)}</div>`;
       }
     });
-    
     content += `
         </div>
       </body>
     </html>
     `;
-    
     printWindow.document.open();
     printWindow.document.write(content);
     printWindow.document.close();
@@ -405,7 +355,9 @@ export const EuropeTripPlanner: React.FC = () => {
 
   // Activity type icons
   const getActivityIcon = (type: string) => {
-    const icons: {[key: string]: string} = {
+    const icons: {
+      [key: string]: string;
+    } = {
       activity: '📌',
       meal: '🍽️',
       logistics: '📋',
@@ -426,23 +378,17 @@ export const EuropeTripPlanner: React.FC = () => {
 
   // Add a new state for the travel buddy section
   const [showTravelBuddySection, setShowTravelBuddySection] = useState(true);
-  
   if (!currentDayData) {
     return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       {/* Hero Header */}
-      <div 
-        className="hero-header bg-gradient-to-br text-white relative overflow-hidden shadow-md"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentDayData.bgImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '250px'
-        }}
-      >
+      <div className="hero-header bg-gradient-to-br text-white relative overflow-hidden shadow-md" style={{
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentDayData.bgImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      minHeight: '250px'
+    }}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
@@ -450,37 +396,27 @@ export const EuropeTripPlanner: React.FC = () => {
               <p className="text-xl opacity-90">{currentDayData.title}</p>
               <p className="text-sm opacity-75">{formatDate(currentDayData.date)}</p>
             </div>
-            {currentDayData.weather && (
-              <div className="mt-4 md:mt-0 bg-white/20 backdrop-blur-sm rounded-lg p-4">
+            {currentDayData.weather && <div className="mt-4 md:mt-0 bg-white/20 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl">{currentDayData.weather.icon}</div>
                 <div className="text-lg font-semibold">{currentDayData.weather.temp}</div>
                 <div className="text-sm">{currentDayData.weather.condition}</div>
-              </div>
-            )}
+              </div>}
           </div>
           
           <div className="mt-4 flex justify-end">
-            <Button 
-              variant="ghost" 
-              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
-              onClick={() => setEditDayModalOpen(true)}
-            >
+            <Button variant="ghost" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white" onClick={() => setEditDayModalOpen(true)}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Day Info
             </Button>
           </div>
           
-          {currentDayData.specialEvent && (
-            <div className="mt-4 bg-yellow-400/20 backdrop-blur-sm rounded-lg p-4 animate-pulse-gentle">
+          {currentDayData.specialEvent && <div className="mt-4 bg-yellow-400/20 backdrop-blur-sm rounded-lg p-4 animate-pulse-gentle">
               <p className="text-lg font-semibold">✨ Special Day! ✨</p>
-            </div>
-          )}
+            </div>}
           
-          {currentDayData.encouragement && (
-            <div className="mt-4 bg-pink-500/20 backdrop-blur-sm rounded-lg p-4">
+          {currentDayData.encouragement && <div className="mt-4 bg-pink-500/20 backdrop-blur-sm rounded-lg p-4">
               <p className="text-lg italic">{currentDayData.encouragement}</p>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
 
@@ -488,45 +424,32 @@ export const EuropeTripPlanner: React.FC = () => {
       <div className="sticky top-0 bg-white shadow-sm z-10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center">
-            <Button
-              onClick={prevDay}
-              disabled={currentDay === 0}
-              variant={currentDay === 0 ? "outline" : "default"}
-              className="flex items-center gap-1"
-            >
+            <Button onClick={prevDay} disabled={currentDay === 0} variant={currentDay === 0 ? "outline" : "default"} className="flex items-center gap-1">
               <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
             
-            <div className="text-center flex flex-col items-center">
+            <div className="text-center flex flex-col items-center rounded-sm, but more importantly, all the dates are not there. We need bologne, firenza, lucerne between Stutty and leipzig  then ending in Milan again\n">
               <div className="text-sm text-gray-500 mb-1">Day {currentDayData.dayNumber} of {tripDays.length}</div>
               <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(currentDayData.dayNumber / tripDays.length) * 100}%` }}
-                ></div>
+                <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{
+                width: `${currentDayData.dayNumber / tripDays.length * 100}%`
+              }}></div>
               </div>
               
               {/* Add day selector dropdown */}
-              <Select value={currentDay.toString()} onValueChange={(value) => goToDay(parseInt(value))}>
+              <Select value={currentDay.toString()} onValueChange={value => goToDay(parseInt(value))}>
                 <SelectTrigger className="w-[180px] mt-2 h-8 text-xs">
                   <SelectValue placeholder="Jump to day..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {tripDays.map((day, index) => (
-                    <SelectItem key={index} value={index.toString()}>
+                  {tripDays.map((day, index) => <SelectItem key={index} value={index.toString()}>
                       Day {day.dayNumber}: {day.city}
-                    </SelectItem>
-                  ))}
+                    </SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             
-            <Button
-              onClick={nextDay}
-              disabled={currentDay === tripDays.length - 1}
-              variant={currentDay === tripDays.length - 1 ? "outline" : "default"}
-              className="flex items-center gap-1"
-            >
+            <Button onClick={nextDay} disabled={currentDay === tripDays.length - 1} variant={currentDay === tripDays.length - 1 ? "outline" : "default"} className="flex items-center gap-1">
               Next <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -557,30 +480,16 @@ export const EuropeTripPlanner: React.FC = () => {
                     <Button onClick={handleExport} className="flex items-center gap-2 mb-2">
                       <Download className="h-4 w-4" /> Export Data
                     </Button>
-                    {exportData && (
-                      <div className="mt-2">
+                    {exportData && <div className="mt-2">
                         <p className="text-sm text-muted-foreground mb-2">Copy this data and save it somewhere safe:</p>
-                        <Textarea
-                          value={exportData}
-                          rows={5}
-                          readOnly
-                          onClick={(e) => (e.target as HTMLTextAreaElement).select()}
-                          className="font-mono text-xs"
-                        />
-                      </div>
-                    )}
+                        <Textarea value={exportData} rows={5} readOnly onClick={e => (e.target as HTMLTextAreaElement).select()} className="font-mono text-xs" />
+                      </div>}
                   </div>
                   
                   <div className="pt-4 border-t">
                     <h3 className="font-medium mb-2">Import Data</h3>
                     <p className="text-sm text-muted-foreground mb-2">Paste previously exported data:</p>
-                    <Textarea
-                      value={importData}
-                      onChange={(e) => setImportData(e.target.value)}
-                      rows={5}
-                      className="font-mono text-xs mb-2"
-                      placeholder='Paste exported JSON data here...'
-                    />
+                    <Textarea value={importData} onChange={e => setImportData(e.target.value)} rows={5} className="font-mono text-xs mb-2" placeholder='Paste exported JSON data here...' />
                     <Button onClick={handleImport} className="flex items-center gap-2">
                       <Upload className="h-4 w-4" /> Import Data
                     </Button>
@@ -598,10 +507,7 @@ export const EuropeTripPlanner: React.FC = () => {
 
       {/* Travel Buddy Section */}
       <div className="container mx-auto px-4 py-4 mb-4">
-        <div 
-          className="flex justify-between items-center mb-4 cursor-pointer"
-          onClick={() => setShowTravelBuddySection(!showTravelBuddySection)}
-        >
+        <div className="flex justify-between items-center mb-4 cursor-pointer" onClick={() => setShowTravelBuddySection(!showTravelBuddySection)}>
           <h2 className="text-2xl font-semibold flex items-center">
             <MessageCircle className="h-6 w-6 mr-2" /> AI Travel Buddy
           </h2>
@@ -610,51 +516,27 @@ export const EuropeTripPlanner: React.FC = () => {
           </Button>
         </div>
         
-        {showTravelBuddySection && (
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+        {showTravelBuddySection && <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <TravelBuddySelector />
-          </div>
-        )}
+          </div>}
       </div>
 
       {/* Warnings */}
-      {currentDayData.warnings && currentDayData.warnings.length > 0 && (
-        <div className="container mx-auto px-4 py-4">
-          {currentDayData.warnings.map((warning, index) => (
-            <div 
-              key={index} 
-              className={`mb-4 p-4 rounded-lg flex items-center bg-white shadow-md ${
-                warning.type === 'critical' 
-                  ? 'border-l-4 border-red-500' 
-                  : warning.type === 'safe' 
-                    ? 'border-l-4 border-green-500' 
-                    : 'border-l-4 border-orange-500'
-              }`}
-            >
-              {warning.image && (
-                <img src={warning.image} alt="Warning" className="w-20 h-16 rounded mr-4 object-cover" />
-              )}
+      {currentDayData.warnings && currentDayData.warnings.length > 0 && <div className="container mx-auto px-4 py-4">
+          {currentDayData.warnings.map((warning, index) => <div key={index} className={`mb-4 p-4 rounded-lg flex items-center bg-white shadow-md ${warning.type === 'critical' ? 'border-l-4 border-red-500' : warning.type === 'safe' ? 'border-l-4 border-green-500' : 'border-l-4 border-orange-500'}`}>
+              {warning.image && <img src={warning.image} alt="Warning" className="w-20 h-16 rounded mr-4 object-cover" />}
               <div className="flex-1">
-                <div className={`font-semibold ${
-                  warning.type === 'critical' 
-                    ? 'text-red-600' 
-                    : warning.type === 'safe' 
-                      ? 'text-green-600' 
-                      : 'text-orange-600'
-                }`}>
+                <div className={`font-semibold ${warning.type === 'critical' ? 'text-red-600' : warning.type === 'safe' ? 'text-green-600' : 'text-orange-600'}`}>
                   {warning.message}
                 </div>
                 {warning.fine && <div className="text-sm text-red-500">Fine: {warning.fine}</div>}
                 {warning.times && <div className="text-sm text-gray-600">{warning.times}</div>}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            </div>)}
+        </div>}
 
       {/* Route Information */}
-      {currentDayData.route && (
-        <div className="container mx-auto px-4 py-4">
+      {currentDayData.route && <div className="container mx-auto px-4 py-4">
           <Card className="p-4 mb-4 bg-gradient-to-r from-blue-50 to-indigo-50">
             <h3 className="text-lg font-semibold mb-2">🗺️ Today's Route</h3>
             <div className="flex flex-wrap gap-2 items-center">
@@ -668,76 +550,58 @@ export const EuropeTripPlanner: React.FC = () => {
                 {currentDayData.route.duration}
               </span>
             </div>
-            {currentDayData.route.stops && currentDayData.route.stops.length > 0 && (
-              <div className="mt-2">
+            {currentDayData.route.stops && currentDayData.route.stops.length > 0 && <div className="mt-2">
                 <p className="text-sm text-gray-600">Stops: {currentDayData.route.stops.join(' • ')}</p>
-              </div>
-            )}
+              </div>}
           </Card>
-        </div>
-      )}
+        </div>}
       
       {/* Parking Tips */}
-      {currentDayData.parkingTips && currentDayData.parkingTips.length > 0 && (
-        <div className="container mx-auto px-4">
+      {currentDayData.parkingTips && currentDayData.parkingTips.length > 0 && <div className="container mx-auto px-4">
           <Card className="p-4 mb-4 bg-gradient-to-r from-green-50 to-emerald-50">
             <h3 className="text-lg font-semibold mb-2">🅿️ Parking Tips</h3>
             <div className="space-y-2">
-              {currentDayData.parkingTips.map((tip, index) => (
-                <div key={index} className="flex justify-between items-center">
+              {currentDayData.parkingTips.map((tip, index) => <div key={index} className="flex justify-between items-center">
                   <span className="font-medium">{tip.name}</span>
-                  <span className={`px-2 py-1 rounded text-sm ${
-                    tip.price.includes('FREE') ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
+                  <span className={`px-2 py-1 rounded text-sm ${tip.price.includes('FREE') ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
                     {tip.price}
                   </span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </Card>
-        </div>
-      )}
+        </div>}
 
       {/* Activities */}
       <div className="container mx-auto px-4 pb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">📅 Today's Activities</h2>
-          <Button 
-            onClick={() => setShowAddActivity(!showAddActivity)}
-            className="flex items-center gap-2"
-          >
+          <Button onClick={() => setShowAddActivity(!showAddActivity)} className="flex items-center gap-2">
             {showAddActivity ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             {showAddActivity ? 'Cancel' : 'Add Activity'}
           </Button>
         </div>
 
         {/* Add Activity Form */}
-        {showAddActivity && (
-          <Card className="p-4 mb-6">
+        {showAddActivity && <Card className="p-4 mb-6">
             <h3 className="font-semibold mb-3">Add New Activity</h3>
             <div className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                  <Input
-                    type="time"
-                    value={newActivity.time}
-                    onChange={(e) => setNewActivity({...newActivity, time: e.target.value})}
-                    className="w-full"
-                  />
+                  <Input type="time" value={newActivity.time} onChange={e => setNewActivity({
+                ...newActivity,
+                time: e.target.value
+              })} className="w-full" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                  <Select
-                    value={newActivity.type}
-                    onValueChange={(value) => {
-                      setNewActivity({
-                        ...newActivity, 
-                        type: value, 
-                        icon: getActivityIcon(value)
-                      });
-                    }}
-                  >
+                  <Select value={newActivity.type} onValueChange={value => {
+                setNewActivity({
+                  ...newActivity,
+                  type: value,
+                  icon: getActivityIcon(value)
+                });
+              }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -760,74 +624,40 @@ export const EuropeTripPlanner: React.FC = () => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Activity Name</label>
-                <Input
-                  type="text"
-                  value={newActivity.activity}
-                  onChange={(e) => setNewActivity({...newActivity, activity: e.target.value})}
-                  placeholder="What are you doing?"
-                  className="w-full"
-                />
+                <Input type="text" value={newActivity.activity} onChange={e => setNewActivity({
+              ...newActivity,
+              activity: e.target.value
+            })} placeholder="What are you doing?" className="w-full" />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <Textarea
-                  value={newActivity.note}
-                  onChange={(e) => setNewActivity({...newActivity, note: e.target.value})}
-                  placeholder="Any additional details..."
-                  className="w-full"
-                  rows={2}
-                />
+                <Textarea value={newActivity.note} onChange={e => setNewActivity({
+              ...newActivity,
+              note: e.target.value
+            })} placeholder="Any additional details..." className="w-full" rows={2} />
               </div>
               
               <div className="flex justify-end">
-                <Button
-                  onClick={handleAddActivity}
-                  className="bg-green-500 hover:bg-green-600"
-                >
+                <Button onClick={handleAddActivity} className="bg-green-500 hover:bg-green-600">
                   Add Activity
                 </Button>
               </div>
             </div>
-          </Card>
-        )}
+          </Card>}
 
         <div className="space-y-4">
-          {currentDayData.activities && currentDayData.activities.length > 0 ? (
-            currentDayData.activities
-              .sort((a, b) => a.time.localeCompare(b.time))
-              .map((activity, index) => (
-                <Card 
-                  key={activity.id}
-                  className={`overflow-hidden transition-all duration-200 ${
-                    activity.completed ? 'bg-gray-50' : ''
-                  } ${
-                    expandedActivity === index ? 'ring-2 ring-blue-500' : ''
-                  }`}
-                >
+          {currentDayData.activities && currentDayData.activities.length > 0 ? currentDayData.activities.sort((a, b) => a.time.localeCompare(b.time)).map((activity, index) => <Card key={activity.id} className={`overflow-hidden transition-all duration-200 ${activity.completed ? 'bg-gray-50' : ''} ${expandedActivity === index ? 'ring-2 ring-blue-500' : ''}`}>
                   <div className="flex items-center p-4">
-                    <Checkbox
-                      checked={activity.completed}
-                      onCheckedChange={() => handleActivityToggle(activity.id)}
-                      className="mr-3 h-5 w-5"
-                    />
+                    <Checkbox checked={activity.completed} onCheckedChange={() => handleActivityToggle(activity.id)} className="mr-3 h-5 w-5" />
                     
-                    <div 
-                      className="flex flex-1 items-center cursor-pointer hover:bg-gray-50"
-                      onClick={() => toggleActivity(index)}
-                    >
+                    <div className="flex flex-1 items-center cursor-pointer hover:bg-gray-50" onClick={() => toggleActivity(index)}>
                       <div className="flex-shrink-0 mr-4">
                         <span className="text-2xl">{activity.icon}</span>
                       </div>
                       
                       <div className="hidden sm:block">
-                        {activity.image && (
-                          <img 
-                            src={activity.image} 
-                            alt={activity.activity}
-                            className="w-16 h-16 rounded-lg object-cover mr-4"
-                          />
-                        )}
+                        {activity.image && <img src={activity.image} alt={activity.activity} className="w-16 h-16 rounded-lg object-cover mr-4" />}
                       </div>
                       
                       <div className="flex-1">
@@ -846,30 +676,21 @@ export const EuropeTripPlanner: React.FC = () => {
                       </div>
                       
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditActivity(activity);
-                          }}
-                        >
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => {
+                  e.stopPropagation();
+                  handleEditActivity(activity);
+                }}>
                           <Edit className="h-4 w-4 text-gray-500" />
                         </Button>
                         
                         <div className="flex-shrink-0">
-                          {expandedActivity === index ? 
-                            <ChevronUp className="h-5 w-5 text-gray-500" /> : 
-                            <ChevronDown className="h-5 w-5 text-gray-500" />
-                          }
+                          {expandedActivity === index ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  {expandedActivity === index && (
-                    <div className="bg-gray-50 p-4 border-t">
+                  {expandedActivity === index && <div className="bg-gray-50 p-4 border-t">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           {activity.note && <p className="text-gray-700"><strong>📝 Note:</strong> {activity.note}</p>}
@@ -882,86 +703,51 @@ export const EuropeTripPlanner: React.FC = () => {
                           {activity.warning && <p className="text-red-700"><strong>⚠️ Warning:</strong> {activity.warning}</p>}
                           {activity.sentiment && <p className="text-green-700"><strong>💭 Note:</strong> {activity.sentiment}</p>}
                           
-                          {activity.checklist && (
-                            <div className="mt-2">
+                          {activity.checklist && <div className="mt-2">
                               <strong>Checklist:</strong>
                               <ul className="list-disc list-inside text-sm mt-1 space-y-1">
-                                {activity.checklist.map((item, i) => (
-                                  <li key={i}>{item}</li>
-                                ))}
+                                {activity.checklist.map((item, i) => <li key={i}>{item}</li>)}
                               </ul>
-                            </div>
-                          )}
-                          {activity.suggestions && (
-                            <div className="mt-2">
+                            </div>}
+                          {activity.suggestions && <div className="mt-2">
                               <strong>🍽️ Try:</strong> {activity.suggestions.join(', ')}
-                            </div>
-                          )}
-                          {activity.sites && (
-                            <div className="mt-2">
+                            </div>}
+                          {activity.sites && <div className="mt-2">
                               <strong>🏛️ Sites:</strong> {activity.sites.join(', ')}
-                            </div>
-                          )}
-                          {activity.highlights && (
-                            <div className="mt-2">
+                            </div>}
+                          {activity.highlights && <div className="mt-2">
                               <strong>✨ Highlights:</strong> {activity.highlights.join(', ')}
-                            </div>
-                          )}
-                          {activity.areas && (
-                            <div className="mt-2">
+                            </div>}
+                          {activity.areas && <div className="mt-2">
                               <strong>📍 Areas:</strong> {activity.areas.join(', ')}
-                            </div>
-                          )}
+                            </div>}
                         </div>
                         <div className="text-center">
-                          {activity.image && (
-                            <img 
-                              src={activity.image} 
-                              alt={activity.activity}
-                              className="w-full h-32 rounded-lg object-cover mb-2"
-                            />
-                          )}
-                          {activity.playlist && (
-                            <div className="bg-green-100 rounded p-2">
+                          {activity.image && <img src={activity.image} alt={activity.activity} className="w-full h-32 rounded-lg object-cover mb-2" />}
+                          {activity.playlist && <div className="bg-green-100 rounded p-2">
                               <span className="text-sm">🎵 {activity.playlist}</span>
-                            </div>
-                          )}
-                          {activity.flightInfo && (
-                            <div className="bg-blue-100 rounded p-2">
+                            </div>}
+                          {activity.flightInfo && <div className="bg-blue-100 rounded p-2">
                               <span className="text-sm">✈️ {activity.flightInfo}</span>
-                            </div>
-                          )}
-                          {activity.distance && (
-                            <div className="bg-indigo-100 rounded p-2">
+                            </div>}
+                          {activity.distance && <div className="bg-indigo-100 rounded p-2">
                               <span className="text-sm">🛣️ {activity.distance}</span>
-                            </div>
-                          )}
+                            </div>}
                         </div>
                       </div>
-                    </div>
-                  )}
-                </Card>
-              ))
-          ) : (
-            <Card className="p-8 text-center">
+                    </div>}
+                </Card>) : <Card className="p-8 text-center">
               <p className="text-gray-500">No activities planned for today yet.</p>
-              <Button 
-                onClick={() => setShowAddActivity(true)}
-                className="mt-4"
-              >
+              <Button onClick={() => setShowAddActivity(true)} className="mt-4">
                 Add Your First Activity
               </Button>
-            </Card>
-          )}
+            </Card>}
         </div>
       </div>
 
       {/* Expenses Section */}
       <div className="container mx-auto px-4 pb-8">
-        <div 
-          className="flex justify-between items-center mb-4 cursor-pointer"
-          onClick={() => setShowExpenseSection(!showExpenseSection)}
-        >
+        <div className="flex justify-between items-center mb-4 cursor-pointer" onClick={() => setShowExpenseSection(!showExpenseSection)}>
           <h2 className="text-2xl font-semibold flex items-center">
             <Euro className="h-6 w-6 mr-2" /> Expense Tracking
           </h2>
@@ -970,24 +756,14 @@ export const EuropeTripPlanner: React.FC = () => {
           </Button>
         </div>
         
-        {showExpenseSection && (
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <ExpenseTracker
-              dayId={currentDayData.dayNumber}
-              date={currentDayData.date}
-              initialExpenses={currentDayExpenses}
-              onSave={handleSaveExpenses}
-            />
-          </div>
-        )}
+        {showExpenseSection && <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+            <ExpenseTracker dayId={currentDayData.dayNumber} date={currentDayData.date} initialExpenses={currentDayExpenses} onSave={handleSaveExpenses} />
+          </div>}
       </div>
 
       {/* Purchases for Customs Section */}
       <div className="container mx-auto px-4 pb-8">
-        <div 
-          className="flex justify-between items-center mb-4 cursor-pointer"
-          onClick={() => setShowPurchaseSection(!showPurchaseSection)}
-        >
+        <div className="flex justify-between items-center mb-4 cursor-pointer" onClick={() => setShowPurchaseSection(!showPurchaseSection)}>
           <h2 className="text-2xl font-semibold flex items-center">
             <Map className="h-6 w-6 mr-2" /> Purchases for Customs
           </h2>
@@ -996,70 +772,35 @@ export const EuropeTripPlanner: React.FC = () => {
           </Button>
         </div>
         
-        {showPurchaseSection && (
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <PurchaseTracker
-              dayId={currentDayData.dayNumber}
-              date={currentDayData.date}
-              countryName={currentDayData.city.split(",")[1]?.trim() || currentDayData.city}
-              initialPurchases={currentDayPurchases}
-              onSave={handleSavePurchases}
-            />
-          </div>
-        )}
+        {showPurchaseSection && <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+            <PurchaseTracker dayId={currentDayData.dayNumber} date={currentDayData.date} countryName={currentDayData.city.split(",")[1]?.trim() || currentDayData.city} initialPurchases={currentDayPurchases} onSave={handleSavePurchases} />
+          </div>}
       </div>
 
       {/* Accommodation Info */}
-      {currentDayData.accommodation && (
-        <div className="container mx-auto px-4 pb-8">
+      {currentDayData.accommodation && <div className="container mx-auto px-4 pb-8">
           <h3 className="text-xl font-semibold mb-3">🏨 Tonight's Stay</h3>
           <Card className="p-4">
             <div className="flex flex-col sm:flex-row items-center">
-              {currentDayData.accommodation.image && (
-                <img 
-                  src={currentDayData.accommodation.image} 
-                  alt={currentDayData.accommodation.name}
-                  className="w-full sm:w-24 h-48 sm:h-20 rounded mr-0 sm:mr-4 mb-4 sm:mb-0 object-cover" 
-                />
-              )}
+              {currentDayData.accommodation.image && <img src={currentDayData.accommodation.image} alt={currentDayData.accommodation.name} className="w-full sm:w-24 h-48 sm:h-20 rounded mr-0 sm:mr-4 mb-4 sm:mb-0 object-cover" />}
               <div className="flex-1">
                 <h4 className="font-semibold text-lg">{currentDayData.accommodation.name}</h4>
-                {currentDayData.accommodation.address && (
-                  <p className="text-gray-600 text-sm mb-1">{currentDayData.accommodation.address}</p>
-                )}
-                {currentDayData.accommodation.contactPhone && (
-                  <p className="text-blue-600 mb-1">📞 {currentDayData.accommodation.contactPhone}</p>
-                )}
-                {currentDayData.accommodation.confirmationNumber && (
-                  <p className="text-green-600 font-mono mb-1">🔢 Confirmation: {currentDayData.accommodation.confirmationNumber}</p>
-                )}
-                {currentDayData.accommodation.confirmationCode && (
-                  <p className="text-green-600 font-mono mb-1">🔢 Confirmation: {currentDayData.accommodation.confirmationCode}</p>
-                )}
-                {currentDayData.accommodation.checkin && (
-                  <p className="text-purple-600 mb-1">⏰ Check-in: {currentDayData.accommodation.checkin}</p>
-                )}
-                {currentDayData.accommodation.checkout && (
-                  <p className="text-purple-600 mb-1">⏰ Check-out: {currentDayData.accommodation.checkout}</p>
-                )}
-                {currentDayData.accommodation.wifi && (
-                  <p className="text-purple-600 mb-1">📶 WiFi: {currentDayData.accommodation.wifi}</p>
-                )}
-                {currentDayData.accommodation.parking && (
-                  <p className="text-orange-600 mb-1">🅿️ {currentDayData.accommodation.parking}</p>
-                )}
-                {currentDayData.accommodation.totalPrice && (
-                  <p className="text-green-600 mb-1">💰 {currentDayData.accommodation.totalPrice}</p>
-                )}
+                {currentDayData.accommodation.address && <p className="text-gray-600 text-sm mb-1">{currentDayData.accommodation.address}</p>}
+                {currentDayData.accommodation.contactPhone && <p className="text-blue-600 mb-1">📞 {currentDayData.accommodation.contactPhone}</p>}
+                {currentDayData.accommodation.confirmationNumber && <p className="text-green-600 font-mono mb-1">🔢 Confirmation: {currentDayData.accommodation.confirmationNumber}</p>}
+                {currentDayData.accommodation.confirmationCode && <p className="text-green-600 font-mono mb-1">🔢 Confirmation: {currentDayData.accommodation.confirmationCode}</p>}
+                {currentDayData.accommodation.checkin && <p className="text-purple-600 mb-1">⏰ Check-in: {currentDayData.accommodation.checkin}</p>}
+                {currentDayData.accommodation.checkout && <p className="text-purple-600 mb-1">⏰ Check-out: {currentDayData.accommodation.checkout}</p>}
+                {currentDayData.accommodation.wifi && <p className="text-purple-600 mb-1">📶 WiFi: {currentDayData.accommodation.wifi}</p>}
+                {currentDayData.accommodation.parking && <p className="text-orange-600 mb-1">🅿️ {currentDayData.accommodation.parking}</p>}
+                {currentDayData.accommodation.totalPrice && <p className="text-green-600 mb-1">💰 {currentDayData.accommodation.totalPrice}</p>}
               </div>
             </div>
           </Card>
-        </div>
-      )}
+        </div>}
 
       {/* Car Rental Details Banner for Day 1 */}
-      {currentDay === 0 && (
-        <div className="container mx-auto px-4 pb-8">
+      {currentDay === 0 && <div className="container mx-auto px-4 pb-8">
           <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
             <Car className="h-5 w-5" /> Rental Car Details
           </h3>
@@ -1112,12 +853,10 @@ export const EuropeTripPlanner: React.FC = () => {
               </div>
             </div>
           </Card>
-        </div>
-      )}
+        </div>}
 
       {/* Return Trip Car Rental Details for June 26 */}
-      {currentDayData.date === '2025-06-26' && (
-        <div className="container mx-auto px-4 pb-8">
+      {currentDayData.date === '2025-06-26' && <div className="container mx-auto px-4 pb-8">
           <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
             <Car className="h-5 w-5" /> Return Trip Rental Car Details
           </h3>
@@ -1171,37 +910,19 @@ export const EuropeTripPlanner: React.FC = () => {
               </div>
             </div>
           </Card>
-        </div>
-      )}
+        </div>}
 
       {/* Edit Day Modal */}
-      <EditDayModal 
-        isOpen={editDayModalOpen}
-        onClose={() => setEditDayModalOpen(false)}
-        day={currentDayData}
-        onSave={handleUpdateDay}
-      />
+      <EditDayModal isOpen={editDayModalOpen} onClose={() => setEditDayModalOpen(false)} day={currentDayData} onSave={handleUpdateDay} />
 
       {/* Edit Activity Modal */}
-      {currentEditActivity && (
-        <EditActivityModal
-          isOpen={editActivityModalOpen}
-          onClose={() => setEditActivityModalOpen(false)}
-          activity={currentEditActivity}
-          onSave={handleUpdateActivity}
-        />
-      )}
+      {currentEditActivity && <EditActivityModal isOpen={editActivityModalOpen} onClose={() => setEditActivityModalOpen(false)} activity={currentEditActivity} onSave={handleUpdateActivity} />}
 
       {/* Quick Add Activity Button */}
       <div className="fixed bottom-6 right-6">
-        <Button
-          onClick={() => setShowAddActivity(!showAddActivity)}
-          size="lg"
-          className="rounded-full w-14 h-14 shadow-lg hover:scale-105 p-0"
-        >
+        <Button onClick={() => setShowAddActivity(!showAddActivity)} size="lg" className="rounded-full w-14 h-14 shadow-lg hover:scale-105 p-0">
           {showAddActivity ? <X className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
