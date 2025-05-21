@@ -85,6 +85,20 @@ export type Weather = {
   condition: string;
 };
 
+export type PointOfInterest = {
+  name: string;
+  description: string;
+  category: "art" | "history" | "music" | "architecture" | "nature" | "food" | "shopping" | "local";
+  image?: string;
+  address?: string;
+  admission?: string;
+  hours?: string;
+  website?: string;
+  rating?: number;
+  tip?: string;
+  mustSee?: boolean;
+};
+
 export type TripDay = {
   date: string;
   dayNumber: number;
@@ -101,6 +115,7 @@ export type TripDay = {
   encouragement?: string;
   route?: Route;
   parkingTips?: ParkingTip[];
+  pointsOfInterest?: PointOfInterest[];
 };
 
 export interface TripData {
@@ -264,7 +279,65 @@ export const europeTrip: TripData = {
         checkin: "15:00",
         wifi: "MilanoGuest2025",
         image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
-      }
+      },
+      pointsOfInterest: [
+        {
+          name: "Duomo di Milano",
+          description: "Iconic Gothic cathedral with rooftop offering city views. One of the largest cathedrals in the world.",
+          category: "architecture",
+          image: "https://images.unsplash.com/photo-1595831220477-5d0a83bd859c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "P.za del Duomo, 20122 Milano MI, Italy",
+          admission: "€15 for full access with terrace",
+          hours: "8:00 AM - 7:00 PM",
+          website: "https://www.duomomilano.it/",
+          rating: 4.8,
+          mustSee: true,
+          tip: "Visit the rooftop for spectacular views of the city and Alps on clear days"
+        },
+        {
+          name: "Teatro alla Scala",
+          description: "World-renowned opera house with a rich musical history. One of the leading opera houses in the world.",
+          category: "music",
+          image: "https://images.unsplash.com/photo-1574102289244-89433368855f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Via Filodrammatici, 2, 20121 Milano MI, Italy",
+          admission: "€9 for museum, performances vary",
+          hours: "Museum: 9:00 AM - 5:30 PM",
+          website: "https://www.teatroallascala.org/",
+          rating: 4.7,
+          tip: "Check for last-minute tickets if you want to see a performance"
+        },
+        {
+          name: "Pinacoteca di Brera",
+          description: "Major art gallery housing Italian Renaissance masterpieces including works by Caravaggio and Raphael.",
+          category: "art",
+          image: "https://images.unsplash.com/photo-1613407606393-168cc694c9d1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Via Brera, 28, 20121 Milano MI, Italy",
+          admission: "€15",
+          hours: "8:30 AM - 7:15 PM, Closed Mondays",
+          website: "https://pinacotecabrera.org/",
+          rating: 4.6
+        },
+        {
+          name: "Galleria Vittorio Emanuele II",
+          description: "Italy's oldest active shopping mall, housed in a four-story double arcade. Known as Milan's drawing room.",
+          category: "shopping",
+          image: "https://images.unsplash.com/photo-1603122630570-680edbc3cfce?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "P.za del Duomo, 20123 Milano MI, Italy",
+          hours: "Open 24 hours",
+          rating: 4.7,
+          mustSee: true,
+          tip: "Look for the mosaic bull on the floor - tradition says spinning on his private parts brings good luck"
+        },
+        {
+          name: "Navigli District",
+          description: "Charming canal district with vibrant nightlife, antique markets and many restaurants and bars.",
+          category: "local",
+          image: "https://images.unsplash.com/photo-1585136917835-33e4a9fb4eb7?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Navigli District, Milan",
+          tip: "Visit in the evening when the area comes alive with aperitivo culture",
+          rating: 4.5
+        }
+      ]
     },
     
     // All other days
@@ -344,7 +417,50 @@ export const europeTrip: TripData = {
         address: "Kriegsbergstraße 24, 70174 Stuttgart",
         image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
         wifi: "AdinaGuest"
-      }
+      },
+      pointsOfInterest: [
+        {
+          name: "Staatsoper Stuttgart",
+          description: "One of Germany's leading opera houses with world-class productions. Architecturally significant building.",
+          category: "music",
+          image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Oberer Schlossgarten 6, 70173 Stuttgart",
+          website: "https://www.staatsoper-stuttgart.de/",
+          rating: 4.8,
+          mustSee: true,
+          tip: "Your audition venue! Worth visiting ahead of time to get comfortable with the space."
+        },
+        {
+          name: "Mercedes-Benz Museum",
+          description: "Automotive museum tracing the history of the Mercedes-Benz brand and the evolution of the automobile.",
+          category: "history",
+          image: "https://images.unsplash.com/photo-1562426357-9d94d0bb0998?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Mercedesstraße 100, 70372 Stuttgart",
+          admission: "€12",
+          hours: "9:00 AM - 6:00 PM, Closed Mondays",
+          website: "https://www.mercedes-benz.com/museum",
+          rating: 4.7,
+          tip: "Perfect distraction if you need to take your mind off the audition"
+        },
+        {
+          name: "Schlossplatz",
+          description: "Stuttgart's largest square and the center of the city with historical buildings and beautiful green spaces.",
+          category: "architecture",
+          image: "https://images.unsplash.com/photo-1564028702109-a7843dcfa0f6?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Schlossplatz, 70173 Stuttgart",
+          rating: 4.6,
+          tip: "Great place for a calming walk before your audition"
+        },
+        {
+          name: "Königstraße",
+          description: "Stuttgart's main shopping street and one of the longest pedestrian zones in Germany.",
+          category: "shopping",
+          image: "https://images.unsplash.com/photo-1555529771-7888783a18d3?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Königstraße, Stuttgart",
+          hours: "10:00 AM - 8:00 PM, varies by store",
+          rating: 4.5
+        }
+      ]
     },
     
     // DAY 16: STUTTGART AUDITION DAY
@@ -423,7 +539,42 @@ export const europeTrip: TripData = {
         address: "Kriegsbergstraße 24, 70174 Stuttgart",
         image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
         wifi: "AdinaGuest"
-      }
+      },
+      pointsOfInterest: [
+        {
+          name: "Wilhelma Zoological-Botanical Garden",
+          description: "Impressive historical zoo and botanical garden built in Moorish style for King Wilhelm I of Württemberg.",
+          category: "nature",
+          image: "https://images.unsplash.com/photo-1534567059665-cbcfe2e0891c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Wilhelma 13, 70376 Stuttgart",
+          admission: "€16",
+          hours: "8:15 AM - 6:00 PM",
+          website: "https://www.wilhelma.de/",
+          rating: 4.6,
+          tip: "Perfect place to unwind after the audition and clear your mind"
+        },
+        {
+          name: "Weinstube Schellenturm",
+          description: "Traditional Stuttgart wine tavern serving Swabian specialties in a historic setting.",
+          category: "food",
+          image: "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Weberstraße 72, 70182 Stuttgart",
+          hours: "5:00 PM - 12:00 AM",
+          rating: 4.7,
+          tip: "Great place for your celebration meal, try the Maultaschen (Swabian ravioli)",
+          mustSee: true
+        },
+        {
+          name: "Killesbergpark",
+          description: "Beautiful public park on rolling hills with a tower offering panoramic views of Stuttgart.",
+          category: "nature",
+          image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          address: "Killesbergpark, 70191 Stuttgart",
+          hours: "Dawn to Dusk",
+          rating: 4.8,
+          tip: "Peaceful place for reflection after your audition"
+        }
+      ]
     },
     
     // DAY 22: RETURN HOME
