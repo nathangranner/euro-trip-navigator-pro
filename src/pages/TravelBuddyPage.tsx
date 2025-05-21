@@ -30,7 +30,7 @@ const TravelBuddyPage: React.FC = () => {
 
       <div className="mb-6">
         <p className="text-gray-600 mb-4">
-          Get personalized recommendations, language help, trip adaptations, and assistance from your AI travel companions
+          Get personalized recommendations, language help, trip adaptations, and assistance from your AI travel companions for your Europe Trip 2025 (June 5-26, 2025)
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
