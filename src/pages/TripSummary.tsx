@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -126,12 +127,14 @@ const TripSummary: React.FC = () => {
     let total = 0;
     
     tripDays.forEach(day => {
-      day.activities.forEach(activity => {
-        total++;
-        if (activity.completed) {
-          completed++;
-        }
-      });
+      if (day.activities) { // Add this check to ensure activities exists
+        day.activities.forEach(activity => {
+          total++;
+          if (activity.completed) {
+            completed++;
+          }
+        });
+      }
     });
     
     return {
@@ -239,21 +242,24 @@ const TripSummary: React.FC = () => {
               <p className="text-sm text-gray-500">{formatDate(day.date)}</p>
               <p className="mt-2">{day.title}</p>
               
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                {day.activities.slice(0, 4).map((activity, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-lg">{activity.icon}</span>
-                    <span className={activity.completed ? "line-through text-gray-500" : ""}>
-                      {activity.time}: {activity.activity}
-                    </span>
-                  </div>
-                ))}
-                {day.activities.length > 4 && (
-                  <div className="col-span-2 text-center text-sm text-gray-500 mt-2">
-                    + {day.activities.length - 4} more activities
-                  </div>
-                )}
-              </div>
+              {/* Only render activities section if day.activities exists */}
+              {day.activities && day.activities.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {day.activities.slice(0, 4).map((activity, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="text-lg">{activity.icon}</span>
+                      <span className={activity.completed ? "line-through text-gray-500" : ""}>
+                        {activity.time}: {activity.activity}
+                      </span>
+                    </div>
+                  ))}
+                  {day.activities.length > 4 && (
+                    <div className="col-span-2 text-center text-sm text-gray-500 mt-2">
+                      + {day.activities.length - 4} more activities
+                    </div>
+                  )}
+                </div>
+              )}
             </Card>
           ))}
         </TabsContent>
