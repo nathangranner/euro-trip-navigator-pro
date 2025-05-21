@@ -22,7 +22,6 @@ import { Expense } from "@/components/ExpenseTracker";
 import { Purchase } from "@/components/PurchaseTracker";
 import { loadStoredData } from "@/utils/storageUtils";
 import { MessageCircle } from "lucide-react";
-import { TravelBuddySelector } from "@/components/TravelBuddySelector";
 
 // Helper function to format currency
 const formatCurrency = (amount: number, currency: string) => {
@@ -50,7 +49,6 @@ const TripSummary: React.FC = () => {
   const [tripDays, setTripDays] = useState<TripDay[]>([]);
   const [expensesByDay, setExpensesByDay] = useState<Record<string, Expense[]>>({});
   const [purchasesByDay, setPurchasesByDay] = useState<Record<string, Purchase[]>>({});
-  const [showTravelBuddy, setShowTravelBuddy] = useState(false);
 
   useEffect(() => {
     const storedData = loadStoredData();
@@ -370,25 +368,30 @@ const TripSummary: React.FC = () => {
         </TabsContent>
       </Tabs>
       
-      {/* Travel Buddy Section */}
+      {/* Travel Buddy Section - replaced with link to dedicated page */}
       <div className="mb-6">
-        <div 
-          className="flex justify-between items-center mb-4 cursor-pointer"
-          onClick={() => setShowTravelBuddy(!showTravelBuddy)}
-        >
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold flex items-center">
             <MessageCircle className="h-6 w-6 mr-2" /> AI Travel Buddy
           </h2>
-          <Button variant="outline">
-            {showTravelBuddy ? 'Hide' : 'Show'} Travel Buddy
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/travel-buddy")}
+            className="flex items-center gap-2"
+          >
+            Visit Travel Buddy
           </Button>
         </div>
         
-        {showTravelBuddy && (
-          <Card className="p-6">
-            <TravelBuddySelector />
-          </Card>
-        )}
+        <Card className="p-6">
+          <p className="text-gray-600 mb-4">
+            Your AI travel companion can help with recommendations, language assistance, 
+            and trip adaptations during your European adventure.
+          </p>
+          <Button onClick={() => navigate("/travel-buddy")}>
+            Explore Travel Buddy Features
+          </Button>
+        </Card>
       </div>
     </div>
   );
