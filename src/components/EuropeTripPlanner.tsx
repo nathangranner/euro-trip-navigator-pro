@@ -85,19 +85,31 @@ export const EuropeTripPlanner: React.FC = () => {
   const currentDayExpenses = expensesByDay[dayId] || [];
   const currentDayPurchases = purchasesByDay[dayId] || [];
 
+  // Fix the navigation functions to prevent skipping days
   const nextDay = () => {
     if (currentDay < tripDays.length - 1) {
-      setCurrentDay(currentDay + 1);
+      const nextDayIndex = currentDay + 1;
+      setCurrentDay(nextDayIndex);
       setExpandedActivity(null);
-      toast.info(`Switched to ${tripDays[currentDay + 1].city} - ${tripDays[currentDay + 1].title}`);
+      toast.info(`Switched to ${tripDays[nextDayIndex].city} - ${tripDays[nextDayIndex].title}`);
     }
   };
 
   const prevDay = () => {
     if (currentDay > 0) {
-      setCurrentDay(currentDay - 1);
+      const prevDayIndex = currentDay - 1;
+      setCurrentDay(prevDayIndex);
       setExpandedActivity(null);
-      toast.info(`Switched to ${tripDays[currentDay - 1].city} - ${tripDays[currentDay - 1].title}`);
+      toast.info(`Switched to ${tripDays[prevDayIndex].city} - ${tripDays[prevDayIndex].title}`);
+    }
+  };
+
+  // Add a function to go directly to a specific day
+  const goToDay = (dayIndex: number) => {
+    if (dayIndex >= 0 && dayIndex < tripDays.length) {
+      setCurrentDay(dayIndex);
+      setExpandedActivity(null);
+      toast.info(`Switched to ${tripDays[dayIndex].city} - ${tripDays[dayIndex].title}`);
     }
   };
 
@@ -413,7 +425,7 @@ export const EuropeTripPlanner: React.FC = () => {
   };
 
   // Add a new state for the travel buddy section
-  const [showTravelBuddySection, setShowTravelBuddySection] = useState(false);
+  const [showTravelBuddySection, setShowTravelBuddySection] = useState(true);
   
   if (!currentDayData) {
     return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
@@ -472,7 +484,7 @@ export const EuropeTripPlanner: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Bar */}
+      {/* Navigation Bar - Modified with day selector */}
       <div className="sticky top-0 bg-white shadow-sm z-10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center">
@@ -485,14 +497,28 @@ export const EuropeTripPlanner: React.FC = () => {
               <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
             
-            <div className="text-center">
-              <div className="text-sm text-gray-500">Day {currentDayData.dayNumber} of {tripDays.length}</div>
-              <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto mt-1">
+            <div className="text-center flex flex-col items-center">
+              <div className="text-sm text-gray-500 mb-1">Day {currentDayData.dayNumber} of {tripDays.length}</div>
+              <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto">
                 <div 
                   className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentDayData.dayNumber / tripDays.length) * 100}%` }}
                 ></div>
               </div>
+              
+              {/* Add day selector dropdown */}
+              <Select value={currentDay.toString()} onValueChange={(value) => goToDay(parseInt(value))}>
+                <SelectTrigger className="w-[180px] mt-2 h-8 text-xs">
+                  <SelectValue placeholder="Jump to day..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {tripDays.map((day, index) => (
+                    <SelectItem key={index} value={index.toString()}>
+                      Day {day.dayNumber}: {day.city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <Button
