@@ -10,7 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "sonner";
 import { 
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, 
-  MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText 
+  MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText,
+  MessageCircle
 } from 'lucide-react';
 import { europeTrip, TripDay, Activity } from '@/data/tripData';
 import { EditDayModal } from './EditDayModal';
@@ -576,7 +577,7 @@ export const EuropeTripPlanner: React.FC = () => {
           onClick={() => setShowTravelBuddySection(!showTravelBuddySection)}
         >
           <h2 className="text-2xl font-semibold flex items-center">
-            <Bot className="h-6 w-6 mr-2" /> AI Travel Buddy
+            <MessageCircle className="h-6 w-6 mr-2" /> AI Travel Buddy
           </h2>
           <Button variant="ghost" size="sm">
             {showTravelBuddySection ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
