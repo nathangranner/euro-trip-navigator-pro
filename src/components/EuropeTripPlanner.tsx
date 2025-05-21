@@ -1,19 +1,40 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar } from 'lucide-react';
+import { 
+  ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, 
+  MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer 
+} from 'lucide-react';
 import { europeTrip, TripDay, Activity } from '@/data/tripData';
+import { EditDayModal } from './EditDayModal';
+import { ExpenseTracker, Expense } from './ExpenseTracker';
+import { PurchaseTracker, Purchase } from './PurchaseTracker';
+import { EditActivityModal } from './EditActivityModal';
+import { 
+  loadStoredData, saveTripDays, saveExpenses, savePurchases, 
+  loadExpenses, loadPurchases, exportTripData, importTripData 
+} from '@/utils/storageUtils';
 
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
   const [showAddActivity, setShowAddActivity] = useState(false);
+  const [editDayModalOpen, setEditDayModalOpen] = useState(false);
+  const [showExpenseSection, setShowExpenseSection] = useState(false);
+  const [showPurchaseSection, setShowPurchaseSection] = useState(false);
+  const [editActivityModalOpen, setEditActivityModalOpen] = useState(false);
+  const [currentEditActivity, setCurrentEditActivity] = useState<Activity | null>(null);
+  const [importExportOpen, setImportExportOpen] = useState(false);
+  const [exportData, setExportData] = useState('');
+  const [importData, setImportData] = useState('');
+  
   const [newActivity, setNewActivity] = useState({
     time: '',
     activity: '',
@@ -21,7 +42,29 @@ export const EuropeTripPlanner: React.FC = () => {
     icon: '📌',
     note: ''
   });
-  const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
+  
+  const [tripDays, setTripDays] = useState<TripDay[]>([]);
+  const [expensesByDay, setExpensesByDay] = useState<Record<string, Expense[]>>({});
+  const [purchasesByDay, setPurchasesByDay] = useState<Record<string, Purchase[]>>({});
+  
+  // Load data on component mount
+  useEffect(() => {
+    const storedData = loadStoredData();
+    
+    if (storedData.tripDays && storedData.tripDays.length > 0) {
+      setTripDays(storedData.tripDays);
+    } else {
+      setTripDays(europeTrip.days);
+    }
+    
+    if (storedData.expenses) {
+      setExpensesByDay(storedData.expenses);
+    }
+    
+    if (storedData.purchases) {
+      setPurchasesByDay(storedData.purchases);
+    }
+  }, []);
   
   // Helper function to format dates
   const formatDate = (dateString: string) => {
@@ -36,10 +79,14 @@ export const EuropeTripPlanner: React.FC = () => {
 
   // Main functions
   const currentDayData = tripDays[currentDay];
+  const dayId = currentDayData ? `day-${currentDayData.dayNumber}` : '';
+  const currentDayExpenses = expensesByDay[dayId] || [];
+  const currentDayPurchases = purchasesByDay[dayId] || [];
 
   const nextDay = () => {
     if (currentDay < tripDays.length - 1) {
       setCurrentDay(currentDay + 1);
+      setExpandedActivity(null);
       toast.info(`Switched to ${tripDays[currentDay + 1].city} - ${tripDays[currentDay + 1].title}`);
     }
   };
@@ -47,12 +94,34 @@ export const EuropeTripPlanner: React.FC = () => {
   const prevDay = () => {
     if (currentDay > 0) {
       setCurrentDay(currentDay - 1);
+      setExpandedActivity(null);
       toast.info(`Switched to ${tripDays[currentDay - 1].city} - ${tripDays[currentDay - 1].title}`);
     }
   };
 
   const toggleActivity = (index: number) => {
     setExpandedActivity(expandedActivity === index ? null : index);
+  };
+
+  const handleEditActivity = (activity: Activity) => {
+    setCurrentEditActivity(activity);
+    setEditActivityModalOpen(true);
+  };
+
+  const handleUpdateActivity = (updatedActivity: Activity) => {
+    const updatedActivities = currentDayData.activities.map(activity => 
+      activity.id === updatedActivity.id ? updatedActivity : activity
+    );
+    
+    const updatedTripDays = [...tripDays];
+    updatedTripDays[currentDay] = {
+      ...currentDayData,
+      activities: updatedActivities
+    };
+    
+    setTripDays(updatedTripDays);
+    saveTripDays(updatedTripDays);
+    toast.success(`Updated: ${updatedActivity.activity}`);
   };
 
   const handleActivityToggle = (id: string) => {
@@ -77,6 +146,7 @@ export const EuropeTripPlanner: React.FC = () => {
     };
     
     setTripDays(updatedTripDays);
+    saveTripDays(updatedTripDays);
   };
 
   const handleAddActivity = () => {
@@ -102,6 +172,7 @@ export const EuropeTripPlanner: React.FC = () => {
     
     // Update state
     setTripDays(updatedTripDays);
+    saveTripDays(updatedTripDays);
     toast.success(`Added: ${newActivity.activity}`);
     
     // Reset form
@@ -114,6 +185,208 @@ export const EuropeTripPlanner: React.FC = () => {
     });
     
     setShowAddActivity(false);
+  };
+  
+  const handleSaveExpenses = (expenses: Expense[]) => {
+    setExpensesByDay(prev => ({ ...prev, [dayId]: expenses }));
+    saveExpenses(dayId, expenses);
+  };
+  
+  const handleSavePurchases = (purchases: Purchase[]) => {
+    setPurchasesByDay(prev => ({ ...prev, [dayId]: purchases }));
+    savePurchases(dayId, purchases);
+  };
+  
+  const handleUpdateDay = (updatedDay: TripDay) => {
+    const updatedTripDays = [...tripDays];
+    updatedTripDays[currentDay] = updatedDay;
+    
+    setTripDays(updatedTripDays);
+    saveTripDays(updatedTripDays);
+    toast.success(`Updated day information for ${updatedDay.city}`);
+  };
+  
+  const handleExport = () => {
+    const data = exportTripData();
+    setExportData(data);
+    toast.success("Data prepared for export");
+  };
+  
+  const handleImport = () => {
+    if (!importData.trim()) {
+      toast.error("Please paste in export data");
+      return;
+    }
+    
+    try {
+      const success = importTripData(importData);
+      if (success) {
+        // Reload data after import
+        const storedData = loadStoredData();
+        
+        if (storedData.tripDays) {
+          setTripDays(storedData.tripDays);
+        }
+        
+        if (storedData.expenses) {
+          setExpensesByDay(storedData.expenses);
+        }
+        
+        if (storedData.purchases) {
+          setPurchasesByDay(storedData.purchases);
+        }
+        
+        toast.success("Data imported successfully");
+        setImportExportOpen(false);
+      } else {
+        toast.error("Failed to import data");
+      }
+    } catch (error) {
+      toast.error("Invalid import data format");
+    }
+  };
+  
+  const handlePrintView = () => {
+    // Open a new window with just the purchases data formatted for customs
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast.error("Pop-up blocked. Please allow pop-ups for this site.");
+      return;
+    }
+    
+    // Combine all purchases for customs
+    const allPurchases: Purchase[] = [];
+    Object.values(purchasesByDay).forEach(dayPurchases => {
+      allPurchases.push(...dayPurchases.filter(p => p.forCustoms));
+    });
+    
+    // Group by country
+    const purchasesByCountry: Record<string, Purchase[]> = {};
+    allPurchases.forEach(purchase => {
+      if (!purchasesByCountry[purchase.country]) {
+        purchasesByCountry[purchase.country] = [];
+      }
+      purchasesByCountry[purchase.country].push(purchase);
+    });
+    
+    // Calculate totals by currency
+    const calculateTotal = (purchases: Purchase[], currency: string): number => {
+      return purchases
+        .filter(p => p.currency === currency)
+        .reduce((total, p) => total + p.price, 0);
+    };
+    
+    // Format the content
+    let content = `
+      <html>
+        <head>
+          <title>Customs Declaration - Purchases</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 40px; }
+            h1 { text-align: center; margin-bottom: 30px; }
+            .country { margin-top: 30px; }
+            .country-name { font-size: 24px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 5px; }
+            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background-color: #f2f2f2; }
+            .totals { margin-top: 30px; font-weight: bold; }
+            .grand-total { font-size: 18px; margin-top: 40px; border-top: 2px solid #333; padding-top: 10px; }
+            @media print {
+              body { padding: 0; }
+              button { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Customs Declaration - Purchases</h1>
+          <p>Trip Period: ${formatDate(europeTrip.startDate)} to ${formatDate(europeTrip.endDate)}</p>
+          <button onclick="window.print();" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; margin: 20px 0;">Print this page</button>
+    `;
+    
+    // Add each country's purchases
+    Object.entries(purchasesByCountry).forEach(([country, purchases]) => {
+      content += `
+        <div class="country">
+          <div class="country-name">${country}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Currency</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      purchases.forEach(purchase => {
+        const purchaseDate = purchase.date ? formatDate(purchase.date) : 'N/A';
+        const currencySymbol = 
+          purchase.currency === 'EUR' ? '€' : 
+          purchase.currency === 'USD' ? '$' : 
+          purchase.currency === 'GBP' ? '£' : 
+          'CHF ';
+          
+        content += `
+          <tr>
+            <td>${purchase.item}</td>
+            <td>${currencySymbol}${purchase.price.toFixed(2)}</td>
+            <td>${purchase.currency}</td>
+            <td>${purchaseDate}</td>
+          </tr>
+        `;
+      });
+      
+      // Country totals by currency
+      content += `
+            </tbody>
+          </table>
+          <div class="totals">
+      `;
+      
+      ['EUR', 'USD', 'GBP', 'CHF'].forEach(currency => {
+        const total = calculateTotal(purchases, currency);
+        if (total > 0) {
+          const currencySymbol = 
+            currency === 'EUR' ? '€' : 
+            currency === 'USD' ? '$' : 
+            currency === 'GBP' ? '£' : 
+            'CHF ';
+          content += `<div>${country} Total (${currency}): ${currencySymbol}${total.toFixed(2)}</div>`;
+        }
+      });
+      
+      content += `</div></div>`;
+    });
+    
+    // Grand totals
+    content += `
+      <div class="grand-total">
+        <div>Grand Totals:</div>
+    `;
+    
+    ['EUR', 'USD', 'GBP', 'CHF'].forEach(currency => {
+      const total = calculateTotal(allPurchases, currency);
+      if (total > 0) {
+        const currencySymbol = 
+          currency === 'EUR' ? '€' : 
+          currency === 'USD' ? '$' : 
+          currency === 'GBP' ? '£' : 
+          'CHF ';
+        content += `<div>Total ${currency}: ${currencySymbol}${total.toFixed(2)}</div>`;
+      }
+    });
+    
+    content += `
+        </div>
+      </body>
+    </html>
+    `;
+    
+    printWindow.document.open();
+    printWindow.document.write(content);
+    printWindow.document.close();
   };
 
   // Activity type icons
@@ -136,6 +409,10 @@ export const EuropeTripPlanner: React.FC = () => {
     };
     return icons[type] || '📌';
   };
+
+  if (!currentDayData) {
+    return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -163,6 +440,17 @@ export const EuropeTripPlanner: React.FC = () => {
                 <div className="text-sm">{currentDayData.weather.condition}</div>
               </div>
             )}
+          </div>
+          
+          <div className="mt-4 flex justify-end">
+            <Button 
+              variant="ghost" 
+              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
+              onClick={() => setEditDayModalOpen(true)}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Day Info
+            </Button>
           </div>
           
           {currentDayData.specialEvent && (
@@ -209,6 +497,64 @@ export const EuropeTripPlanner: React.FC = () => {
               className="flex items-center gap-1"
             >
               Next <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Data Management Bar */}
+      <div className="bg-blue-50 py-2">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-end gap-2">
+            <Dialog open={importExportOpen} onOpenChange={setImportExportOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                  <Save className="h-4 w-4" /> Export/Import
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[550px]">
+                <DialogHeader>
+                  <DialogTitle>Export/Import Trip Data</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div>
+                    <Button onClick={handleExport} className="flex items-center gap-2 mb-2">
+                      <Download className="h-4 w-4" /> Export Data
+                    </Button>
+                    {exportData && (
+                      <div className="mt-2">
+                        <p className="text-sm text-muted-foreground mb-2">Copy this data and save it somewhere safe:</p>
+                        <Textarea
+                          value={exportData}
+                          rows={5}
+                          readOnly
+                          onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+                          className="font-mono text-xs"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="font-medium mb-2">Import Data</h3>
+                    <p className="text-sm text-muted-foreground mb-2">Paste previously exported data:</p>
+                    <Textarea
+                      value={importData}
+                      onChange={(e) => setImportData(e.target.value)}
+                      rows={5}
+                      className="font-mono text-xs mb-2"
+                      placeholder='Paste exported JSON data here...'
+                    />
+                    <Button onClick={handleImport} className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" /> Import Data
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <Button variant="outline" size="sm" onClick={handlePrintView} className="flex items-center gap-1">
+              <Printer className="h-4 w-4" /> Customs Print
             </Button>
           </div>
         </div>
@@ -442,11 +788,25 @@ export const EuropeTripPlanner: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="flex-shrink-0 ml-4">
-                        {expandedActivity === index ? 
-                          <ChevronUp className="h-5 w-5 text-gray-500" /> : 
-                          <ChevronDown className="h-5 w-5 text-gray-500" />
-                        }
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditActivity(activity);
+                          }}
+                        >
+                          <Edit className="h-4 w-4 text-gray-500" />
+                        </Button>
+                        
+                        <div className="flex-shrink-0">
+                          {expandedActivity === index ? 
+                            <ChevronUp className="h-5 w-5 text-gray-500" /> : 
+                            <ChevronDown className="h-5 w-5 text-gray-500" />
+                          }
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -537,6 +897,59 @@ export const EuropeTripPlanner: React.FC = () => {
             </Card>
           )}
         </div>
+      </div>
+
+      {/* Expenses Section */}
+      <div className="container mx-auto px-4 pb-8">
+        <div 
+          className="flex justify-between items-center mb-4 cursor-pointer"
+          onClick={() => setShowExpenseSection(!showExpenseSection)}
+        >
+          <h2 className="text-2xl font-semibold flex items-center">
+            <Euro className="h-6 w-6 mr-2" /> Expense Tracking
+          </h2>
+          <Button variant="ghost" size="sm">
+            {showExpenseSection ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+          </Button>
+        </div>
+        
+        {showExpenseSection && (
+          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+            <ExpenseTracker
+              dayId={currentDayData.dayNumber}
+              date={currentDayData.date}
+              initialExpenses={currentDayExpenses}
+              onSave={handleSaveExpenses}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Purchases for Customs Section */}
+      <div className="container mx-auto px-4 pb-8">
+        <div 
+          className="flex justify-between items-center mb-4 cursor-pointer"
+          onClick={() => setShowPurchaseSection(!showPurchaseSection)}
+        >
+          <h2 className="text-2xl font-semibold flex items-center">
+            <Map className="h-6 w-6 mr-2" /> Purchases for Customs
+          </h2>
+          <Button variant="ghost" size="sm">
+            {showPurchaseSection ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+          </Button>
+        </div>
+        
+        {showPurchaseSection && (
+          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+            <PurchaseTracker
+              dayId={currentDayData.dayNumber}
+              date={currentDayData.date}
+              countryName={currentDayData.city.split(",")[1]?.trim() || currentDayData.city}
+              initialPurchases={currentDayPurchases}
+              onSave={handleSavePurchases}
+            />
+          </div>
+        )}
       </div>
 
       {/* Accommodation Info */}
@@ -702,6 +1115,24 @@ export const EuropeTripPlanner: React.FC = () => {
             </div>
           </Card>
         </div>
+      )}
+
+      {/* Edit Day Modal */}
+      <EditDayModal 
+        isOpen={editDayModalOpen}
+        onClose={() => setEditDayModalOpen(false)}
+        day={currentDayData}
+        onSave={handleUpdateDay}
+      />
+
+      {/* Edit Activity Modal */}
+      {currentEditActivity && (
+        <EditActivityModal
+          isOpen={editActivityModalOpen}
+          onClose={() => setEditActivityModalOpen(false)}
+          activity={currentEditActivity}
+          onSave={handleUpdateActivity}
+        />
       )}
 
       {/* Quick Add Activity Button */}
