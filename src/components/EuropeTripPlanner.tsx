@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,13 +10,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "sonner";
 import { 
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, 
-  MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer 
+  MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText 
 } from 'lucide-react';
 import { europeTrip, TripDay, Activity } from '@/data/tripData';
 import { EditDayModal } from './EditDayModal';
 import { ExpenseTracker, Expense } from './ExpenseTracker';
 import { PurchaseTracker, Purchase } from './PurchaseTracker';
 import { EditActivityModal } from './EditActivityModal';
+import { TravelBuddySelector } from './TravelBuddySelector';
 import { 
   loadStoredData, saveTripDays, saveExpenses, savePurchases, 
   loadExpenses, loadPurchases, exportTripData, importTripData 
@@ -410,6 +411,9 @@ export const EuropeTripPlanner: React.FC = () => {
     return icons[type] || '📌';
   };
 
+  // Add a new state for the travel buddy section
+  const [showTravelBuddySection, setShowTravelBuddySection] = useState(false);
+  
   if (!currentDayData) {
     return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
   }
@@ -506,6 +510,11 @@ export const EuropeTripPlanner: React.FC = () => {
       <div className="bg-blue-50 py-2">
         <div className="container mx-auto px-4">
           <div className="flex justify-end gap-2">
+            <Link to="/summary">
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <FileText className="h-4 w-4" /> Trip Summary
+              </Button>
+            </Link>
             <Dialog open={importExportOpen} onOpenChange={setImportExportOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center gap-1">
@@ -558,6 +567,27 @@ export const EuropeTripPlanner: React.FC = () => {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Travel Buddy Section */}
+      <div className="container mx-auto px-4 py-4 mb-4">
+        <div 
+          className="flex justify-between items-center mb-4 cursor-pointer"
+          onClick={() => setShowTravelBuddySection(!showTravelBuddySection)}
+        >
+          <h2 className="text-2xl font-semibold flex items-center">
+            <Bot className="h-6 w-6 mr-2" /> AI Travel Buddy
+          </h2>
+          <Button variant="ghost" size="sm">
+            {showTravelBuddySection ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+          </Button>
+        </div>
+        
+        {showTravelBuddySection && (
+          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+            <TravelBuddySelector />
+          </div>
+        )}
       </div>
 
       {/* Warnings */}

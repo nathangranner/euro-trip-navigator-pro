@@ -7,6 +7,7 @@ interface StoredData {
   tripDays?: TripDay[];
   expenses?: Record<string, Expense[]>;
   purchases?: Record<string, Purchase[]>;
+  apiKeys?: Record<string, string>;
 }
 
 const STORAGE_KEY = "europe-trip-data";
@@ -73,4 +74,15 @@ export const importTripData = (jsonString: string): boolean => {
     console.error("Error importing data:", error);
     return false;
   }
+};
+
+export const saveApiKey = (service: string, key: string): void => {
+  const storedData = loadStoredData();
+  const updatedApiKeys = { ...(storedData.apiKeys || {}), [service]: key };
+  saveStoredData({ ...storedData, apiKeys: updatedApiKeys });
+};
+
+export const getApiKey = (service: string): string | null => {
+  const storedData = loadStoredData();
+  return storedData.apiKeys?.[service] || null;
 };
