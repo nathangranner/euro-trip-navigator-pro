@@ -21,6 +21,58 @@ type Accommodation = {
   contact?: string;
 };
 
+// Define types for activities and other data structures
+type Activity = {
+  id: string;
+  time: string;
+  activity: string;
+  type: string;
+  icon: string;
+  image: string;
+  note?: string;
+  checklist?: string[];
+  suggestions?: string[];
+  completed: boolean;
+  contactInfo?: string;
+  flightInfo?: string;
+  tip?: string;
+  culturalNote?: string;
+  location?: string;
+  mustTry?: boolean;
+  booked?: boolean;
+  importance?: string;
+  duration?: string;
+  playlist?: string;
+};
+
+type Warning = {
+  type: string;
+  message: string;
+  fine?: string;
+  times?: string;
+  image: string;
+};
+
+type Weather = {
+  temp: string;
+  icon: string;
+  condition: string;
+};
+
+type TripDay = {
+  date: string;
+  city: string;
+  title: string;
+  bgImage: string;
+  bgGradient: string;
+  activities: Activity[];
+  warnings?: Warning[];
+  accommodation?: Accommodation;
+  weather?: Weather;
+  specialEvent?: boolean;
+  encouragement?: string;
+};
+
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
@@ -32,7 +84,7 @@ export const EuropeTripPlanner: React.FC = () => {
     icon: '📌',
     note: ''
   });
-  const [tripDays, setTripDays] = useState([
+  const [tripDays, setTripDays] = useState<TripDay[]>([
     {
       date: '2025-06-05',
       city: 'Los Angeles',
@@ -304,6 +356,49 @@ export const EuropeTripPlanner: React.FC = () => {
         image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
         wifi: 'AdinaGuest'
       }
+    },
+    // Adding the return trip day with car rental details
+    {
+      date: '2025-06-26',
+      city: 'Los Angeles',
+      title: 'Return Trip',
+      bgImage: 'https://images.unsplash.com/photo-1515896769750-31548aa180ed?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      bgGradient: 'from-blue-600 to-purple-500',
+      activities: [
+        { 
+          id: '26-1',
+          time: '01:30', 
+          activity: 'Pick up rental car at LAX', 
+          type: 'logistics',
+          icon: '🚗',
+          image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+          note: 'Toyota Corolla (Automatic), Confirmation #23786281US1, Reservation #J5, Budget Fastbreak Counter',
+          checklist: ['Booking confirmation', 'Driver\'s license', 'Credit card (Visa *4592)'],
+          completed: false,
+          contactInfo: 'Budget LAX: (1) 310-642-4500'
+        },
+        { 
+          id: '26-2',
+          time: '02:30', 
+          activity: 'Drive to Santa Maria', 
+          type: 'travel',
+          icon: '🚗',
+          image: 'https://images.unsplash.com/photo-1566202546954-b0200d9c7482?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+          note: 'Approximately 3 hours drive',
+          completed: false
+        },
+        { 
+          id: '26-3',
+          time: '23:30', 
+          activity: 'Return rental car at Santa Maria Airport', 
+          type: 'travel',
+          icon: '🚗',
+          image: 'https://images.unsplash.com/photo-1592859600972-1b0834d83747?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+          note: 'After-hours drop-off, key-drop box available',
+          contactInfo: 'Budget Santa Maria: (1) 805-922-3113',
+          completed: false
+        }
+      ]
     }
   ]);
   
@@ -785,7 +880,7 @@ export const EuropeTripPlanner: React.FC = () => {
           <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
             <Car className="h-5 w-5" /> Rental Car Details
           </h3>
-          <Card className="p-4 border-t-4 border-travel-blue">
+          <Card className="p-4 border-t-4 border-blue-500">
             <div className="flex flex-col">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -830,6 +925,65 @@ export const EuropeTripPlanner: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-500" />
                   <p className="text-sm text-gray-700">Thursday, Jun 05, 2025</p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Return Trip Car Rental Details for June 26 */}
+      {currentDay === 4 && (
+        <div className="container mx-auto px-4 pb-8">
+          <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+            <Car className="h-5 w-5" /> Return Trip Rental Car Details
+          </h3>
+          <Card className="p-4 border-t-4 border-purple-500">
+            <div className="flex flex-col">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Your Vehicle</h4>
+                  <div className="text-gray-700">
+                    <p><strong>Car:</strong> Toyota Corolla (or similar)</p>
+                    <p><strong>Transmission:</strong> Automatic</p>
+                    <p><strong>Mileage:</strong> Unlimited</p>
+                    <p><strong>Total:</strong> $89.98 (Confirmation #23786281US1)</p>
+                    <p className="text-xs mt-2 text-green-600">Amazon.com Gift Card upon rental completion</p>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-4">
+                    <h4 className="font-semibold flex items-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4" /> Pick-Up Location
+                    </h4>
+                    <p className="text-gray-700">Los Angeles International Airport (LAX)</p>
+                    <p className="text-gray-700 text-sm">Budget Fastbreak Counter</p>
+                    <p className="text-gray-700 text-sm">Phone: (1) 310-642-4500</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold flex items-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4" /> Return Location
+                    </h4>
+                    <p className="text-gray-700">Santa Maria Public Airport (SMX)</p>
+                    <p className="text-gray-700 text-sm">Budget Fastbreak Counter</p>
+                    <p className="text-gray-700 text-sm">Phone: (1) 805-922-3113</p>
+                    <p className="text-gray-700 text-sm text-amber-600">After-hours key-drop box available</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm text-gray-700">Pick-Up: 1:30 AM</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm text-gray-700">Return: 11:30 PM</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm text-gray-700">Thursday, Jun 26, 2025</p>
                 </div>
               </div>
             </div>
