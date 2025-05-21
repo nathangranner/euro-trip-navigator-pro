@@ -11,10 +11,12 @@ import { saveApiKey, getApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
   content: string;
 }
+
 interface TravelBuddy {
   id: string;
   name: string;
@@ -23,12 +25,20 @@ interface TravelBuddy {
   model: string;
   systemPrompt: string;
 }
+
 interface RecommendationRequest {
   dayNumber: number;
   city: string;
   type: "dining" | "attractions" | "events" | "adaptation";
   context: string;
 }
+
+interface TravelBuddySelectorProps {
+  onOpenChat?: () => void;
+  isChatOpen?: boolean;
+  setIsChatOpen?: (isOpen: boolean) => void;
+}
+
 const TRAVEL_BUDDIES: TravelBuddy[] = [{
   id: "claude",
   name: "Sophie",
@@ -58,9 +68,14 @@ const TRAVEL_BUDDIES: TravelBuddy[] = [{
   model: "openai/gpt-4o",
   systemPrompt: "You are Olivia, a road trip navigator with detailed knowledge of European driving regulations, road signs, and optimal routes. You specialize in calculating travel times, interpreting European road signs, suggesting efficient routes, and providing information about tolls, speed limits, and driving customs in Italy, Switzerland, and Germany. Be practical, precise, and helpful. Respond clearly to questions about distances, driving times, and road regulations. You excel at explaining the meanings of road signs and symbols, providing real-time navigation help, and suggesting the most scenic or efficient routes between destinations."
 }];
-export const TravelBuddySelector: React.FC = () => {
+
+export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({ 
+  onOpenChat, 
+  isChatOpen = false, 
+  setIsChatOpen = () => {} 
+}) => {
   const [selectedBuddy, setSelectedBuddy] = useState<TravelBuddy | null>(null);
-  const [chatOpen, setChatOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(isChatOpen);
   const [messages, setMessages] = useState<TravelBuddyMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -73,6 +88,12 @@ export const TravelBuddySelector: React.FC = () => {
   const [recommendations, setRecommendations] = useState<string>("");
   const [recommendationsLoading, setRecommendationsLoading] = useState(false);
   const [adaptationRequest, setAdaptationRequest] = useState("");
+
+  // Sync the chat state with parent component
+  useEffect(() => {
+    setChatOpen(isChatOpen);
+  }, [isChatOpen]);
+
   useEffect(() => {
     const storedApiKey = getApiKey("openrouter");
     if (storedApiKey) {
@@ -82,6 +103,7 @@ export const TravelBuddySelector: React.FC = () => {
       setShowApiKeyModal(true);
     }
   }, []);
+
   const handleSelectBuddy = (buddy: TravelBuddy) => {
     setSelectedBuddy(buddy);
     setMessages([{
@@ -90,6 +112,7 @@ export const TravelBuddySelector: React.FC = () => {
     }]);
     toast.success(`${buddy.name} is now your travel buddy!`);
   };
+
   const handleStartChat = () => {
     if (!apiKey) {
       setShowApiKeyModal(true);
@@ -97,10 +120,20 @@ export const TravelBuddySelector: React.FC = () => {
     }
     if (selectedBuddy) {
       setChatOpen(true);
+      setIsChatOpen(true);
+      if (onOpenChat) {
+        onOpenChat();
+      }
     } else {
       toast.error("Please select a travel buddy first");
     }
   };
+
+  const handleCloseChat = () => {
+    setChatOpen(false);
+    setIsChatOpen(false);
+  };
+
   const handleSaveApiKey = () => {
     if (apiKey.trim()) {
       saveApiKey("openrouter", apiKey.trim());
@@ -110,6 +143,7 @@ export const TravelBuddySelector: React.FC = () => {
       toast.error("Please enter a valid API key");
     }
   };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedBuddy || !apiKey) return;
     const userMessage = {
@@ -160,11 +194,13 @@ export const TravelBuddySelector: React.FC = () => {
       setLoading(false);
     }
   };
+
   const handleOpenRecommendations = (day: TripDay) => {
     setSelectedDay(day);
     setRecommendationTab("dining");
     setRecommendationsOpen(true);
   };
+
   const handleGetRecommendations = async (type: string) => {
     if (!selectedDay || !selectedBuddy || !apiKey) return;
     setRecommendationsLoading(true);
@@ -233,6 +269,7 @@ export const TravelBuddySelector: React.FC = () => {
       setRecommendationsLoading(false);
     }
   };
+
   return <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Travel Buddy</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
@@ -251,8 +288,13 @@ export const TravelBuddySelector: React.FC = () => {
       </div>
       
       <div className="flex flex-col gap-4">
-        <div className="this button doesnt work. it needs to bring up an agent buddy\n">
-          <Button onClick={handleStartChat} disabled={!selectedBuddy} className="px-6">
+        <div>
+          <Button 
+            onClick={handleStartChat} 
+            disabled={!selectedBuddy} 
+            className="px-6 flex items-center gap-2"
+          >
+            <MessageCircle className="h-4 w-4" />
             Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
           </Button>
         </div>
@@ -300,7 +342,7 @@ export const TravelBuddySelector: React.FC = () => {
       </Modal>
 
       {/* Chat Modal */}
-      <Modal isOpen={chatOpen} onClose={() => setChatOpen(false)} title={selectedBuddy ? `Chat with ${selectedBuddy.name}` : "Chat with Travel Buddy"}>
+      <Modal isOpen={chatOpen} onClose={handleCloseChat} title={selectedBuddy ? `Chat with ${selectedBuddy.name}` : "Chat with Travel Buddy"}>
         <div className="flex flex-col h-[60vh]">
           <div className="flex-1 overflow-y-auto mb-4 space-y-4 p-4 bg-gray-50 rounded-md">
             {messages.filter(msg => msg.role !== "system").map((message, index) => <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>

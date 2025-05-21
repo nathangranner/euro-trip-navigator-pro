@@ -1,13 +1,18 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { TravelBuddySelector } from "@/components/TravelBuddySelector";
-import { ChevronLeft, Route, Navigation, Map } from "lucide-react";
+import { ChevronLeft, Route, Navigation, Map, MessageCircle } from "lucide-react";
 
 const TravelBuddyPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const handleOpenChat = () => {
+    setIsChatOpen(true);
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -55,7 +60,7 @@ const TravelBuddyPage: React.FC = () => {
         </div>
         
         <Card className="p-6">
-          <TravelBuddySelector />
+          <TravelBuddySelector onOpenChat={handleOpenChat} isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
         </Card>
       </div>
     </div>
