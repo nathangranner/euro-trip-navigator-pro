@@ -7,8 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import { Loader2, MessageCircle, User, Send } from "lucide-react";
+import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star } from "lucide-react";
 import { saveApiKey, getApiKey } from "@/utils/storageUtils";
+import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
@@ -22,6 +25,13 @@ interface TravelBuddy {
   description: string;
   model: string;
   systemPrompt: string;
+}
+
+interface RecommendationRequest {
+  dayNumber: number;
+  city: string;
+  type: "dining" | "attractions" | "events" | "adaptation";
+  context: string;
 }
 
 const TRAVEL_BUDDIES: TravelBuddy[] = [
@@ -59,6 +69,13 @@ export const TravelBuddySelector: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState<string>("");
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
+  const [selectedDay, setSelectedDay] = useState<TripDay | null>(null);
+  const [recommendationsOpen, setRecommendationsOpen] = useState(false);
+  const [recommendationTab, setRecommendationTab] = useState("dining");
+  const [recommendations, setRecommendations] = useState<string>("");
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [adaptationRequest, setAdaptationRequest] = useState("");
 
   useEffect(() => {
     const storedApiKey = getApiKey("openrouter");
@@ -158,6 +175,90 @@ export const TravelBuddySelector: React.FC = () => {
     }
   };
 
+  const handleOpenRecommendations = (day: TripDay) => {
+    setSelectedDay(day);
+    setRecommendationTab("dining");
+    setRecommendationsOpen(true);
+  };
+
+  const handleGetRecommendations = async (type: string) => {
+    if (!selectedDay || !selectedBuddy || !apiKey) return;
+    
+    setRecommendationsLoading(true);
+    setRecommendations("");
+    
+    let prompt = "";
+    
+    switch(type) {
+      case "dining":
+        prompt = `I'm visiting ${selectedDay.city} during my European trip on ${selectedDay.date}. Can you recommend the best local restaurants or dining experiences? Please include:
+1. 3-5 specific restaurant recommendations with brief descriptions
+2. Any local specialties I should try
+3. Dining customs or etiquette I should know about
+4. Any "insider tips" for getting reservations or special experiences`;
+        break;
+      case "attractions":
+        prompt = `I'm visiting ${selectedDay.city} during my European trip on ${selectedDay.date}. What are the must-see attractions or hidden gems I should visit? Please include:
+1. 3-5 attractions that are worth visiting with brief descriptions
+2. Any special exhibits, events, or seasonal opportunities
+3. Suggestions for the best times to visit to avoid crowds
+4. Photography opportunities or viewpoints that tourists often miss`;
+        break;
+      case "events":
+        prompt = `I'm visiting ${selectedDay.city} during my European trip on ${selectedDay.date}. Are there any special events, performances, or limited-time experiences happening around this time? Please include:
+1. Any festivals, concerts, or cultural events during my visit
+2. Special museum exhibitions or limited-time displays
+3. Seasonal activities that are only available during this time period
+4. Any local celebrations or traditions happening around this date`;
+        break;
+      case "adaptation":
+        prompt = `I'm visiting ${selectedDay.city} during my European trip on ${selectedDay.date}. ${adaptationRequest || "I need to adapt my itinerary. What would you recommend?"} Please provide:
+1. Alternative activities or places that match my interests
+2. Suggestions for how to reorganize my day
+3. Potential replacements for any activities I might need to skip
+4. Any time-sensitive opportunities I should prioritize`;
+        break;
+    }
+
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Europe Trip Planner'
+        },
+        body: JSON.stringify({
+          model: selectedBuddy.model,
+          messages: [
+            {
+              role: "system",
+              content: selectedBuddy.systemPrompt
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ]
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get recommendations');
+      }
+
+      const data = await response.json();
+      setRecommendations(data.choices[0]?.message?.content || "No recommendations available.");
+    } catch (error) {
+      console.error('Error getting recommendations:', error);
+      setRecommendations("I couldn't retrieve recommendations right now. Please check your connection and API key.");
+      toast.error("Couldn't get recommendations");
+    } finally {
+      setRecommendationsLoading(false);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Travel Buddy</h2>
@@ -188,14 +289,45 @@ export const TravelBuddySelector: React.FC = () => {
         ))}
       </div>
       
-      <div className="flex justify-center">
-        <Button 
-          onClick={handleStartChat}
-          disabled={!selectedBuddy}
-          className="px-6"
-        >
-          Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
-        </Button>
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-center">
+          <Button 
+            onClick={handleStartChat}
+            disabled={!selectedBuddy}
+            className="px-6"
+          >
+            Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
+          </Button>
+        </div>
+        
+        {selectedBuddy && (
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Get Location Recommendations</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Let {selectedBuddy.name} suggest interesting places and itinerary adaptations for each day of your trip
+            </p>
+            
+            <div className="space-y-4 mt-4">
+              {tripDays.map((day) => (
+                <Card key={day.dayNumber} className="p-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="font-medium">Day {day.dayNumber}: {day.city}</h4>
+                      <p className="text-sm text-gray-500">{new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleOpenRecommendations(day)}
+                      className="flex items-center gap-1"
+                    >
+                      <Compass className="h-4 w-4" /> Get Recommendations
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* API Key Modal */}
@@ -296,6 +428,141 @@ export const TravelBuddySelector: React.FC = () => {
               <Send className="h-4 w-4" />
             </Button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Recommendations Modal */}
+      <Modal
+        isOpen={recommendationsOpen}
+        onClose={() => setRecommendationsOpen(false)}
+        title={selectedDay ? `Recommendations for ${selectedDay.city}` : "Recommendations"}
+      >
+        <div className="flex flex-col h-[60vh]">
+          <Tabs defaultValue="dining" value={recommendationTab} onValueChange={setRecommendationTab}>
+            <TabsList className="grid grid-cols-4 mb-4">
+              <TabsTrigger value="dining">Dining</TabsTrigger>
+              <TabsTrigger value="attractions">Attractions</TabsTrigger>
+              <TabsTrigger value="events">Events</TabsTrigger>
+              <TabsTrigger value="adaptation">Adaptation</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="dining">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2">Restaurant Recommendations</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Discover the best dining options in {selectedDay?.city}
+                </p>
+                <Button
+                  onClick={() => handleGetRecommendations("dining")}
+                  disabled={recommendationsLoading || !selectedBuddy}
+                  className="mb-4"
+                >
+                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Star className="h-4 w-4 mr-2" />}
+                  Get Dining Recommendations
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="attractions">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2">Local Attractions</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Discover must-see sights and hidden gems in {selectedDay?.city}
+                </p>
+                <Button
+                  onClick={() => handleGetRecommendations("attractions")}
+                  disabled={recommendationsLoading || !selectedBuddy}
+                  className="mb-4"
+                >
+                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <MapPin className="h-4 w-4 mr-2" />}
+                  Get Attraction Recommendations
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="events">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2">Special Events</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Discover timely events and activities in {selectedDay?.city}
+                </p>
+                <Button
+                  onClick={() => handleGetRecommendations("events")}
+                  disabled={recommendationsLoading || !selectedBuddy}
+                  className="mb-4"
+                >
+                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Star className="h-4 w-4 mr-2" />}
+                  Get Event Recommendations
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="adaptation">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2">Itinerary Adaptation</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Need to change your plans? Get suggestions for adapting your itinerary
+                </p>
+                <Textarea
+                  placeholder="Briefly describe why you need to adapt your itinerary (e.g., 'Museum is closed', 'Weather is bad', 'Want to try something different')"
+                  value={adaptationRequest}
+                  onChange={(e) => setAdaptationRequest(e.target.value)}
+                  className="mb-4"
+                />
+                <Button
+                  onClick={() => handleGetRecommendations("adaptation")}
+                  disabled={recommendationsLoading || !selectedBuddy}
+                  className="mb-4"
+                >
+                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Compass className="h-4 w-4 mr-2" />}
+                  Get Adaptation Suggestions
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 rounded-md">
+            {recommendationsLoading ? (
+              <div className="flex justify-center items-center h-full">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+              </div>
+            ) : recommendations ? (
+              <div className="whitespace-pre-wrap">
+                {recommendations}
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 h-full flex items-center justify-center">
+                <p>Click the button above to get recommendations from {selectedBuddy?.name}</p>
+              </div>
+            )}
+          </div>
+          
+          {selectedDay?.pointsOfInterest && selectedDay.pointsOfInterest.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-md font-medium mb-2">Points of Interest in {selectedDay.city}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto p-2">
+                {selectedDay.pointsOfInterest.map((poi, index) => (
+                  <div key={index} className="flex items-start space-x-2 border rounded p-2">
+                    {poi.image && (
+                      <img 
+                        src={poi.image} 
+                        alt={poi.name} 
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{poi.name}</span>
+                        <Badge variant="outline">{poi.category}</Badge>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">{poi.description.length > 100 ? `${poi.description.substring(0, 100)}...` : poi.description}</p>
+                      {poi.mustSee && <Badge className="mt-1 bg-blue-100 text-blue-800 border-blue-300">Must See</Badge>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
     </div>
