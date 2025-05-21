@@ -7,7 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar } from 'lucide-react';
+
+// Create a type for accommodation to fix TypeScript errors
+type Accommodation = {
+  name: string;
+  image: string;
+  wifi: string;
+  address?: string;
+  checkin?: string;
+  code?: string;
+  parking?: string;
+  contact?: string;
+};
 
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
@@ -30,6 +42,18 @@ export const EuropeTripPlanner: React.FC = () => {
       activities: [
         { 
           id: '1-1',
+          time: '10:00', 
+          activity: 'Pick up rental car at Santa Maria Airport', 
+          type: 'logistics',
+          icon: '🚗',
+          image: 'https://images.unsplash.com/photo-1650472576213-1e7ae623c6fa?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+          note: 'Volkswagen Jetta (Automatic), Reservation #L1, Budget Fastbreak Counter',
+          checklist: ['Booking confirmation', 'Driver\'s license', 'Credit card (Visa *4592)'],
+          completed: false,
+          contactInfo: 'Budget: (1) 805-922-3113'
+        },
+        { 
+          id: '1-2',
           time: '12:00', 
           activity: 'Final packing & docs check', 
           type: 'logistics',
@@ -39,22 +63,24 @@ export const EuropeTripPlanner: React.FC = () => {
           completed: false
         },
         { 
-          id: '1-2',
-          time: '15:00', 
-          activity: 'Leave for LAX', 
+          id: '1-3',
+          time: '14:00', 
+          activity: 'Return rental car at LAX', 
           type: 'travel',
           icon: '🚗',
           image: 'https://images.unsplash.com/photo-1592859600972-1b0834d83747?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+          note: 'Budget return at LAX, follow signs for rental car return',
+          contactInfo: 'Budget LAX: (1) 310-642-4500',
           completed: false
         },
         { 
-          id: '1-3',
+          id: '1-4',
           time: '18:40', 
           activity: 'Flight LAX → Milan', 
           type: 'travel',
           icon: '✈️',
           image: 'https://images.unsplash.com/photo-1532299033752-9376aa1fed37?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-          flightInfo: 'Flight with 1 stop • Arrive 18:00+1',
+          flightInfo: 'Lufthansa #8900 • Arrive 18:00+1',
           completed: false
         }
       ]
@@ -666,7 +692,7 @@ export const EuropeTripPlanner: React.FC = () => {
                           {activity.tip && <p className="text-blue-700"><strong>💡 Tip:</strong> {activity.tip}</p>}
                           {activity.culturalNote && <p className="text-purple-700"><strong>🎭 Culture:</strong> {activity.culturalNote}</p>}
                           {activity.location && <p className="text-green-700"><strong>📍 Location:</strong> {activity.location}</p>}
-                          {activity.contact && <p className="text-blue-700"><strong>📞 Contact:</strong> {activity.contact}</p>}
+                          {activity.contactInfo && <p className="text-blue-700"><strong>📞 Contact:</strong> {activity.contactInfo}</p>}
                           {activity.checklist && (
                             <div className="mt-2">
                               <strong>Checklist:</strong>
@@ -747,6 +773,64 @@ export const EuropeTripPlanner: React.FC = () => {
                 {currentDayData.accommodation.parking && (
                   <p className="text-orange-600">🅿️ {currentDayData.accommodation.parking}</p>
                 )}
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Car Rental Details Banner for Day 1 */}
+      {currentDay === 0 && (
+        <div className="container mx-auto px-4 pb-8">
+          <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+            <Car className="h-5 w-5" /> Rental Car Details
+          </h3>
+          <Card className="p-4 border-t-4 border-travel-blue">
+            <div className="flex flex-col">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Your Vehicle</h4>
+                  <div className="text-gray-700">
+                    <p><strong>Car:</strong> Volkswagen Jetta (or similar)</p>
+                    <p><strong>Transmission:</strong> Automatic</p>
+                    <p><strong>Mileage:</strong> Unlimited</p>
+                    <p><strong>Total:</strong> $110.89 (Prepaid with Visa *4592)</p>
+                    <p className="text-xs mt-2 text-green-600">Amazon.com Gift Card upon rental completion</p>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-4">
+                    <h4 className="font-semibold flex items-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4" /> Pick-Up Location
+                    </h4>
+                    <p className="text-gray-700">Santa Maria Public Airport (SMX)</p>
+                    <p className="text-gray-700 text-sm">Budget Fastbreak Counter</p>
+                    <p className="text-gray-700 text-sm">Phone: (1) 805-922-3113</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold flex items-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4" /> Return Location
+                    </h4>
+                    <p className="text-gray-700">Los Angeles International Airport (LAX)</p>
+                    <p className="text-gray-700 text-sm">Budget Fastbreak Counter</p>
+                    <p className="text-gray-700 text-sm">Phone: (1) 310-642-4500</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm text-gray-700">Pick-Up: 10:00 AM</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm text-gray-700">Return: 2:00 PM</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm text-gray-700">Thursday, Jun 05, 2025</p>
+                </div>
               </div>
             </div>
           </Card>
