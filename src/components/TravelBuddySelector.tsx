@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star } from "lucide-react";
+import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map } from "lucide-react";
 import { saveApiKey, getApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
 import { Badge } from "@/components/ui/badge";
@@ -58,6 +57,14 @@ const TRAVEL_BUDDIES: TravelBuddy[] = [
     description: "History professor specializing in European art and architecture",
     model: "meta/llama-3-70b-instruct",
     systemPrompt: "You are Professor Ludwig, a history professor specializing in European art and architecture with decades of experience. You provide fascinating historical context for landmarks and cities in Italy, Switzerland, and Germany. Speak in a slightly formal but approachable manner, showing enthusiasm when discussing historical subjects. You excel at explaining the historical significance of buildings, artwork, and monuments. When asked questions, focus on providing educational and enriching responses that add depth to a traveler's experience."
+  },
+  {
+    id: "navigator",
+    name: "Olivia",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format",
+    description: "Road trip navigator with expertise on European driving regulations and routes",
+    model: "openai/gpt-4o",
+    systemPrompt: "You are Olivia, a road trip navigator with detailed knowledge of European driving regulations, road signs, and optimal routes. You specialize in calculating travel times, interpreting European road signs, suggesting efficient routes, and providing information about tolls, speed limits, and driving customs in Italy, Switzerland, and Germany. Be practical, precise, and helpful. Respond clearly to questions about distances, driving times, and road regulations. You excel at explaining the meanings of road signs and symbols, providing real-time navigation help, and suggesting the most scenic or efficient routes between destinations."
   }
 ];
 
@@ -264,7 +271,7 @@ export const TravelBuddySelector: React.FC = () => {
       <h2 className="text-2xl font-semibold mb-4">Choose Your Travel Buddy</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {TRAVEL_BUDDIES.map((buddy) => (
           <Card 
             key={buddy.id}
