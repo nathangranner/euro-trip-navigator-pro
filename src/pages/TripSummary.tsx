@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -5,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { europeTrip } from "@/data/tripData";
 import { loadStoredData } from "@/utils/storageUtils";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
-import { Calendar, Compass } from "lucide-react";
+import { Calendar, Compass, Shield } from "lucide-react";
 
 // Import components
 import { TripDurationCard } from "@/components/trip/TripDurationCard";
@@ -18,6 +19,7 @@ import { ExpensesTab } from "@/components/trip/ExpensesTab";
 import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
+import { InsuranceInfo } from "@/components/trip/InsuranceInfo";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
 
 const TripSummary: React.FC = () => {
@@ -106,18 +108,24 @@ const TripSummary: React.FC = () => {
           <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Accommodations</TabsTrigger>
           <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Expenses</TabsTrigger>
           <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Purchases</TabsTrigger>
+          <TabsTrigger value="insurance" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">
+            <Shield className="h-4 w-4 mr-1" />
+            Insurance
+          </TabsTrigger>
         </TabsList>
         
         <div className="bg-white rounded-lg shadow-sm p-4">
-          <ItineraryTab tripDays={tripDays} onViewMap={handleViewMap} />
+          {activeTab === "itinerary" && <ItineraryTab tripDays={tripDays} onViewMap={handleViewMap} />}
           
-          <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
+          {activeTab === "cityview" && <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />}
           
-          <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+          {activeTab === "accommodations" && <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />}
           
-          <ExpensesTab expensesByDay={expensesByDay} tripDays={tripDays} />
+          {activeTab === "expenses" && <ExpensesTab expensesByDay={expensesByDay} tripDays={tripDays} />}
           
-          <PurchasesTab purchasesByDay={purchasesByDay} tripDays={tripDays} />
+          {activeTab === "purchases" && <PurchasesTab purchasesByDay={purchasesByDay} tripDays={tripDays} />}
+          
+          {activeTab === "insurance" && <InsuranceInfo />}
         </div>
       </Tabs>
       
