@@ -19,7 +19,6 @@ import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
-
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState(europeTrip.days);
@@ -71,8 +70,7 @@ const TripSummary: React.FC = () => {
   const handleEditLocation = dayIndex => {
     navigate(`/planner?day=${dayIndex}`);
   };
-  return (
-    <div className="container mx-auto py-8 bg-gradient-to-b from-white to-blue-50">
+  return <div className="container mx-auto py-8 bg-gradient-to-b from-white to-blue-50 bg-sky-300">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-blue-800">Trip Summary</h1>
         <div className="flex space-x-2">
@@ -120,8 +118,6 @@ const TripSummary: React.FC = () => {
       </Tabs>
       
       <TravelBuddySection />
-    </div>
-  );
+    </div>;
 };
-
 export default TripSummary;
