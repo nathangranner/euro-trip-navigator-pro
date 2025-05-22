@@ -74,15 +74,15 @@ const TripSummary: React.FC = () => {
     navigate(`/planner?day=${dayIndex}`);
   };
 
-  return <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded">
+  return <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-white">Trip Summary</h1>
+        <h1 className="text-3xl font-light tracking-wide text-white">Trip Summary</h1>
         <div className="flex space-x-2">
-          <Button onClick={() => navigate("/planner")} className="flex items-center gap-2 bg-blue-800 hover:bg-blue-900">
+          <Button onClick={() => navigate("/planner")} className="flex items-center gap-2 bg-blue-800 hover:bg-blue-900 font-light">
             <Calendar className="h-4 w-4" />
             Trip Planner
           </Button>
-          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2 border-blue-300 text-white hover:bg-blue-700">
+          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2 border-blue-300 text-white hover:bg-blue-700 font-light">
             <Compass className="h-4 w-4" />
             Home
           </Button>
@@ -101,11 +101,11 @@ const TripSummary: React.FC = () => {
 
       <Tabs defaultValue="itinerary" className="mb-8" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4 bg-gradient-to-r from-blue-800 to-blue-900 p-1">
-          <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Day by Day</TabsTrigger>
-          <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">City View</TabsTrigger>
-          <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Accommodations</TabsTrigger>
-          <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Expenses</TabsTrigger>
-          <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Purchases</TabsTrigger>
+          <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Day by Day</TabsTrigger>
+          <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">City View</TabsTrigger>
+          <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Accommodations</TabsTrigger>
+          <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Expenses</TabsTrigger>
+          <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Purchases</TabsTrigger>
         </TabsList>
         
         <div className="bg-white rounded-lg shadow-sm p-4">
