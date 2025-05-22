@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { europeTrip } from "@/data/tripData";
 import { loadStoredData } from "@/utils/storageUtils";
+import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 import { Calendar, Compass } from "lucide-react";
 
 // Import components
@@ -17,6 +18,7 @@ import { AccommodationsTab } from "@/components/trip/AccommodationsTab";
 import { ExpensesTab } from "@/components/trip/ExpensesTab";
 import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
+import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
 
 const TripSummary: React.FC = () => {
@@ -25,6 +27,7 @@ const TripSummary: React.FC = () => {
   const [expensesByDay, setExpensesByDay] = useState({});
   const [purchasesByDay, setPurchasesByDay] = useState({});
   const [activeTab, setActiveTab] = useState("itinerary");
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
 
   useEffect(() => {
     const storedData = loadStoredData();
@@ -42,9 +45,21 @@ const TripSummary: React.FC = () => {
     if (storedData.purchases) {
       setPurchasesByDay(storedData.purchases);
     }
+
+    // Load banner image
+    const savedBanner = loadBannerImage();
+    if (savedBanner) {
+      setBannerImage(savedBanner);
+    }
   }, []);
 
   const { totalExpenses, totalPurchases } = useTripCalculations(expensesByDay, purchasesByDay);
+
+  // Handle banner image change
+  const handleBannerChange = (newBannerUrl: string) => {
+    setBannerImage(newBannerUrl);
+    saveBannerImage(newBannerUrl);
+  };
 
   // Handle view accommodation on map
   const handleViewMap = (day) => {
@@ -75,6 +90,9 @@ const TripSummary: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Banner Image Section */}
+      <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <TripDurationCard

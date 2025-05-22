@@ -1,12 +1,13 @@
 
-import React, { useState } from "react";
-import { TripDay } from "@/data/tripData";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
-import { formatDate } from "./DateFormatter";
-import { Map, MapPin } from "lucide-react";
+import { TripDay } from "@/data/tripData";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Map } from "lucide-react";
+import { CityBanner } from "./CityBanner";
+import { loadCityBannerImages, saveCityBannerImage } from "@/utils/bannerUtils";
 
 interface CityViewTabProps {
   tripDays: TripDay[];
@@ -14,98 +15,89 @@ interface CityViewTabProps {
 }
 
 export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap }) => {
-  const navigate = useNavigate();
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [cityBanners, setCityBanners] = useState<Record<string, string>>({});
+  
+  useEffect(() => {
+    // Load saved city banners
+    const savedBanners = loadCityBannerImages();
+    setCityBanners(savedBanners);
+  }, []);
 
-  // Group trip days by city
-  const getCitiesList = () => {
-    const cities: Record<string, TripDay[]> = {};
-    tripDays.forEach(day => {
-      const cityName = day.city.split(',')[0].trim();
-      if (!cities[cityName]) {
-        cities[cityName] = [];
-      }
-      cities[cityName].push(day);
-    });
+  // Group days by city
+  const citiesWithDays = tripDays.reduce((cities, day) => {
+    if (!cities[day.city]) {
+      cities[day.city] = [];
+    }
+    cities[day.city].push(day);
     return cities;
+  }, {} as Record<string, TripDay[]>);
+
+  // Handle banner change for a specific city
+  const handleCityBannerChange = (city: string, newBannerUrl: string) => {
+    setCityBanners(prev => ({
+      ...prev,
+      [city]: newBannerUrl
+    }));
+    saveCityBannerImage(city, newBannerUrl);
   };
 
-  const cities = getCitiesList();
-
   return (
-    <TabsContent value="cityview">
-      {selectedCity ? (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">{selectedCity}</h2>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setSelectedCity(null)}
-            >
-              Back to All Cities
-            </Button>
-          </div>
+    <TabsContent value="cityview" className="space-y-6">
+      {Object.entries(citiesWithDays).map(([city, days]) => (
+        <div key={city} className="bg-white rounded-lg shadow-sm p-4">
+          <h2 className="text-xl font-bold mb-2">{city}</h2>
+          <CityBanner 
+            city={city}
+            bannerImage={cityBanners[city] || null}
+            onBannerChange={handleCityBannerChange}
+          />
+          
           <div className="space-y-4">
-            {cities[selectedCity].map((day, index) => (
-              <Card key={index} className="p-4">
-                <div className="flex justify-between">
-                  <h3 className="text-lg font-semibold">
-                    Day {day.dayNumber} - {formatDate(day.date)}
-                  </h3>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate(`/planner?day=${tripDays.findIndex(d => d.dayNumber === day.dayNumber)}`)}
-                  >
-                    View Details
-                  </Button>
-                </div>
-                <p className="mt-2">{day.title}</p>
-                
-                {day.accommodation && (
-                  <div className="mt-4 pt-3 border-t border-gray-200">
-                    <div className="flex items-start">
-                      <MapPin className="h-4 w-4 text-red-500 mt-1 mr-2" />
-                      <div>
-                        <p className="font-medium">{day.accommodation.name}</p>
-                        {day.accommodation.address && (
-                          <p className="text-sm text-gray-600">{day.accommodation.address}</p>
-                        )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => onViewMap(day)}
-                          className="flex items-center gap-1 mt-1 p-0"
-                        >
-                          <Map className="h-4 w-4" />
-                          View on Map
-                        </Button>
-                      </div>
+            {days.map((day, index) => (
+              <Card key={index}>
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium">Day {day.dayNumber}</h3>
+                      <p className="text-sm text-gray-500">{day.title}</p>
                     </div>
+                    {day.accommodation && day.accommodation.address && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => onViewMap(day)}
+                        className="flex items-center gap-2"
+                      >
+                        <Map className="h-4 w-4" />
+                        View Map
+                      </Button>
+                    )}
                   </div>
-                )}
+                  
+                  {day.activities && day.activities.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium mb-2">Activities</h4>
+                      <ul className="text-sm">
+                        {day.activities.map((activity, i) => (
+                          <li key={i} className="mb-1">{activity.title}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {day.accommodation && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium">Accommodation</h4>
+                      <p className="text-sm">{day.accommodation.name}</p>
+                    </div>
+                  )}
+                </CardContent>
               </Card>
             ))}
           </div>
-        </>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Object.entries(cities).map(([cityName, days]) => (
-            <Card 
-              key={cityName} 
-              className="p-4 cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => setSelectedCity(cityName)}
-            >
-              <h3 className="text-xl font-semibold">{cityName}</h3>
-              <p className="text-sm text-gray-500">{days.length} days</p>
-              <p className="text-sm text-gray-500">
-                {formatDate(days[0].date)} - {formatDate(days[days.length - 1].date)}
-              </p>
-            </Card>
-          ))}
+          <Separator className="my-6" />
         </div>
-      )}
+      ))}
     </TabsContent>
   );
 };
