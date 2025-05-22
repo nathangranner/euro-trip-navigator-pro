@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -44,9 +43,9 @@ const Index = () => {
 
         {/* Main Title Section */}
         <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
-          <h1 ref={titleRef} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect" style={{
+          <h1 ref={titleRef} style={{
           letterSpacing: "0.15em"
-        }}>
+        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect  i love this font and style. please use it for the rest of the site\n">
             EUROPE<span className="font-thin">25</span>
           </h1>
           
