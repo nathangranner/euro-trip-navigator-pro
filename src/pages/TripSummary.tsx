@@ -19,6 +19,7 @@ import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
+
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState(europeTrip.days);
@@ -70,15 +71,16 @@ const TripSummary: React.FC = () => {
   const handleEditLocation = dayIndex => {
     navigate(`/planner?day=${dayIndex}`);
   };
-  return <div className="container mx-auto py-8 bg-amber-700">
+  return (
+    <div className="container mx-auto py-8 bg-gradient-to-b from-white to-blue-50">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Trip Summary</h1>
+        <h1 className="text-3xl font-bold text-blue-800">Trip Summary</h1>
         <div className="flex space-x-2">
-          <Button onClick={() => navigate("/planner")} className="flex items-center gap-2">
+          <Button onClick={() => navigate("/planner")} className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800">
             <Calendar className="h-4 w-4" />
             Trip Planner
           </Button>
-          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2">
+          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2 border-blue-300 text-blue-700 hover:bg-blue-50">
             <Compass className="h-4 w-4" />
             Home
           </Button>
@@ -96,26 +98,30 @@ const TripSummary: React.FC = () => {
       </div>
 
       <Tabs defaultValue="itinerary" className="mb-8" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="itinerary">Day by Day</TabsTrigger>
-          <TabsTrigger value="cityview">City View</TabsTrigger>
-          <TabsTrigger value="accommodations">Accommodations</TabsTrigger>
-          <TabsTrigger value="expenses">Expenses</TabsTrigger>
-          <TabsTrigger value="purchases">Purchases</TabsTrigger>
+        <TabsList className="mb-4 bg-gradient-to-r from-blue-600 to-blue-800 p-1">
+          <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Day by Day</TabsTrigger>
+          <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">City View</TabsTrigger>
+          <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Accommodations</TabsTrigger>
+          <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Expenses</TabsTrigger>
+          <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white">Purchases</TabsTrigger>
         </TabsList>
         
-        <ItineraryTab tripDays={tripDays} onViewMap={handleViewMap} />
-        
-        <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
-        
-        <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
-        
-        <ExpensesTab expensesByDay={expensesByDay} tripDays={tripDays} />
-        
-        <PurchasesTab purchasesByDay={purchasesByDay} tripDays={tripDays} />
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <ItineraryTab tripDays={tripDays} onViewMap={handleViewMap} />
+          
+          <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
+          
+          <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+          
+          <ExpensesTab expensesByDay={expensesByDay} tripDays={tripDays} />
+          
+          <PurchasesTab purchasesByDay={purchasesByDay} tripDays={tripDays} />
+        </div>
       </Tabs>
       
       <TravelBuddySection />
-    </div>;
+    </div>
+  );
 };
+
 export default TripSummary;

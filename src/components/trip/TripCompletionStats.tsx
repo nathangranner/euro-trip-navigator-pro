@@ -38,13 +38,13 @@ export const TripCompletionCard: React.FC<TripCompletionStatsProps> = ({ tripDay
       value={`${completionStats.completed} / ${completionStats.total}`}
       footer={
         <>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div className="w-full bg-blue-300/50 rounded-full h-2.5 mt-2">
             <div 
-              className="bg-blue-600 h-2.5 rounded-full" 
+              className="bg-white h-2.5 rounded-full" 
               style={{ width: `${completionStats.percentage}%` }}
             ></div>
           </div>
-          <div className="text-sm text-gray-500 mt-1">{completionStats.percentage}% Complete</div>
+          <div className="text-sm text-white mt-1">{completionStats.percentage}% Complete</div>
         </>
       }
     />

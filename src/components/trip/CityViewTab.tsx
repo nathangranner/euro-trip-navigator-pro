@@ -44,8 +44,8 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
   return (
     <TabsContent value="cityview" className="space-y-6">
       {Object.entries(citiesWithDays).map(([city, days]) => (
-        <div key={city} className="bg-white rounded-lg shadow-sm p-4">
-          <h2 className="text-xl font-bold mb-2">{city}</h2>
+        <div key={city} className="bg-gradient-to-r from-blue-50 to-white rounded-lg shadow-sm p-4">
+          <h2 className="text-xl font-bold mb-2 text-blue-800">{city}</h2>
           <CityBanner 
             city={city}
             bannerImage={cityBanners[city] || null}
@@ -54,19 +54,19 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
           
           <div className="space-y-4">
             {days.map((day, index) => (
-              <Card key={index}>
+              <Card key={index} className="border border-blue-100 shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-medium">Day {day.dayNumber}</h3>
-                      <p className="text-sm text-gray-500">{day.title}</p>
+                      <h3 className="font-medium text-blue-700">Day {day.dayNumber}</h3>
+                      <p className="text-sm text-gray-700">{day.title}</p>
                     </div>
                     {day.accommodation && day.accommodation.address && (
                       <Button 
                         variant="outline" 
                         size="sm" 
                         onClick={() => onViewMap(day)}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 border-blue-300 text-blue-700 hover:bg-blue-50"
                       >
                         <Map className="h-4 w-4" />
                         View Map
@@ -76,8 +76,8 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
                   
                   {day.activities && day.activities.length > 0 && (
                     <div className="mt-4">
-                      <h4 className="text-sm font-medium mb-2">Activities</h4>
-                      <ul className="text-sm">
+                      <h4 className="text-sm font-medium mb-2 text-blue-600">Activities</h4>
+                      <ul className="text-sm text-gray-700">
                         {day.activities.map((activity, i) => (
                           <li key={i} className="mb-1">{activity.activity}</li>
                         ))}
@@ -87,15 +87,15 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
                   
                   {day.accommodation && (
                     <div className="mt-4">
-                      <h4 className="text-sm font-medium">Accommodation</h4>
-                      <p className="text-sm">{day.accommodation.name}</p>
+                      <h4 className="text-sm font-medium text-blue-600">Accommodation</h4>
+                      <p className="text-sm text-gray-700">{day.accommodation.name}</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
             ))}
           </div>
-          <Separator className="my-6" />
+          <Separator className="my-6 bg-blue-200" />
         </div>
       ))}
     </TabsContent>
