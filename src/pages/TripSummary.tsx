@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +19,6 @@ import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
-
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState(europeTrip.days);
@@ -28,20 +26,16 @@ const TripSummary: React.FC = () => {
   const [purchasesByDay, setPurchasesByDay] = useState({});
   const [activeTab, setActiveTab] = useState("itinerary");
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-
   useEffect(() => {
     const storedData = loadStoredData();
-    
     if (storedData.tripDays && storedData.tripDays.length > 0) {
       setTripDays(storedData.tripDays);
     } else {
       setTripDays(europeTrip.days);
     }
-    
     if (storedData.expenses) {
       setExpensesByDay(storedData.expenses);
     }
-    
     if (storedData.purchases) {
       setPurchasesByDay(storedData.purchases);
     }
@@ -52,8 +46,10 @@ const TripSummary: React.FC = () => {
       setBannerImage(savedBanner);
     }
   }, []);
-
-  const { totalExpenses, totalPurchases } = useTripCalculations(expensesByDay, purchasesByDay);
+  const {
+    totalExpenses,
+    totalPurchases
+  } = useTripCalculations(expensesByDay, purchasesByDay);
 
   // Handle banner image change
   const handleBannerChange = (newBannerUrl: string) => {
@@ -62,7 +58,7 @@ const TripSummary: React.FC = () => {
   };
 
   // Handle view accommodation on map
-  const handleViewMap = (day) => {
+  const handleViewMap = day => {
     if (day.accommodation && day.accommodation.address) {
       // Open Google Maps with the address
       const address = encodeURIComponent(day.accommodation.address);
@@ -71,12 +67,10 @@ const TripSummary: React.FC = () => {
   };
 
   // Navigate to dashboard for location editing
-  const handleEditLocation = (dayIndex) => {
+  const handleEditLocation = dayIndex => {
     navigate(`/planner?day=${dayIndex}`);
   };
-
-  return (
-    <div className="container mx-auto py-8">
+  return <div className="container mx-auto py-8 bg-amber-700">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Trip Summary</h1>
         <div className="flex space-x-2">
@@ -95,22 +89,13 @@ const TripSummary: React.FC = () => {
       <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <TripDurationCard
-          daysCount={tripDays.length}
-          startDate={europeTrip.startDate}
-          endDate={europeTrip.endDate}
-        />
+        <TripDurationCard daysCount={tripDays.length} startDate={europeTrip.startDate} endDate={europeTrip.endDate} />
         <TripCompletionCard tripDays={tripDays} />
         <ExpenseDisplay totals={totalExpenses} title="Total Expenses" />
         <ExpenseDisplay totals={totalPurchases} title="Customs Declarations" />
       </div>
 
-      <Tabs 
-        defaultValue="itinerary" 
-        className="mb-8"
-        value={activeTab} 
-        onValueChange={setActiveTab}
-      >
+      <Tabs defaultValue="itinerary" className="mb-8" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4">
           <TabsTrigger value="itinerary">Day by Day</TabsTrigger>
           <TabsTrigger value="cityview">City View</TabsTrigger>
@@ -119,36 +104,18 @@ const TripSummary: React.FC = () => {
           <TabsTrigger value="purchases">Purchases</TabsTrigger>
         </TabsList>
         
-        <ItineraryTab 
-          tripDays={tripDays} 
-          onViewMap={handleViewMap} 
-        />
+        <ItineraryTab tripDays={tripDays} onViewMap={handleViewMap} />
         
-        <CityViewTab 
-          tripDays={tripDays} 
-          onViewMap={handleViewMap} 
-        />
+        <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
         
-        <AccommodationsTab 
-          tripDays={tripDays} 
-          onViewMap={handleViewMap} 
-          onEditLocation={handleEditLocation} 
-        />
+        <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
         
-        <ExpensesTab 
-          expensesByDay={expensesByDay} 
-          tripDays={tripDays} 
-        />
+        <ExpensesTab expensesByDay={expensesByDay} tripDays={tripDays} />
         
-        <PurchasesTab 
-          purchasesByDay={purchasesByDay} 
-          tripDays={tripDays} 
-        />
+        <PurchasesTab purchasesByDay={purchasesByDay} tripDays={tripDays} />
       </Tabs>
       
       <TravelBuddySection />
-    </div>
-  );
+    </div>;
 };
-
 export default TripSummary;
