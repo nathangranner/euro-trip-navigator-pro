@@ -19,7 +19,7 @@ export const TripDurationCard: React.FC<TripDurationCardProps> = ({
       title="Trip Duration"
       value={`${daysCount} Days`}
       footer={
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-white/90">
           {formatDate(startDate)} - {formatDate(endDate)}
         </div>
       }
