@@ -79,7 +79,7 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
                       <h4 className="text-sm font-medium mb-2">Activities</h4>
                       <ul className="text-sm">
                         {day.activities.map((activity, i) => (
-                          <li key={i} className="mb-1">{activity.title}</li>
+                          <li key={i} className="mb-1">{activity.activity}</li>
                         ))}
                       </ul>
                     </div>

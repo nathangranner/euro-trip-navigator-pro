@@ -78,7 +78,7 @@ export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap }) => {
                 {day.activities.map((activity, i) => (
                   <li key={i} className="text-sm">
                     {activity.time && <span className="font-medium">{activity.time}: </span>}
-                    {activity.title}
+                    {activity.activity}
                     {activity.location && <span className="text-gray-500"> @ {activity.location}</span>}
                   </li>
                 ))}
