@@ -12,7 +12,7 @@ export const calculateCompletionStats = (tripDays: TripDay[]) => {
   let total = 0;
   
   tripDays.forEach(day => {
-    if (day.activities) { // Add this check to ensure activities exists
+    if (day.activities) {
       day.activities.forEach(activity => {
         total++;
         if (activity.completed) {
@@ -38,13 +38,13 @@ export const TripCompletionCard: React.FC<TripCompletionStatsProps> = ({ tripDay
       value={`${completionStats.completed} / ${completionStats.total}`}
       footer={
         <>
-          <div className="w-full bg-blue-400/50 rounded-full h-2.5 mt-2">
+          <div className="w-full bg-white/20 rounded-full h-2.5 mt-2">
             <div 
-              className="bg-gray-100 h-2.5 rounded-full" 
+              className="bg-pink-300 h-2.5 rounded-full" 
               style={{ width: `${completionStats.percentage}%` }}
             ></div>
           </div>
-          <div className="text-sm text-gray-100 mt-1 font-light tracking-wide">{completionStats.percentage}% Complete</div>
+          <div className="text-sm text-white/90 mt-1 font-light tracking-wide">{completionStats.percentage}% Complete</div>
         </>
       }
     />
