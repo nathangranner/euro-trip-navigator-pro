@@ -22,7 +22,7 @@ import { europeTrip, TripDay } from "@/data/tripData";
 import { Expense } from "@/components/ExpenseTracker";
 import { Purchase } from "@/components/PurchaseTracker";
 import { loadStoredData } from "@/utils/storageUtils";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Map, MapPin, Calendar, Compass } from "lucide-react";
 
 // Helper function to format currency
 const formatCurrency = (amount: number, currency: string) => {
@@ -50,6 +50,8 @@ const TripSummary: React.FC = () => {
   const [tripDays, setTripDays] = useState<TripDay[]>([]);
   const [expensesByDay, setExpensesByDay] = useState<Record<string, Expense[]>>({});
   const [purchasesByDay, setPurchasesByDay] = useState<Record<string, Purchase[]>>({});
+  const [activeTab, setActiveTab] = useState("itinerary");
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   useEffect(() => {
     const storedData = loadStoredData();
@@ -166,13 +168,49 @@ const TripSummary: React.FC = () => {
     return acc;
   }, {});
 
+  // Group trip days by city
+  const getCitiesList = () => {
+    const cities: Record<string, TripDay[]> = {};
+    tripDays.forEach(day => {
+      const cityName = day.city.split(',')[0].trim();
+      if (!cities[cityName]) {
+        cities[cityName] = [];
+      }
+      cities[cityName].push(day);
+    });
+    return cities;
+  };
+
+  const cities = getCitiesList();
+  
+  // Handle view accommodation on map
+  const handleViewMap = (day: TripDay) => {
+    if (day.accommodation && day.accommodation.address) {
+      // Open Google Maps with the address
+      const address = encodeURIComponent(day.accommodation.address);
+      window.open(`https://www.google.com/maps?q=${address}`, '_blank');
+    }
+  };
+
+  // Navigate to dashboard for location editing
+  const handleEditLocation = (dayIndex: number) => {
+    navigate(`/planner?day=${dayIndex}`);
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Trip Summary</h1>
-        <Button onClick={() => navigate("/")} className="flex items-center gap-2">
-          Return to Trip Planner
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={() => navigate("/planner")} className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            Trip Planner
+          </Button>
+          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2">
+            <Compass className="h-4 w-4" />
+            Home
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -217,13 +255,21 @@ const TripSummary: React.FC = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="itinerary" className="mb-8">
+      <Tabs 
+        defaultValue="itinerary" 
+        className="mb-8"
+        value={activeTab} 
+        onValueChange={setActiveTab}
+      >
         <TabsList className="mb-4">
-          <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
+          <TabsTrigger value="itinerary">Day by Day</TabsTrigger>
+          <TabsTrigger value="cityview">City View</TabsTrigger>
+          <TabsTrigger value="accommodations">Accommodations</TabsTrigger>
           <TabsTrigger value="expenses">Expenses</TabsTrigger>
           <TabsTrigger value="purchases">Purchases</TabsTrigger>
         </TabsList>
         
+        {/* Itinerary Tab - Day by Day */}
         <TabsContent value="itinerary" className="space-y-4">
           {tripDays.map((day, index) => (
             <Card key={index} className="p-4">
@@ -231,13 +277,26 @@ const TripSummary: React.FC = () => {
                 <h3 className="text-lg font-semibold">
                   Day {day.dayNumber}: {day.city}
                 </h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate(`/?day=${index}`)}
-                >
-                  View Details
-                </Button>
+                <div className="flex space-x-2">
+                  {day.accommodation && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleViewMap(day)}
+                      className="flex items-center gap-1"
+                    >
+                      <Map className="h-4 w-4" />
+                      View Map
+                    </Button>
+                  )}
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate(`/planner?day=${index}`)}
+                  >
+                    View Details
+                  </Button>
+                </div>
               </div>
               <p className="text-sm text-gray-500">{formatDate(day.date)}</p>
               <p className="mt-2">{day.title}</p>
@@ -260,8 +319,217 @@ const TripSummary: React.FC = () => {
                   )}
                 </div>
               )}
+
+              {/* Show accommodation info if available */}
+              {day.accommodation && (
+                <div className="mt-4 pt-3 border-t border-gray-200">
+                  <div className="flex items-start">
+                    <MapPin className="h-4 w-4 text-red-500 mt-1 mr-2" />
+                    <div>
+                      <p className="font-medium">{day.accommodation.name}</p>
+                      {day.accommodation.address && (
+                        <p className="text-sm text-gray-600">{day.accommodation.address}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </Card>
           ))}
+        </TabsContent>
+
+        {/* City View Tab */}
+        <TabsContent value="cityview">
+          {selectedCity ? (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold">{selectedCity}</h2>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setSelectedCity(null)}
+                >
+                  Back to All Cities
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {cities[selectedCity].map((day, index) => (
+                  <Card key={index} className="p-4">
+                    <div className="flex justify-between">
+                      <h3 className="text-lg font-semibold">
+                        Day {day.dayNumber} - {formatDate(day.date)}
+                      </h3>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => navigate(`/planner?day=${tripDays.findIndex(d => d.dayNumber === day.dayNumber)}`)}
+                      >
+                        View Details
+                      </Button>
+                    </div>
+                    <p className="mt-2">{day.title}</p>
+                    
+                    {day.accommodation && (
+                      <div className="mt-4 pt-3 border-t border-gray-200">
+                        <div className="flex items-start">
+                          <MapPin className="h-4 w-4 text-red-500 mt-1 mr-2" />
+                          <div>
+                            <p className="font-medium">{day.accommodation.name}</p>
+                            {day.accommodation.address && (
+                              <p className="text-sm text-gray-600">{day.accommodation.address}</p>
+                            )}
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleViewMap(day)}
+                              className="flex items-center gap-1 mt-1 p-0"
+                            >
+                              <Map className="h-4 w-4" />
+                              View on Map
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(cities).map(([cityName, days]) => (
+                <Card 
+                  key={cityName} 
+                  className="p-4 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => setSelectedCity(cityName)}
+                >
+                  <h3 className="text-xl font-semibold">{cityName}</h3>
+                  <p className="text-sm text-gray-500">{days.length} days</p>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(days[0].date)} - {formatDate(days[days.length - 1].date)}
+                  </p>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        
+        {/* Accommodations Tab */}
+        <TabsContent value="accommodations" className="space-y-6">
+          {tripDays
+            .filter(day => day.accommodation)
+            .map((day, index) => (
+              <Card key={index} className="p-6 overflow-hidden">
+                <div className="flex flex-col md:flex-row">
+                  {day.accommodation?.image && (
+                    <div className="md:w-1/4 mb-4 md:mb-0 md:mr-6">
+                      <img 
+                        src={day.accommodation.image} 
+                        alt={day.accommodation.name} 
+                        className="w-full h-48 object-cover rounded-md"
+                      />
+                    </div>
+                  )}
+                  <div className="md:w-3/4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="text-xl font-semibold">{day.accommodation?.name}</h3>
+                        <p className="text-gray-500">{day.city} - Day {day.dayNumber}</p>
+                        <p className="text-gray-500 text-sm">{formatDate(day.date)}</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditLocation(tripDays.findIndex(d => d.dayNumber === day.dayNumber))}
+                        >
+                          Edit Details
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewMap(day)}
+                          className="flex items-center gap-2"
+                        >
+                          <Map className="h-4 w-4" />
+                          View Map
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 bg-gray-50 rounded-md p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {day.accommodation?.address && (
+                          <div>
+                            <p className="text-sm text-gray-500">Address</p>
+                            <p>{day.accommodation.address}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.contactPhone && (
+                          <div>
+                            <p className="text-sm text-gray-500">Phone</p>
+                            <p>{day.accommodation.contactPhone}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.confirmationNumber && (
+                          <div>
+                            <p className="text-sm text-gray-500">Confirmation</p>
+                            <p className="font-mono">{day.accommodation.confirmationNumber}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.confirmationCode && (
+                          <div>
+                            <p className="text-sm text-gray-500">Confirmation Code</p>
+                            <p className="font-mono">{day.accommodation.confirmationCode}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.checkin && (
+                          <div>
+                            <p className="text-sm text-gray-500">Check-in</p>
+                            <p>{day.accommodation.checkin}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.checkout && (
+                          <div>
+                            <p className="text-sm text-gray-500">Check-out</p>
+                            <p>{day.accommodation.checkout}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.wifi && (
+                          <div>
+                            <p className="text-sm text-gray-500">WiFi</p>
+                            <p>{day.accommodation.wifi}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.parking && (
+                          <div>
+                            <p className="text-sm text-gray-500">Parking</p>
+                            <p>{day.accommodation.parking}</p>
+                          </div>
+                        )}
+                        {day.accommodation?.totalPrice && (
+                          <div>
+                            <p className="text-sm text-gray-500">Price</p>
+                            <p className="text-green-600 font-medium">{day.accommodation.totalPrice}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          {!tripDays.some(day => day.accommodation) && (
+            <Card className="p-8 text-center">
+              <p className="text-gray-500">No accommodation information recorded yet.</p>
+              <Button 
+                onClick={() => navigate("/planner")} 
+                className="mt-4"
+              >
+                Add Accommodation Details
+              </Button>
+            </Card>
+          )}
         </TabsContent>
         
         <TabsContent value="expenses">
