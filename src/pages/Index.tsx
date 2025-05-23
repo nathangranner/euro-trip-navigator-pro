@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +45,7 @@ const Index = () => {
       <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col bg-amber-600">
         {/* Header with luxury brand style */}
         <header className="pt-12 pb-8 flex justify-between items-center">
-          <div className="text-2xl font-light tracking-[0.3em] uppercase">Europa</div>
+          <div className="text-2xl font-light tracking-[0.3em] uppercase">EUROTRIP25</div>
           <div className="text-sm tracking-wider uppercase">Summer 2025</div>
         </header>
 
@@ -54,7 +53,7 @@ const Index = () => {
         <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
           <h1 ref={titleRef} style={{
           letterSpacing: "0.15em"
-        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect">
+        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect. Text reads: \"EUROTRIP25\"">
             EUROPE<span className="font-thin">25</span>
           </h1>
           
