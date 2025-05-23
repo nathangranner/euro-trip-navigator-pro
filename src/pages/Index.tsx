@@ -134,7 +134,7 @@ const Index = () => {
               JUNE 5-26, 2025 · 21 DAYS · 7 DESTINATIONS
             </div>
             <div className="text-xs tracking-wider">
-              DESIGNED FOR THE EXTRAORDINARY
+              Designed for Jamie and Nathan. Have fun!
             </div>
           </div>
         </footer>
