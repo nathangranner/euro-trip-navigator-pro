@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,15 @@ export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap, onEditD
     saveDayMementoImage(dayNumber, newMementoUrl);
   };
 
+  // Debug function to log activities
+  useEffect(() => {
+    if (day.activities) {
+      console.log(`Day ${day.dayNumber} activities:`, day.activities);
+    } else {
+      console.log(`Day ${day.dayNumber} has no activities defined`);
+    }
+  }, [day]);
+
   return (
     <Card key={index} className="overflow-hidden">
       <CardContent className="p-0">
@@ -51,6 +61,16 @@ export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap, onEditD
               >
                 <Map className="h-4 w-4" />
                 View Map
+              </Button>
+            )}
+            {onEditDay && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => onEditDay(day)}
+                className="ml-2"
+              >
+                Edit Day
               </Button>
             )}
           </div>
@@ -77,10 +97,22 @@ export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap, onEditD
               <h4 className="font-medium mb-2">Activities</h4>
               <ul className="space-y-1">
                 {day.activities.map((activity, i) => (
-                  <li key={i} className="text-sm">
-                    {activity.time && <span className="font-medium">{activity.time}: </span>}
-                    {activity.activity}
-                    {activity.location && <span className="text-gray-500"> @ {activity.location}</span>}
+                  <li key={i} className="text-sm flex justify-between items-center group">
+                    <div>
+                      {activity.time && <span className="font-medium">{activity.time}: </span>}
+                      {activity.activity}
+                      {activity.location && <span className="text-gray-500"> @ {activity.location}</span>}
+                    </div>
+                    {onEditActivity && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => onEditActivity(activity, day.id)}
+                      >
+                        Edit
+                      </Button>
+                    )}
                   </li>
                 ))}
               </ul>

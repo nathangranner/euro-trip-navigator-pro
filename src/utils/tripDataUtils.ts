@@ -56,3 +56,10 @@ export const updateTripDay = (tripDays: TripDay[], updatedDay: TripDay): TripDay
     day.id === updatedDay.id ? updatedDay : day
   );
 };
+
+export const validateTripDayActivities = (tripDays: TripDay[]): TripDay[] => {
+  return tripDays.map(day => ({
+    ...day,
+    activities: Array.isArray(day.activities) ? day.activities : []
+  }));
+};
