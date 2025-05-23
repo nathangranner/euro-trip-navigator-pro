@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import TripSummary from "./pages/TripSummary";
 import TravelConciergePage from "./pages/TravelConciergePage";
 import { EuropeTripPlanner } from "./components/EuropeTripPlanner";
 import NavHome from "./components/NavHome";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { initOfflineSupport, isOnline } from "./utils/offlineStorageUtils";
 import { toast } from "./components/ui/use-toast";
 import { OfflineStatusBar } from "./components/OfflineStatusBar";
@@ -84,22 +86,30 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/planner" element={<>
-              <NavHome />
-              <EuropeTripPlanner />
-            </>} />
-            <Route path="/summary" element={<>
-              <NavHome />
-              <TripSummary />
-            </>} />
-            <Route path="/travel-concierge" element={<>
-              <NavHome />
-              <TravelConciergePage />
-            </>} />
-            <Route path="/travel-buddy" element={<>
-              <NavHome />
-              <TravelConciergePage />
-            </>} />
+            <Route path="/planner" element={
+              <ProtectedRoute>
+                <NavHome />
+                <EuropeTripPlanner />
+              </ProtectedRoute>
+            } />
+            <Route path="/summary" element={
+              <ProtectedRoute>
+                <NavHome />
+                <TripSummary />
+              </ProtectedRoute>
+            } />
+            <Route path="/travel-concierge" element={
+              <ProtectedRoute>
+                <NavHome />
+                <TravelConciergePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/travel-buddy" element={
+              <ProtectedRoute>
+                <NavHome />
+                <TravelConciergePage />
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

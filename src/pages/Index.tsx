@@ -2,11 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Mail, MailOpen, ArrowLeft } from "lucide-react";
+import PasswordProtection from "@/components/PasswordProtection";
+
 const Index = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    const authStatus = localStorage.getItem("eurotrip25_auth") === "authenticated";
+    setIsAuthenticated(authStatus);
+  }, []);
 
   // Parallax effect on scroll
   useEffect(() => {
@@ -22,14 +31,27 @@ const Index = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   const handleEnvelopeClick = () => {
+    if (!isAuthenticated) return;
     setIsEnvelopeOpen(true);
     // Delay navigation to allow envelope animation to complete
     setTimeout(() => {
       navigate("/planner");
     }, 1200);
   };
-  return <div className="relative min-h-screen overflow-hidden bg-black text-white">
+
+  const handlePasswordCorrect = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleNavigate = (path: string) => {
+    if (!isAuthenticated) return;
+    navigate(path);
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
         <div className="absolute inset-0 w-full h-[120vh] bg-cover bg-center" style={{
@@ -60,63 +82,72 @@ const Index = () => {
             An experience designed for Jamie and Nathan.
           </p>
 
-          <div className="mt-12">
-            <div onClick={handleEnvelopeClick} className={`duomo-container ${isEnvelopeOpen ? 'duomo-open' : ''}`}>
-              <div className="duomo-main">
-                <div className="duomo-body"></div>
-                <div className="duomo-central-spire"></div>
-                <div className="duomo-side-spire-left"></div>
-                <div className="duomo-side-spire-right"></div>
-                <div className="duomo-arch-left"></div>
-                <div className="duomo-arch-right"></div>
-                <div className="duomo-rose-window"></div>
-                <div className="duomo-portal"></div>
-                <div className="duomo-buttress-left"></div>
-                <div className="duomo-buttress-right"></div>
-                <div className="duomo-filigree-tl"></div>
-                <div className="duomo-filigree-tr"></div>
-                <div className="duomo-filigree-bl"></div>
-                <div className="duomo-filigree-br"></div>
-                <div className="duomo-filigree-center"></div>
+          {/* Password Protection or Navigation */}
+          {!isAuthenticated ? (
+            <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
+          ) : (
+            <>
+              <div className="mt-12">
+                <div onClick={handleEnvelopeClick} className={`duomo-container ${isEnvelopeOpen ? 'duomo-open' : ''}`}>
+                  <div className="duomo-main">
+                    <div className="duomo-body"></div>
+                    <div className="duomo-central-spire"></div>
+                    <div className="duomo-side-spire-left"></div>
+                    <div className="duomo-side-spire-right"></div>
+                    <div className="duomo-arch-left"></div>
+                    <div className="duomo-arch-right"></div>
+                    <div className="duomo-rose-window"></div>
+                    <div className="duomo-portal"></div>
+                    <div className="duomo-buttress-left"></div>
+                    <div className="duomo-buttress-right"></div>
+                    <div className="duomo-filigree-tl"></div>
+                    <div className="duomo-filigree-tr"></div>
+                    <div className="duomo-filigree-bl"></div>
+                    <div className="duomo-filigree-br"></div>
+                    <div className="duomo-filigree-center"></div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
-        {/* Bottom navigation */}
-        <div className="mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 max-w-4xl mx-auto">
-            <div className="group cursor-pointer relative overflow-hidden" onClick={() => navigate("/planner")}>
-              <div className="h-72 overflow-hidden">
-                <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110 bg-cover bg-center" style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')"
-              }} />
-              </div>
-              <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-8 transition-all duration-500 group-hover:bg-black group-hover:bg-opacity-40">
-                <div>
-                  <h3 className="text-xl uppercase tracking-wider font-light mb-1">Itinerary</h3>
-                  <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
-                  <p className="text-sm text-white text-opacity-80">Day-by-day curated experiences</p>
+        {/* Bottom navigation - only show when authenticated */}
+        {isAuthenticated && (
+          <div className="mb-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 max-w-4xl mx-auto">
+              <div className="group cursor-pointer relative overflow-hidden" onClick={() => handleNavigate("/planner")}>
+                <div className="h-72 overflow-hidden">
+                  <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110 bg-cover bg-center" style={{
+                  backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')"
+                }} />
+                </div>
+                <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-8 transition-all duration-500 group-hover:bg-black group-hover:bg-opacity-40">
+                  <div>
+                    <h3 className="text-xl uppercase tracking-wider font-light mb-1">Itinerary</h3>
+                    <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
+                    <p className="text-sm text-white text-opacity-80">Day-by-day curated experiences</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="group cursor-pointer relative overflow-hidden" onClick={() => navigate("/travel-buddy")}>
-              <div className="h-72 overflow-hidden">
-                <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110 bg-cover bg-center" style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')"
-              }} />
-              </div>
-              <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-8 transition-all duration-500 group-hover:bg-black group-hover:bg-opacity-40">
-                <div>
-                  <h3 className="text-xl uppercase tracking-wider font-light mb-1">CONCIERGE</h3>
-                  <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
-                  <p className="text-sm text-white text-opacity-80">AI-powered travel assistance</p>
+              
+              <div className="group cursor-pointer relative overflow-hidden" onClick={() => handleNavigate("/travel-buddy")}>
+                <div className="h-72 overflow-hidden">
+                  <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110 bg-cover bg-center" style={{
+                  backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')"
+                }} />
+                </div>
+                <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-8 transition-all duration-500 group-hover:bg-black group-hover:bg-opacity-40">
+                  <div>
+                    <h3 className="text-xl uppercase tracking-wider font-light mb-1">CONCIERGE</h3>
+                    <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
+                    <p className="text-sm text-white text-opacity-80">AI-powered travel assistance</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Footer */}
         <footer className="py-8 border-t border-white border-opacity-20">
@@ -135,6 +166,8 @@ const Index = () => {
       <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
       <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
       <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
