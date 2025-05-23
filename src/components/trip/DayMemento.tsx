@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -140,6 +139,9 @@ export const DayMemento: React.FC<DayMementoProps> = ({
     setPreviewImage(null);
   };
 
+  // Get the image to display (preview, current URL input, or saved memento)
+  const displayImage = previewImage || (isEditing ? imageUrl : mementoImage);
+
   return (
     <div className="mb-4">
       {!isEditing ? (
@@ -171,6 +173,30 @@ export const DayMemento: React.FC<DayMementoProps> = ({
       ) : (
         <Card className="p-3">
           <h3 className="text-sm font-medium mb-2">Day {dayNumber} Memento</h3>
+          
+          {/* Image Preview Section */}
+          {displayImage && (
+            <div className="mb-2">
+              <div className="relative w-full h-32 overflow-hidden rounded-lg border">
+                <img 
+                  src={displayImage} 
+                  alt="Memento preview" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <div className="hidden w-full h-full bg-gray-100 flex items-center justify-center">
+                  <div className="text-gray-400 text-center">
+                    <Image className="h-4 w-4 mx-auto mb-1" />
+                    <p className="text-xs">Failed to load image</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div 
             className={`border-2 border-dashed rounded-lg p-3 mb-3 transition-colors ${
               dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
@@ -239,6 +265,7 @@ export const DayMemento: React.FC<DayMementoProps> = ({
               <Button variant="outline" size="sm" onClick={() => {
                 setIsEditing(false);
                 setPreviewImage(null);
+                setImageUrl(mementoImage || "");
               }}>
                 Cancel
               </Button>

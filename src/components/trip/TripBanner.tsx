@@ -137,6 +137,9 @@ export const TripBanner: React.FC<TripBannerProps> = ({
     setPreviewImage(null);
   };
 
+  // Get the image to display (preview, current URL input, or saved banner)
+  const displayImage = previewImage || (isEditing ? imageUrl : bannerImage);
+
   return (
     <div className="w-full mb-8">
       {!isEditing ? (
@@ -168,6 +171,30 @@ export const TripBanner: React.FC<TripBannerProps> = ({
       ) : (
         <Card className="p-4">
           <h3 className="text-lg font-medium mb-4">Update Banner Image</h3>
+          
+          {/* Image Preview Section */}
+          {displayImage && (
+            <div className="mb-4">
+              <div className="relative w-full h-48 overflow-hidden rounded-lg border">
+                <img 
+                  src={displayImage} 
+                  alt="Banner preview" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <div className="hidden w-full h-full bg-gray-100 flex items-center justify-center">
+                  <div className="text-gray-400 text-center">
+                    <Image className="h-8 w-8 mx-auto mb-2" />
+                    <p className="text-sm">Failed to load image</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div 
             className={`border-2 border-dashed rounded-lg p-6 mb-4 transition-colors ${
               dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
@@ -238,6 +265,7 @@ export const TripBanner: React.FC<TripBannerProps> = ({
               <Button variant="outline" onClick={() => {
                 setIsEditing(false);
                 setPreviewImage(null);
+                setImageUrl(bannerImage || "");
               }}>
                 Cancel
               </Button>
