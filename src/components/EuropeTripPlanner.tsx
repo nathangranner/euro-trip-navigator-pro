@@ -78,7 +78,7 @@ export const EuropeTripPlanner: React.FC = () => {
             onViewMap={handleViewMap}
           />
 
-          <div className="space-y-6">
+          <div className={`space-y-6 ${activeTab === 'translation' ? 'block' : 'hidden'}`}>
             <TranslationTool />
             <TravelBuddySection />
           </div>

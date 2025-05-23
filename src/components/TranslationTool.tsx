@@ -1,17 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
 import { translateText, getSupportedLanguages, TranslationResult } from "@/services/TranslationService";
 import { toast } from "sonner";
-import { getApiKey, saveApiKey, hasApiKey } from "@/utils/storageUtils";
-import { supabase } from "@/integrations/supabase/client";
 import { TranslationForm } from './translation/TranslationForm';
 import { TranslationResult as TranslationResultComponent } from './translation/TranslationResult';
 import { TranslationHistory } from './translation/TranslationHistory';
-import { AuthNotice } from './translation/AuthNotice';
-import { LoginModal } from './translation/LoginModal';
-import { ApiKeyModal } from './translation/ApiKeyModal';
 import { TranslationHistory as TranslationHistoryType } from './translation/types';
 
 export const TranslationTool: React.FC = () => {
@@ -20,54 +14,18 @@ export const TranslationTool: React.FC = () => {
   const [targetLanguage, setTargetLanguage] = useState("Italian");
   const [translation, setTranslation] = useState<TranslationResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [recentTranslations, setRecentTranslations] = useState<TranslationHistoryType[]>([]);
-  const [apiKey, setApiKey] = useState<string>("");
-  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingUser, setCheckingUser] = useState(true);
+  const [recentTranslations, setRecentTranslations] = useState<TranslationHistoryType[]>(() => {
+    // Load from localStorage
+    const stored = localStorage.getItem('translation-history');
+    return stored ? JSON.parse(stored) : [];
+  });
   
   const languages = getSupportedLanguages();
   const sourceLanguages = ["Auto-detect", ...languages];
   
-  // Check user auth status on mount
-  useEffect(() => {
-    const checkUser = async () => {
-      setCheckingUser(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      setIsLoggedIn(!!user);
-      setCheckingUser(false);
-      
-      if (user) {
-        // Check for saved API key
-        const keyExists = await hasApiKey("openrouter");
-        if (keyExists) {
-          const storedKey = await getApiKey("openrouter");
-          setApiKey(storedKey);
-        }
-      }
-    };
-    
-    checkUser();
-  }, []);
-  
   const handleTranslate = async () => {
     if (!inputText.trim()) {
       toast.error("Please enter text to translate");
-      return;
-    }
-    
-    // Check if user is logged in
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
-    
-    // Check if API key is available
-    if (!apiKey) {
-      setShowApiKeyModal(true);
       return;
     }
     
@@ -77,105 +35,26 @@ export const TranslationTool: React.FC = () => {
         text: inputText,
         sourceLanguage: sourceLanguage === "Auto-detect" ? undefined : sourceLanguage,
         targetLanguage: targetLanguage
-      }, apiKey);
+      });
       
       setTranslation(result);
       
       // Save to recent translations (limited to 5)
-      setRecentTranslations(prev => {
-        const newTranslations = [
-          { input: inputText, result, source: sourceLanguage, target: targetLanguage },
-          ...prev
-        ].slice(0, 5);
-        return newTranslations;
-      });
+      const newTranslations = [
+        { input: inputText, result, source: sourceLanguage, target: targetLanguage },
+        ...recentTranslations
+      ].slice(0, 5);
+      
+      setRecentTranslations(newTranslations);
+      
+      // Save to localStorage
+      localStorage.setItem('translation-history', JSON.stringify(newTranslations));
       
     } catch (error) {
       console.error("Translation error:", error);
+      toast.error("Translation failed. Please try again.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSaveApiKey = async () => {
-    if (!apiKey.trim()) {
-      toast.error("Please enter a valid API key");
-      return;
-    }
-    
-    if (!isLoggedIn) {
-      toast.error("Please log in to save your API key");
-      setShowLoginModal(true);
-      return;
-    }
-    
-    const success = await saveApiKey("openrouter", apiKey.trim());
-    
-    if (success) {
-      setShowApiKeyModal(false);
-      toast.success("OpenRouter API key saved");
-      
-      // Now try translating again
-      handleTranslate();
-    } else {
-      toast.error("Failed to save API key. Please try again.");
-    }
-  };
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      
-      if (data.user) {
-        setIsLoggedIn(true);
-        setShowLoginModal(false);
-        toast.success("Login successful!");
-        
-        // If we have an API key in state, save it now
-        if (apiKey) {
-          await saveApiKey("openrouter", apiKey);
-        }
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Login failed. Please try again.");
-    }
-  };
-
-  const handleSignup = async () => {
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      
-      toast.success("Account created! Please check your email for verification.");
-    } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Signup failed. Please try again.");
     }
   };
 
@@ -219,25 +98,10 @@ export const TranslationTool: React.FC = () => {
     setTranslation(historyItem.result);
   };
   
-  if (checkingUser) {
-    return (
-      <Card className="p-6">
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2">Loading...</span>
-        </div>
-      </Card>
-    );
-  }
-  
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Travel Translator</h2>
       <p className="text-gray-600 mb-6">Translate phrases during your European adventure</p>
-      
-      {!isLoggedIn && (
-        <AuthNotice onShowLogin={() => setShowLoginModal(true)} />
-      )}
       
       <TranslationForm
         inputText={inputText}
@@ -264,27 +128,6 @@ export const TranslationTool: React.FC = () => {
       <TranslationHistory
         recentTranslations={recentTranslations}
         onSelectTranslation={handleSelectTranslation}
-      />
-      
-      {/* API Key Modal */}
-      <ApiKeyModal
-        isOpen={showApiKeyModal}
-        onClose={() => setShowApiKeyModal(false)}
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-        onSave={handleSaveApiKey}
-      />
-      
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        email={email}
-        setEmail={setEmail}
-        password={password}
-        setPassword={setPassword}
-        onLogin={handleLogin}
-        onSignup={handleSignup}
       />
     </Card>
   );
