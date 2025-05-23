@@ -1,9 +1,7 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Mail, MailOpen, ArrowLeft } from "lucide-react";
-
 const Index = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -24,7 +22,6 @@ const Index = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
   const handleEnvelopeClick = () => {
     setIsEnvelopeOpen(true);
     // Delay navigation to allow envelope animation to complete
@@ -32,7 +29,6 @@ const Index = () => {
       navigate("/planner");
     }, 1200);
   };
-
   return <div className="relative min-h-screen overflow-hidden bg-black text-white">
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
@@ -46,7 +42,7 @@ const Index = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col">
+      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col bg-amber-600">
         {/* Header with luxury brand style */}
         <header className="pt-12 pb-8 flex justify-between items-center">
           <div className="text-2xl font-light tracking-[0.3em] uppercase">Europa</div>
@@ -67,10 +63,7 @@ const Index = () => {
           </p>
 
           <div className="mt-12">
-            <div 
-              onClick={handleEnvelopeClick} 
-              className={`italianate-envelope ${isEnvelopeOpen ? 'italianate-envelope-open' : ''}`}
-            >
+            <div onClick={handleEnvelopeClick} className={`italianate-envelope ${isEnvelopeOpen ? 'italianate-envelope-open' : ''}`}>
               <div className="italianate-envelope-front">
                 <div className="italianate-envelope-flap"></div>
                 <div className="italianate-envelope-back"></div>
