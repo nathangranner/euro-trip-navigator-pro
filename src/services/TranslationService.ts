@@ -32,7 +32,7 @@ export const translateText = async (request: TranslationRequest): Promise<Transl
         'X-Title': 'Europe Trip Planner'
       },
       body: JSON.stringify({
-        model: "google/gemini-pro", // Using Gemini Pro for translations
+        model: "openai/gpt-4o-mini", // Using a valid OpenRouter model
         messages: [
           {
             role: "system",
