@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,11 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map, Ambulance } from "lucide-react";
-import { saveApiKey, getApiKey } from "@/utils/storageUtils";
-import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
+import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map, Ambulance, Key, Settings } from "lucide-react";
+import { saveApiKey, getApiKey, isApiKeyPermanent, clearApiKey } from "@/utils/storageUtils";
+import { europeTrip, TripDay, PointOfInterest } from '@/data/tripData';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
@@ -71,6 +74,7 @@ const TRAVEL_BUDDIES: TravelBuddy[] = [{
   model: "anthropic/claude-3-opus",
   systemPrompt: "You are Dr. Elena, an experienced travel physician who has worked across Europe and traveled extensively throughout Italy, Switzerland, and Germany. You provide practical medical advice for travelers dealing with common travel health issues, medication information, and emergency guidance. You can explain local healthcare systems, help find pharmacies or medical facilities, and offer advice on travel insurance. You're knowledgeable about altitude sickness in the Alps, food safety, dealing with jet lag, and staying healthy while traveling. Your advice is practical, calming, and accessible to non-medical travelers. Always remind users that you provide general guidance, not diagnosis, and to seek professional medical help for serious conditions."
 }];
+
 export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   onOpenChat,
   isChatOpen = false,
@@ -83,6 +87,8 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState<string>("");
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showApiSettingsModal, setShowApiSettingsModal] = useState(false);
+  const [rememberApiKey, setRememberApiKey] = useState(true);
   const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
   const [selectedDay, setSelectedDay] = useState<TripDay | null>(null);
   const [recommendationsOpen, setRecommendationsOpen] = useState(false);
@@ -95,15 +101,18 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   useEffect(() => {
     setChatOpen(isChatOpen);
   }, [isChatOpen]);
+
+  // Check for saved API key on component mount
   useEffect(() => {
     const storedApiKey = getApiKey("openrouter");
+    const isPermanent = isApiKeyPermanent("openrouter");
+    
     if (storedApiKey) {
       setApiKey(storedApiKey);
-    } else {
-      // Show API key modal if no key is found
-      setShowApiKeyModal(true);
+      setRememberApiKey(isPermanent);
     }
   }, []);
+
   const handleSelectBuddy = (buddy: TravelBuddy) => {
     setSelectedBuddy(buddy);
     setMessages([{
@@ -112,11 +121,13 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }]);
     toast.success(`${buddy.name} is now your travel buddy!`);
   };
+
   const handleStartChat = () => {
     if (!apiKey) {
       setShowApiKeyModal(true);
       return;
     }
+    
     if (selectedBuddy) {
       setChatOpen(true);
       setIsChatOpen(true);
@@ -127,28 +138,46 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       toast.error("Please select a travel buddy first");
     }
   };
+
   const handleCloseChat = () => {
     setChatOpen(false);
     setIsChatOpen(false);
   };
+
   const handleSaveApiKey = () => {
     if (apiKey.trim()) {
-      saveApiKey("openrouter", apiKey.trim());
+      // Save the API key, and mark it as permanent if the switch is checked
+      saveApiKey("openrouter", apiKey.trim(), rememberApiKey);
       setShowApiKeyModal(false);
       toast.success("OpenRouter API key saved");
     } else {
       toast.error("Please enter a valid API key");
     }
   };
+
+  const handleOpenApiSettings = () => {
+    setShowApiSettingsModal(true);
+  };
+
+  const handleClearApiKey = () => {
+    clearApiKey("openrouter");
+    setApiKey("");
+    toast.success("API key removed");
+    setShowApiSettingsModal(false);
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedBuddy || !apiKey) return;
+    
     const userMessage = {
       role: "user" as const,
       content: inputMessage
     };
+    
     setMessages([...messages, userMessage]);
     setInputMessage("");
     setLoading(true);
+    
     try {
       // Prepare messages for the API call
       const apiMessages = [...messages, userMessage];
@@ -164,17 +193,21 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
         },
         body: JSON.stringify({
           model: selectedBuddy.model,
-          messages: apiMessages.filter(msg => msg.role !== "system" || msg.role === "system" && apiMessages.indexOf(msg) === 0)
+          messages: apiMessages.filter(msg => msg.role !== "system" || (msg.role === "system" && apiMessages.indexOf(msg) === 0))
         })
       });
+      
       if (!response.ok) {
         throw new Error('Failed to get response from travel buddy');
       }
+      
       const data = await response.json();
+      
       const assistantMessage = {
         role: "assistant" as const,
         content: data.choices[0]?.message?.content || "I'm sorry, I couldn't process your request."
       };
+      
       setMessages([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error communicating with travel buddy:', error);
@@ -185,20 +218,25 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
         role: "assistant" as const,
         content: "I'm having trouble connecting right now. Please check your OpenRouter API key and try again."
       };
+      
       setMessages([...messages, userMessage, fallbackMessage]);
     } finally {
       setLoading(false);
     }
   };
+
   const handleOpenRecommendations = (day: TripDay) => {
     setSelectedDay(day);
     setRecommendationTab("dining");
     setRecommendationsOpen(true);
   };
+
   const handleGetRecommendations = async (type: string) => {
     if (!selectedDay || !selectedBuddy || !apiKey) return;
+    
     setRecommendationsLoading(true);
     setRecommendations("");
+    
     let prompt = "";
     switch (type) {
       case "dining":
@@ -230,6 +268,7 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
 4. Any time-sensitive opportunities I should prioritize`;
         break;
     }
+    
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -250,9 +289,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
           }]
         })
       });
+      
       if (!response.ok) {
         throw new Error('Failed to get recommendations');
       }
+      
       const data = await response.json();
       setRecommendations(data.choices[0]?.message?.content || "No recommendations available.");
     } catch (error) {
@@ -263,32 +304,61 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       setRecommendationsLoading(false);
     }
   };
-  return <div>
+
+  return (
+    <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
       
+      <div className="flex justify-end mb-4">
+        <Button 
+          variant="outline" 
+          onClick={handleOpenApiSettings}
+          className="flex items-center gap-2"
+          size="sm"
+        >
+          <Key className="h-4 w-4" />
+          Manage API Key
+        </Button>
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        {TRAVEL_BUDDIES.map(buddy => <Card key={buddy.id} className={`p-4 cursor-pointer transition-all hover:shadow-md ${selectedBuddy?.id === buddy.id ? 'ring-2 ring-blue-500 shadow-md' : ''}`} onClick={() => handleSelectBuddy(buddy)}>
+        {TRAVEL_BUDDIES.map(buddy => (
+          <Card 
+            key={buddy.id} 
+            className={`p-4 cursor-pointer transition-all hover:shadow-md ${selectedBuddy?.id === buddy.id ? 'ring-2 ring-blue-500 shadow-md' : ''}`} 
+            onClick={() => handleSelectBuddy(buddy)}
+          >
             <div className="flex items-center mb-3">
-              <img src={buddy.avatar} alt={buddy.name} className="w-12 h-12 rounded-full mr-3 object-cover" />
+              <img 
+                src={buddy.avatar} 
+                alt={buddy.name} 
+                className="w-12 h-12 rounded-full mr-3 object-cover" 
+              />
               <div>
                 <h3 className="font-semibold">{buddy.name}</h3>
                 <p className="text-sm text-gray-500">{buddy.model.split('/')[0]}</p>
               </div>
             </div>
             <p className="text-sm">{buddy.description}</p>
-          </Card>)}
+          </Card>
+        ))}
       </div>
       
       <div className="flex flex-col gap-4">
         <div>
-          <Button onClick={handleStartChat} disabled={!selectedBuddy} className="px-6 flex items-center gap-2">
+          <Button 
+            onClick={handleStartChat} 
+            disabled={!selectedBuddy} 
+            className="px-6 flex items-center gap-2"
+          >
             <MessageCircle className="h-4 w-4" />
             Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
           </Button>
         </div>
         
-        {selectedBuddy && <div className="mt-4">
+        {selectedBuddy && (
+          <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2">Get Location Recommendations</h3>
             <p className="text-sm text-gray-600 mb-4">
               Let {selectedBuddy.name} suggest interesting places and itinerary adaptations for each day of your trip
@@ -299,69 +369,211 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
             </p>
             
             <div className="space-y-4 mt-4">
-              {tripDays.map(day => <Card key={day.dayNumber} className="p-4">
+              {tripDays.map(day => (
+                <Card key={day.dayNumber} className="p-4">
                   <div className="flex justify-between items-center">
                     <div>
                       <h4 className="font-medium">Day {day.dayNumber}: {day.city}</h4>
                       <p className="text-sm text-gray-500">{new Date(day.date).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}</p>
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}</p>
                     </div>
-                    <Button variant="outline" onClick={() => handleOpenRecommendations(day)} className="flex items-center gap-1">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleOpenRecommendations(day)} 
+                      className="flex items-center gap-1"
+                    >
                       <Compass className="h-4 w-4" /> Get Recommendations
                     </Button>
                   </div>
-                </Card>)}
+                </Card>
+              ))}
             </div>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* API Key Modal */}
-      <Modal isOpen={showApiKeyModal} onClose={() => setShowApiKeyModal(false)} title="Set OpenRouter API Key" footer={<Button onClick={handleSaveApiKey} className="ml-auto">
+      <Modal 
+        isOpen={showApiKeyModal} 
+        onClose={() => setShowApiKeyModal(false)} 
+        title="Set OpenRouter API Key" 
+        footer={
+          <Button onClick={handleSaveApiKey} className="ml-auto">
             Save API Key
-          </Button>}>
+          </Button>
+        }
+      >
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
             To use the travel buddy feature, you need an OpenRouter API key. 
             Get your key at <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">openrouter.ai</a>.
           </p>
-          <Input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="sk-or-v1-xxxxxxxx" className="w-full" />
+          
+          <Input 
+            type="password" 
+            value={apiKey} 
+            onChange={e => setApiKey(e.target.value)} 
+            placeholder="sk-or-v1-xxxxxxxx" 
+            className="w-full" 
+          />
+          
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="remember-api-key" 
+              checked={rememberApiKey}
+              onCheckedChange={setRememberApiKey} 
+            />
+            <Label htmlFor="remember-api-key">Remember this API key permanently</Label>
+          </div>
+          
           <p className="text-xs text-gray-500">
             Your API key is stored locally in your browser and never sent to our servers.
           </p>
         </div>
       </Modal>
+      
+      {/* API Settings Modal */}
+      <Modal 
+        isOpen={showApiSettingsModal} 
+        onClose={() => setShowApiSettingsModal(false)} 
+        title="API Key Settings" 
+        footer={
+          <div className="flex justify-between w-full">
+            <Button 
+              onClick={handleClearApiKey} 
+              variant="destructive"
+            >
+              Remove API Key
+            </Button>
+            <Button 
+              onClick={() => setShowApiSettingsModal(false)} 
+              variant="outline"
+            >
+              Close
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-medium mb-2">OpenRouter API Key</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Your API key is securely stored {isApiKeyPermanent("openrouter") ? "permanently" : "for this session"} in your browser's local storage.
+            </p>
+            
+            <div className="flex items-center space-x-2 mb-4">
+              <Input 
+                type="password" 
+                value={apiKey} 
+                onChange={e => setApiKey(e.target.value)} 
+                className="flex-1" 
+                placeholder="sk-or-v1-xxxxxxxx"
+              />
+              <Button 
+                onClick={() => {
+                  if (apiKey.trim()) {
+                    saveApiKey("openrouter", apiKey.trim(), rememberApiKey);
+                    toast.success("API key updated");
+                  } else {
+                    toast.error("Please enter a valid API key");
+                  }
+                }}
+                size="sm"
+              >
+                Update
+              </Button>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="remember-api-key-settings" 
+                checked={rememberApiKey}
+                onCheckedChange={(checked) => {
+                  setRememberApiKey(checked);
+                  if (apiKey.trim()) {
+                    saveApiKey("openrouter", apiKey.trim(), checked);
+                    toast.success(checked ? "API key will be remembered permanently" : "API key will only be stored for this session");
+                  }
+                }} 
+              />
+              <Label htmlFor="remember-api-key-settings">Remember API key permanently</Label>
+            </div>
+          </div>
+          
+          <div className="text-xs text-gray-500 border-t pt-4 mt-4">
+            <p>Your API key is stored locally and used for:</p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Travel buddy conversations</li>
+              <li>City recommendations</li>
+              <li>Translation services</li>
+            </ul>
+          </div>
+        </div>
+      </Modal>
 
       {/* Chat Modal */}
-      <Modal isOpen={chatOpen} onClose={handleCloseChat} title={selectedBuddy ? `Chat with ${selectedBuddy.name}` : "Chat with Travel Buddy"}>
+      <Modal 
+        isOpen={chatOpen} 
+        onClose={handleCloseChat} 
+        title={selectedBuddy ? `Chat with ${selectedBuddy.name}` : "Chat with Travel Buddy"}
+      >
         <div className="flex flex-col h-[60vh]">
           <div className="flex-1 overflow-y-auto mb-4 space-y-4 p-4 bg-gray-50 rounded-md">
-            {messages.filter(msg => msg.role !== "system").map((message, index) => <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+            {messages.filter(msg => msg.role !== "system").map((message, index) => (
+              <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] p-3 rounded-lg ${message.role === "user" ? "bg-blue-500 text-white rounded-br-none" : "bg-white border rounded-bl-none shadow-sm"}`}>
                   <div className="flex items-center mb-1">
-                    {message.role === "assistant" && selectedBuddy && <img src={selectedBuddy.avatar} alt={selectedBuddy.name} className="w-6 h-6 rounded-full mr-2 object-cover" />}
+                    {message.role === "assistant" && selectedBuddy && (
+                      <img 
+                        src={selectedBuddy.avatar} 
+                        alt={selectedBuddy.name} 
+                        className="w-6 h-6 rounded-full mr-2 object-cover" 
+                      />
+                    )}
                     <span className="text-xs font-medium">
                       {message.role === "user" ? "You" : selectedBuddy?.name}
                     </span>
                   </div>
                   <p className="whitespace-pre-wrap">{message.content}</p>
                 </div>
-              </div>)}
-            {loading && <div className="flex justify-start">
+              </div>
+            ))}
+            
+            {loading && (
+              <div className="flex justify-start">
                 <div className="max-w-[80%] p-3 rounded-lg bg-white border rounded-bl-none shadow-sm">
                   <div className="flex items-center">
-                    {selectedBuddy && <img src={selectedBuddy.avatar} alt={selectedBuddy.name} className="w-6 h-6 rounded-full mr-2 object-cover" />}
+                    {selectedBuddy && (
+                      <img 
+                        src={selectedBuddy.avatar} 
+                        alt={selectedBuddy.name} 
+                        className="w-6 h-6 rounded-full mr-2 object-cover" 
+                      />
+                    )}
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 </div>
-              </div>}
+              </div>
+            )}
           </div>
           
           <div className="flex gap-2">
-            <Input placeholder="Ask your travel buddy a question..." value={inputMessage} onChange={e => setInputMessage(e.target.value)} onKeyPress={e => e.key === "Enter" && !loading && handleSendMessage()} className="flex-1" disabled={loading} />
-            <Button onClick={handleSendMessage} disabled={!inputMessage.trim() || loading} size="icon">
+            <Input 
+              placeholder="Ask your travel buddy a question..." 
+              value={inputMessage} 
+              onChange={e => setInputMessage(e.target.value)} 
+              onKeyPress={e => e.key === "Enter" && !loading && handleSendMessage()} 
+              className="flex-1" 
+              disabled={loading} 
+            />
+            <Button 
+              onClick={handleSendMessage} 
+              disabled={!inputMessage.trim() || loading} 
+              size="icon"
+            >
               <Send className="h-4 w-4" />
             </Button>
           </div>
@@ -369,7 +581,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       </Modal>
 
       {/* Recommendations Modal */}
-      <Modal isOpen={recommendationsOpen} onClose={() => setRecommendationsOpen(false)} title={selectedDay ? `Recommendations for ${selectedDay.city}` : "Recommendations"}>
+      <Modal 
+        isOpen={recommendationsOpen} 
+        onClose={() => setRecommendationsOpen(false)} 
+        title={selectedDay ? `Recommendations for ${selectedDay.city}` : "Recommendations"}
+      >
         <div className="flex flex-col h-[60vh]">
           <Tabs defaultValue="dining" value={recommendationTab} onValueChange={setRecommendationTab}>
             <TabsList className="grid grid-cols-4 mb-4">
@@ -385,7 +601,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
                 <p className="text-sm text-gray-600 mb-4">
                   Discover the best dining options in {selectedDay?.city}
                 </p>
-                <Button onClick={() => handleGetRecommendations("dining")} disabled={recommendationsLoading || !selectedBuddy} className="mb-4">
+                <Button 
+                  onClick={() => handleGetRecommendations("dining")} 
+                  disabled={recommendationsLoading || !selectedBuddy} 
+                  className="mb-4"
+                >
                   {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Star className="h-4 w-4 mr-2" />}
                   Get Dining Recommendations
                 </Button>
@@ -398,7 +618,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
                 <p className="text-sm text-gray-600 mb-4">
                   Discover must-see sights and hidden gems in {selectedDay?.city}
                 </p>
-                <Button onClick={() => handleGetRecommendations("attractions")} disabled={recommendationsLoading || !selectedBuddy} className="mb-4">
+                <Button 
+                  onClick={() => handleGetRecommendations("attractions")} 
+                  disabled={recommendationsLoading || !selectedBuddy} 
+                  className="mb-4"
+                >
                   {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <MapPin className="h-4 w-4 mr-2" />}
                   Get Attraction Recommendations
                 </Button>
@@ -411,7 +635,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
                 <p className="text-sm text-gray-600 mb-4">
                   Discover timely events and activities in {selectedDay?.city}
                 </p>
-                <Button onClick={() => handleGetRecommendations("events")} disabled={recommendationsLoading || !selectedBuddy} className="mb-4">
+                <Button 
+                  onClick={() => handleGetRecommendations("events")} 
+                  disabled={recommendationsLoading || !selectedBuddy} 
+                  className="mb-4"
+                >
                   {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Star className="h-4 w-4 mr-2" />}
                   Get Event Recommendations
                 </Button>
@@ -424,8 +652,17 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
                 <p className="text-sm text-gray-600 mb-4">
                   Need to change your plans? Get suggestions for adapting your itinerary
                 </p>
-                <Textarea placeholder="Briefly describe why you need to adapt your itinerary (e.g., 'Museum is closed', 'Weather is bad', 'Want to try something different')" value={adaptationRequest} onChange={e => setAdaptationRequest(e.target.value)} className="mb-4" />
-                <Button onClick={() => handleGetRecommendations("adaptation")} disabled={recommendationsLoading || !selectedBuddy} className="mb-4">
+                <Textarea 
+                  placeholder="Briefly describe why you need to adapt your itinerary (e.g., 'Museum is closed', 'Weather is bad', 'Want to try something different')" 
+                  value={adaptationRequest} 
+                  onChange={e => setAdaptationRequest(e.target.value)} 
+                  className="mb-4" 
+                />
+                <Button 
+                  onClick={() => handleGetRecommendations("adaptation")} 
+                  disabled={recommendationsLoading || !selectedBuddy} 
+                  className="mb-4"
+                >
                   {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Compass className="h-4 w-4 mr-2" />}
                   Get Adaptation Suggestions
                 </Button>
@@ -434,32 +671,53 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
           </Tabs>
           
           <div className="flex-1 overflow-y-auto p-4 bg-gray-50 rounded-md">
-            {recommendationsLoading ? <div className="flex justify-center items-center h-full">
+            {recommendationsLoading ? (
+              <div className="flex justify-center items-center h-full">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-              </div> : recommendations ? <div className="whitespace-pre-wrap">
+              </div>
+            ) : recommendations ? (
+              <div className="whitespace-pre-wrap">
                 {recommendations}
-              </div> : <div className="text-center text-gray-500 h-full flex items-center justify-center">
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 h-full flex items-center justify-center">
                 <p>Click the button above to get recommendations from {selectedBuddy?.name}</p>
-              </div>}
+              </div>
+            )}
           </div>
           
-          {selectedDay?.pointsOfInterest && selectedDay.pointsOfInterest.length > 0 && <div className="mt-4">
+          {selectedDay?.pointsOfInterest && selectedDay.pointsOfInterest.length > 0 && (
+            <div className="mt-4">
               <h3 className="text-md font-medium mb-2">Points of Interest in {selectedDay.city}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto p-2">
-                {selectedDay.pointsOfInterest.map((poi, index) => <div key={index} className="flex items-start space-x-2 border rounded p-2">
-                    {poi.image && <img src={poi.image} alt={poi.name} className="w-16 h-16 object-cover rounded" />}
+                {selectedDay.pointsOfInterest.map((poi, index) => (
+                  <div key={index} className="flex items-start space-x-2 border rounded p-2">
+                    {poi.image && (
+                      <img 
+                        src={poi.image} 
+                        alt={poi.name} 
+                        className="w-16 h-16 object-cover rounded" 
+                      />
+                    )}
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{poi.name}</span>
                         <Badge variant="outline">{poi.category}</Badge>
                       </div>
-                      <p className="text-xs text-gray-600 mt-1">{poi.description.length > 100 ? `${poi.description.substring(0, 100)}...` : poi.description}</p>
-                      {poi.mustSee && <Badge className="mt-1 bg-blue-100 text-blue-800 border-blue-300">Must See</Badge>}
+                      <p className="text-xs text-gray-600 mt-1">
+                        {poi.description.length > 100 ? `${poi.description.substring(0, 100)}...` : poi.description}
+                      </p>
+                      {poi.mustSee && (
+                        <Badge className="mt-1 bg-blue-100 text-blue-800 border-blue-300">Must See</Badge>
+                      )}
                     </div>
-                  </div>)}
+                  </div>
+                ))}
               </div>
-            </div>}
+            </div>
+          )}
         </div>
       </Modal>
-    </div>;
+    </div>
+  );
 };

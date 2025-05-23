@@ -10,6 +10,7 @@ const TRIP_DAYS_KEY = "europe_trip_days";
 const EXPENSES_KEY = "europe_trip_expenses";
 const PURCHASES_KEY = "europe_trip_purchases";
 const API_KEY_PREFIX = "api_key_";
+const API_KEY_PERMANENT = "api_key_permanent_";
 
 // Trip data storage and retrieval functions
 export const loadStoredData = () => {
@@ -59,13 +60,26 @@ export const loadPurchases = () => {
   return purchasesString ? JSON.parse(purchasesString) : {};
 };
 
-// API key management
-export const saveApiKey = (service: string, key: string) => {
+// Enhanced API key management
+export const saveApiKey = (service: string, key: string, permanent: boolean = false) => {
   localStorage.setItem(`${API_KEY_PREFIX}${service}`, key);
+  
+  if (permanent) {
+    localStorage.setItem(`${API_KEY_PERMANENT}${service}`, "true");
+  }
 };
 
 export const getApiKey = (service: string): string => {
   return localStorage.getItem(`${API_KEY_PREFIX}${service}`) || "";
+};
+
+export const isApiKeyPermanent = (service: string): boolean => {
+  return localStorage.getItem(`${API_KEY_PERMANENT}${service}`) === "true";
+};
+
+export const clearApiKey = (service: string): void => {
+  localStorage.removeItem(`${API_KEY_PREFIX}${service}`);
+  localStorage.removeItem(`${API_KEY_PERMANENT}${service}`);
 };
 
 // Import/Export trip data

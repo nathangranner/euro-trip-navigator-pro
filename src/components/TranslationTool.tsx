@@ -1,14 +1,18 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { translateText, getSupportedLanguages, TranslationResult } from "@/services/TranslationService";
-import { Loader2, Languages, ArrowDown, VolumeX, Volume2, ArrowRightLeft } from "lucide-react";
+import { Loader2, Languages, ArrowDown, VolumeX, Volume2, ArrowRightLeft, Key } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { getApiKey, saveApiKey, isApiKeyPermanent } from "@/utils/storageUtils";
+import { Modal } from "@/components/ui/modal";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const TranslationTool: React.FC = () => {
   const [inputText, setInputText] = useState("");
@@ -17,13 +21,33 @@ export const TranslationTool: React.FC = () => {
   const [translation, setTranslation] = useState<TranslationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [recentTranslations, setRecentTranslations] = useState<Array<{input: string, result: TranslationResult, source: string, target: string}>>([]);
+  const [apiKey, setApiKey] = useState<string>("");
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [rememberApiKey, setRememberApiKey] = useState(true);
 
   const languages = getSupportedLanguages();
   const sourceLanguages = ["Auto-detect", ...languages];
   
+  // Check for saved API key on component mount
+  useEffect(() => {
+    const storedApiKey = getApiKey("openrouter");
+    const isPermanent = isApiKeyPermanent("openrouter");
+    
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+      setRememberApiKey(isPermanent);
+    }
+  }, []);
+  
   const handleTranslate = async () => {
     if (!inputText.trim()) {
       toast.error("Please enter text to translate");
+      return;
+    }
+    
+    // Check if API key is available
+    if (!apiKey) {
+      setShowApiKeyModal(true);
       return;
     }
     
@@ -50,6 +74,20 @@ export const TranslationTool: React.FC = () => {
       console.error("Translation error:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveApiKey = () => {
+    if (apiKey.trim()) {
+      // Save the API key, and mark it as permanent if the switch is checked
+      saveApiKey("openrouter", apiKey.trim(), rememberApiKey);
+      setShowApiKeyModal(false);
+      toast.success("OpenRouter API key saved");
+      
+      // Now try translating again
+      handleTranslate();
+    } else {
+      toast.error("Please enter a valid API key");
     }
   };
 
@@ -191,6 +229,46 @@ export const TranslationTool: React.FC = () => {
           </div>
         )}
       </div>
+      
+      {/* API Key Modal */}
+      <Modal 
+        isOpen={showApiKeyModal} 
+        onClose={() => setShowApiKeyModal(false)} 
+        title="Set OpenRouter API Key" 
+        footer={
+          <Button onClick={handleSaveApiKey} className="ml-auto">
+            Save API Key
+          </Button>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            To use the translation feature, you need an OpenRouter API key. 
+            Get your key at <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">openrouter.ai</a>.
+          </p>
+          
+          <Input 
+            type="password" 
+            value={apiKey} 
+            onChange={e => setApiKey(e.target.value)} 
+            placeholder="sk-or-v1-xxxxxxxx" 
+            className="w-full" 
+          />
+          
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="remember-api-key-translation" 
+              checked={rememberApiKey}
+              onCheckedChange={setRememberApiKey} 
+            />
+            <Label htmlFor="remember-api-key-translation">Remember this API key permanently</Label>
+          </div>
+          
+          <p className="text-xs text-gray-500">
+            Your API key is stored locally in your browser and never sent to our servers.
+          </p>
+        </div>
+      </Modal>
     </Card>
   );
 };
