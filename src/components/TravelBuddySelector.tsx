@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import { TravelBuddyCard } from './travel-buddy/TravelBuddyCard';
 import { ChatModal } from './travel-buddy/ChatModal';
 import { RecommendationsModal } from './travel-buddy/RecommendationsModal';
 import { supabase } from "@/integrations/supabase/client";
-
 export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   onOpenChat,
   isChatOpen = false,
@@ -34,7 +32,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   useEffect(() => {
     setChatOpen(isChatOpen);
   }, [isChatOpen]);
-
   const handleSelectBuddy = (buddy: TravelBuddy) => {
     setSelectedBuddy(buddy);
     setMessages([{
@@ -43,7 +40,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }]);
     toast.success(`${buddy.name} is now your travel buddy!`);
   };
-
   const handleStartChat = () => {
     if (selectedBuddy) {
       setChatOpen(true);
@@ -55,43 +51,38 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       toast.error("Please select a travel buddy first");
     }
   };
-
   const handleCloseChat = () => {
     setChatOpen(false);
     setIsChatOpen(false);
   };
-
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedBuddy) return;
-    
     const userMessage = {
       role: "user" as const,
       content: inputMessage
     };
-    
     setMessages([...messages, userMessage]);
     setInputMessage("");
     setLoading(true);
-    
     try {
       // Call the Supabase Edge Function for travel buddy chat
-      const { data, error } = await supabase.functions.invoke('travel-buddy-chat', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('travel-buddy-chat', {
         body: {
-          messages: [...messages, userMessage].filter(msg => msg.role !== "system" || (msg.role === "system" && [...messages, userMessage].indexOf(msg) === 0)),
+          messages: [...messages, userMessage].filter(msg => msg.role !== "system" || msg.role === "system" && [...messages, userMessage].indexOf(msg) === 0),
           model: selectedBuddy.model,
           systemPrompt: selectedBuddy.systemPrompt
         }
       });
-
       if (error) {
         throw new Error(error.message || 'Failed to get response from travel buddy');
       }
-      
       const assistantMessage = {
         role: "assistant" as const,
         content: data.response || "I'm sorry, I couldn't process your request."
       };
-      
       setMessages([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error communicating with travel buddy:', error);
@@ -102,25 +93,20 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
         role: "assistant" as const,
         content: "I'm having trouble connecting right now. Please try again in a moment."
       };
-      
       setMessages([...messages, userMessage, fallbackMessage]);
     } finally {
       setLoading(false);
     }
   };
-
   const handleOpenRecommendations = (day: TripDay) => {
     setSelectedDay(day);
     setRecommendationTab("dining");
     setRecommendationsOpen(true);
   };
-
   const handleGetRecommendations = async (type: string) => {
     if (!selectedDay || !selectedBuddy) return;
-    
     setRecommendationsLoading(true);
     setRecommendations("");
-    
     let prompt = "";
     switch (type) {
       case "dining":
@@ -152,9 +138,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
 4. Any time-sensitive opportunities I should prioritize`;
         break;
     }
-    
     try {
-      const { data, error } = await supabase.functions.invoke('travel-buddy-chat', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('travel-buddy-chat', {
         body: {
           messages: [{
             role: "system",
@@ -167,11 +155,9 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
           systemPrompt: selectedBuddy.systemPrompt
         }
       });
-
       if (error) {
         throw new Error(error.message || 'Failed to get recommendations');
       }
-      
       setRecommendations(data.response || "No recommendations available.");
     } catch (error) {
       console.error('Error getting recommendations:', error);
@@ -181,37 +167,23 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       setRecommendationsLoading(false);
     }
   };
-
-  return (
-    <div>
+  return <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        {TRAVEL_BUDDIES.map(buddy => (
-          <TravelBuddyCard
-            key={buddy.id}
-            buddy={buddy}
-            isSelected={selectedBuddy?.id === buddy.id}
-            onSelect={handleSelectBuddy}
-          />
-        ))}
+        {TRAVEL_BUDDIES.map(buddy => <TravelBuddyCard key={buddy.id} buddy={buddy} isSelected={selectedBuddy?.id === buddy.id} onSelect={handleSelectBuddy} />)}
       </div>
       
       <div className="flex flex-col gap-4">
         <div>
-          <Button 
-            onClick={handleStartChat} 
-            disabled={!selectedBuddy} 
-            className="px-6 flex items-center gap-2"
-          >
+          <Button onClick={handleStartChat} disabled={!selectedBuddy} className="px-6 flex items-center gap-2 text-orange-50">
             <MessageCircle className="h-4 w-4" />
             Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
           </Button>
         </div>
         
-        {selectedBuddy && (
-          <div className="mt-4">
+        {selectedBuddy && <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2">Get Location Recommendations</h3>
             <p className="text-sm text-gray-600 mb-4">
               Let {selectedBuddy.name} suggest interesting places and itinerary adaptations for each day of your trip
@@ -222,57 +194,28 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
             </p>
             
             <div className="space-y-4 mt-4">
-              {tripDays.map(day => (
-                <Card key={day.dayNumber} className="p-4">
+              {tripDays.map(day => <Card key={day.dayNumber} className="p-4">
                   <div className="flex justify-between items-center">
                     <div>
                       <h4 className="font-medium">Day {day.dayNumber}: {day.city}</h4>
                       <p className="text-sm text-gray-500">{new Date(day.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}</p>
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}</p>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => handleOpenRecommendations(day)} 
-                      className="flex items-center gap-1"
-                    >
+                    <Button variant="outline" onClick={() => handleOpenRecommendations(day)} className="flex items-center gap-1">
                       <Compass className="h-4 w-4" /> Get Recommendations
                     </Button>
                   </div>
-                </Card>
-              ))}
+                </Card>)}
             </div>
-          </div>
-        )}
+          </div>}
       </div>
 
       {/* Modals */}
-      <ChatModal
-        isOpen={chatOpen}
-        onClose={handleCloseChat}
-        selectedBuddy={selectedBuddy}
-        messages={messages}
-        inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
-        loading={loading}
-        onSendMessage={handleSendMessage}
-      />
+      <ChatModal isOpen={chatOpen} onClose={handleCloseChat} selectedBuddy={selectedBuddy} messages={messages} inputMessage={inputMessage} setInputMessage={setInputMessage} loading={loading} onSendMessage={handleSendMessage} />
 
-      <RecommendationsModal
-        isOpen={recommendationsOpen}
-        onClose={() => setRecommendationsOpen(false)}
-        selectedDay={selectedDay}
-        recommendationTab={recommendationTab}
-        setRecommendationTab={setRecommendationTab}
-        recommendations={recommendations}
-        recommendationsLoading={recommendationsLoading}
-        adaptationRequest={adaptationRequest}
-        setAdaptationRequest={setAdaptationRequest}
-        selectedBuddy={selectedBuddy}
-        handleGetRecommendations={handleGetRecommendations}
-      />
-    </div>
-  );
+      <RecommendationsModal isOpen={recommendationsOpen} onClose={() => setRecommendationsOpen(false)} selectedDay={selectedDay} recommendationTab={recommendationTab} setRecommendationTab={setRecommendationTab} recommendations={recommendations} recommendationsLoading={recommendationsLoading} adaptationRequest={adaptationRequest} setAdaptationRequest={setAdaptationRequest} selectedBuddy={selectedBuddy} handleGetRecommendations={handleGetRecommendations} />
+    </div>;
 };
