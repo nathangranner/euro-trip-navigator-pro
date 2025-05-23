@@ -1,19 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 import { translateText, getSupportedLanguages, TranslationResult } from "@/services/TranslationService";
-import { Loader2, Languages, ArrowDown, VolumeX, Volume2, ArrowRightLeft, Key, LogIn } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { getApiKey, saveApiKey, hasApiKey, clearApiKey } from "@/utils/storageUtils";
-import { Modal } from "@/components/ui/modal";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { getApiKey, saveApiKey, hasApiKey } from "@/utils/storageUtils";
 import { supabase } from "@/integrations/supabase/client";
+import { TranslationForm } from './translation/TranslationForm';
+import { TranslationResult as TranslationResultComponent } from './translation/TranslationResult';
+import { TranslationHistory } from './translation/TranslationHistory';
+import { AuthNotice } from './translation/AuthNotice';
+import { LoginModal } from './translation/LoginModal';
+import { ApiKeyModal } from './translation/ApiKeyModal';
+import { TranslationHistory as TranslationHistoryType } from './translation/types';
 
 export const TranslationTool: React.FC = () => {
   const [inputText, setInputText] = useState("");
@@ -21,7 +20,7 @@ export const TranslationTool: React.FC = () => {
   const [targetLanguage, setTargetLanguage] = useState("Italian");
   const [translation, setTranslation] = useState<TranslationResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [recentTranslations, setRecentTranslations] = useState<Array<{input: string, result: TranslationResult, source: string, target: string}>>([]);
+  const [recentTranslations, setRecentTranslations] = useState<TranslationHistoryType[]>([]);
   const [apiKey, setApiKey] = useState<string>("");
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -212,6 +211,13 @@ export const TranslationTool: React.FC = () => {
       toast.error("Speech synthesis not supported in this browser");
     }
   };
+
+  const handleSelectTranslation = (historyItem: TranslationHistoryType) => {
+    setInputText(historyItem.input);
+    setSourceLanguage(historyItem.source);
+    setTargetLanguage(historyItem.target);
+    setTranslation(historyItem.result);
+  };
   
   if (checkingUser) {
     return (
@@ -230,203 +236,56 @@ export const TranslationTool: React.FC = () => {
       <p className="text-gray-600 mb-6">Translate phrases during your European adventure</p>
       
       {!isLoggedIn && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-md">
-          <div className="flex items-center">
-            <LogIn className="h-5 w-5 text-amber-500 mr-2" />
-            <p className="text-amber-800 font-medium">Sign in to save your API key</p>
-          </div>
-          <p className="text-sm text-amber-700 mt-1">
-            Log in or create an account to securely store your OpenRouter API key for future sessions.
-          </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShowLoginModal(true)} 
-            className="mt-2"
-          >
-            Login or Sign up
-          </Button>
-        </div>
+        <AuthNotice onShowLogin={() => setShowLoginModal(true)} />
       )}
       
-      <div className="space-y-4">
-        <div>
-          <Textarea
-            placeholder="Enter text to translate..."
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            className="resize-none h-24"
-          />
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="From language" />
-            </SelectTrigger>
-            <SelectContent>
-              {sourceLanguages.map(lang => (
-                <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={swapLanguages}
-            disabled={sourceLanguage === "Auto-detect"}
-            className="flex-shrink-0"
-          >
-            <ArrowRightLeft className="h-4 w-4" />
-          </Button>
-          
-          <Select value={targetLanguage} onValueChange={setTargetLanguage}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="To language" />
-            </SelectTrigger>
-            <SelectContent>
-              {languages.map(lang => (
-                <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <Button onClick={handleTranslate} disabled={loading || !inputText.trim()} className="w-full">
-          {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Languages className="h-4 w-4 mr-2" />}
-          Translate
-        </Button>
-        
-        {translation && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-md">
-            <div className="flex justify-between items-start">
-              <div>
-                <Badge className="mb-2">{targetLanguage}</Badge>
-                <p className="text-lg font-medium">{translation.translatedText}</p>
-                {translation.pronunciation && (
-                  <p className="text-sm text-gray-600 italic mt-1">
-                    {translation.pronunciation}
-                  </p>
-                )}
-              </div>
-              <Button 
-                size="icon"
-                variant="ghost" 
-                onClick={() => speak(translation.translatedText, targetLanguage)}
-              >
-                <Volume2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-        
-        {recentTranslations.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Recent Translations</h3>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {recentTranslations.map((item, index) => (
-                <Card key={index} className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => {
-                  setInputText(item.input);
-                  setSourceLanguage(item.source);
-                  setTargetLanguage(item.target);
-                  setTranslation(item.result);
-                }}>
-                  <div className="flex justify-between">
-                    <div className="truncate max-w-[70%]">
-                      <span className="text-sm font-medium">{item.input}</span>
-                      <p className="text-xs text-gray-600 truncate">{item.result.translatedText}</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <Badge variant="outline" className="text-xs">{item.source}</Badge>
-                      <ArrowDown className="h-3 w-3 mt-1" />
-                      <Badge variant="outline" className="text-xs">{item.target}</Badge>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      <TranslationForm
+        inputText={inputText}
+        setInputText={setInputText}
+        sourceLanguage={sourceLanguage}
+        setSourceLanguage={setSourceLanguage}
+        targetLanguage={targetLanguage}
+        setTargetLanguage={setTargetLanguage}
+        onTranslate={handleTranslate}
+        loading={loading}
+        sourceLanguages={sourceLanguages}
+        targetLanguages={languages}
+        onSwapLanguages={swapLanguages}
+      />
+      
+      {translation && (
+        <TranslationResultComponent
+          translation={translation}
+          targetLanguage={targetLanguage}
+          onSpeak={speak}
+        />
+      )}
+      
+      <TranslationHistory
+        recentTranslations={recentTranslations}
+        onSelectTranslation={handleSelectTranslation}
+      />
       
       {/* API Key Modal */}
-      <Modal 
-        isOpen={showApiKeyModal} 
-        onClose={() => setShowApiKeyModal(false)} 
-        title="Set OpenRouter API Key" 
-        footer={
-          <Button onClick={handleSaveApiKey} className="ml-auto">
-            Save API Key
-          </Button>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            To use the translation feature, you need an OpenRouter API key. 
-            Get your key at <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">openrouter.ai</a>.
-          </p>
-          
-          <Input 
-            type="password" 
-            value={apiKey} 
-            onChange={e => setApiKey(e.target.value)} 
-            placeholder="sk-or-v1-xxxxxxxx" 
-            className="w-full" 
-          />
-          
-          <p className="text-xs text-gray-500">
-            Your API key will be securely stored in your account for future use.
-          </p>
-        </div>
-      </Modal>
+      <ApiKeyModal
+        isOpen={showApiKeyModal}
+        onClose={() => setShowApiKeyModal(false)}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
+        onSave={handleSaveApiKey}
+      />
       
       {/* Login Modal */}
-      <Modal 
-        isOpen={showLoginModal} 
-        onClose={() => setShowLoginModal(false)} 
-        title="Login or Create Account" 
-        footer={
-          <div className="flex justify-between w-full">
-            <Button onClick={handleSignup} variant="outline">
-              Sign Up
-            </Button>
-            <Button onClick={handleLogin}>
-              Login
-            </Button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Please log in or create an account to securely store your API key.
-          </p>
-          
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input 
-              id="email"
-              type="email" 
-              value={email} 
-              onChange={e => setEmail(e.target.value)} 
-              placeholder="your@email.com" 
-              className="w-full mt-1" 
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input 
-              id="password"
-              type="password" 
-              value={password} 
-              onChange={e => setPassword(e.target.value)} 
-              placeholder="********" 
-              className="w-full mt-1" 
-            />
-          </div>
-        </div>
-      </Modal>
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        onLogin={handleLogin}
+        onSignup={handleSignup}
+      />
     </Card>
   );
 };
