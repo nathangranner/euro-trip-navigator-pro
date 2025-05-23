@@ -2,79 +2,19 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Modal } from "@/components/ui/modal";
-import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map, Ambulance, Key, Settings, LogIn } from "lucide-react";
+import { Loader2, MessageCircle, User, Key, Settings, LogIn } from "lucide-react";
 import { saveApiKey, getApiKey, hasApiKey, clearApiKey } from "@/utils/storageUtils";
-import { europeTrip, TripDay, PointOfInterest } from '@/data/tripData';
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { europeTrip, TripDay } from '@/data/tripData';
 import { supabase } from "@/integrations/supabase/client";
-
-interface TravelBuddyMessage {
-  role: "user" | "assistant" | "system";
-  content: string;
-}
-interface TravelBuddy {
-  id: string;
-  name: string;
-  avatar: string;
-  description: string;
-  model: string;
-  systemPrompt: string;
-}
-interface RecommendationRequest {
-  dayNumber: number;
-  city: string;
-  type: "dining" | "attractions" | "events" | "adaptation";
-  context: string;
-}
-interface TravelBuddySelectorProps {
-  onOpenChat?: () => void;
-  isChatOpen?: boolean;
-  setIsChatOpen?: (isOpen: boolean) => void;
-}
-const TRAVEL_BUDDIES: TravelBuddy[] = [{
-  id: "claude",
-  name: "Sophie",
-  avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format",
-  description: "Worldly travel expert with knowledge of European history and culture",
-  model: "anthropic/claude-3-opus",
-  systemPrompt: "You are Sophie, a worldly travel expert with extensive knowledge of European history, culture, and hidden gems. You specialize in Italy, Switzerland, and Germany. Be conversational, warm, and personable. Provide specific, actionable travel advice when asked. You have extensive knowledge about European customs, local foods, and off-the-beaten-path destinations. If asked about something outside your expertise, politely redirect to travel-related topics you can help with."
-}, {
-  id: "gpt4o",
-  name: "Marco",
-  avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=100&auto=format",
-  description: "Local European guide with insider knowledge of restaurants and activities",
-  model: "openai/gpt-4o",
-  systemPrompt: "You are Marco, a local European guide with insider knowledge of the best restaurants, activities, and hidden spots across Italy, Switzerland, and Germany. You have lived in these countries for years and know the authentic experiences tourists often miss. Be friendly, enthusiastic, and speak casually as if talking to a friend. Focus on providing specific recommendations with local insights when asked. You excel at suggesting food, entertainment options, and how to interact with locals."
-}, {
-  id: "llama",
-  name: "Professor Ludwig",
-  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100&auto=format",
-  description: "History professor specializing in European art and architecture",
-  model: "meta/llama-3-70b-instruct",
-  systemPrompt: "You are Professor Ludwig, a history professor specializing in European art and architecture with decades of experience. You provide fascinating historical context for landmarks and cities in Italy, Switzerland, and Germany. Speak in a slightly formal but approachable manner, showing enthusiasm when discussing historical subjects. You excel at explaining the historical significance of buildings, artwork, and monuments. When asked questions, focus on providing educational and enriching responses that add depth to a traveler's experience."
-}, {
-  id: "navigator",
-  name: "Olivia",
-  avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format",
-  description: "Road trip navigator with expertise on European driving regulations and routes",
-  model: "openai/gpt-4o",
-  systemPrompt: "You are Olivia, a road trip navigator with detailed knowledge of European driving regulations, road signs, and optimal routes. You specialize in calculating travel times, interpreting European road signs, suggesting efficient routes, and providing information about tolls, speed limits, and driving customs in Italy, Switzerland, and Germany. Be practical, precise, and helpful. Respond clearly to questions about distances, driving times, and road regulations. You excel at explaining the meanings of road signs and symbols, providing real-time navigation help, and suggesting the most scenic or efficient routes between destinations."
-}, {
-  id: "health",
-  name: "Dr. Elena",
-  avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=100&auto=format",
-  description: "Experienced travel doctor with medical expertise for travelers in Europe",
-  model: "anthropic/claude-3-opus",
-  systemPrompt: "You are Dr. Elena, an experienced travel physician who has worked across Europe and traveled extensively throughout Italy, Switzerland, and Germany. You provide practical medical advice for travelers dealing with common travel health issues, medication information, and emergency guidance. You can explain local healthcare systems, help find pharmacies or medical facilities, and offer advice on travel insurance. You're knowledgeable about altitude sickness in the Alps, food safety, dealing with jet lag, and staying healthy while traveling. Your advice is practical, calming, and accessible to non-medical travelers. Always remind users that you provide general guidance, not diagnosis, and to seek professional medical help for serious conditions."
-}];
+import { TravelBuddy, TravelBuddyMessage, TravelBuddySelectorProps } from './travel-buddy/types';
+import { TRAVEL_BUDDIES } from './travel-buddy/travel-buddy-data';
+import { TravelBuddyCard } from './travel-buddy/TravelBuddyCard';
+import { ApiKeyModal } from './travel-buddy/ApiKeyModal';
+import { ApiSettingsModal } from './travel-buddy/ApiSettingsModal';
+import { LoginModal } from './travel-buddy/LoginModal';
+import { ChatModal } from './travel-buddy/ChatModal';
+import { RecommendationsModal } from './travel-buddy/RecommendationsModal';
 
 export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   onOpenChat,
@@ -267,10 +207,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }
   };
 
-  const swapLanguages = () => {
-    // Function left empty - not used in this component but kept for consistency
-  };
-
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedBuddy || !apiKey) return;
     
@@ -460,24 +396,12 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {TRAVEL_BUDDIES.map(buddy => (
-          <Card 
-            key={buddy.id} 
-            className={`p-4 cursor-pointer transition-all hover:shadow-md ${selectedBuddy?.id === buddy.id ? 'ring-2 ring-blue-500 shadow-md' : ''}`} 
-            onClick={() => handleSelectBuddy(buddy)}
-          >
-            <div className="flex items-center mb-3">
-              <img 
-                src={buddy.avatar} 
-                alt={buddy.name} 
-                className="w-12 h-12 rounded-full mr-3 object-cover" 
-              />
-              <div>
-                <h3 className="font-semibold">{buddy.name}</h3>
-                <p className="text-sm text-gray-500">{buddy.model.split('/')[0]}</p>
-              </div>
-            </div>
-            <p className="text-sm">{buddy.description}</p>
-          </Card>
+          <TravelBuddyCard
+            key={buddy.id}
+            buddy={buddy}
+            isSelected={selectedBuddy?.id === buddy.id}
+            onSelect={handleSelectBuddy}
+          />
         ))}
       </div>
       
@@ -531,356 +455,58 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
         )}
       </div>
 
-      {/* API Key Modal */}
-      <Modal 
-        isOpen={showApiKeyModal} 
-        onClose={() => setShowApiKeyModal(false)} 
-        title="Set OpenRouter API Key" 
-        footer={
-          <Button onClick={handleSaveApiKey} className="ml-auto">
-            Save API Key
-          </Button>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            To use the travel buddy feature, you need an OpenRouter API key. 
-            Get your key at <a href="https://openrouter.ai" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">openrouter.ai</a>.
-          </p>
-          
-          <Input 
-            type="password" 
-            value={apiKey} 
-            onChange={e => setApiKey(e.target.value)} 
-            placeholder="sk-or-v1-xxxxxxxx" 
-            className="w-full" 
-          />
-          
-          <p className="text-xs text-gray-500">
-            Your API key will be securely stored in your account for future use.
-          </p>
-        </div>
-      </Modal>
+      {/* Modals */}
+      <ApiKeyModal
+        isOpen={showApiKeyModal}
+        onClose={() => setShowApiKeyModal(false)}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
+        onSave={handleSaveApiKey}
+      />
       
-      {/* API Settings Modal */}
-      <Modal 
-        isOpen={showApiSettingsModal} 
-        onClose={() => setShowApiSettingsModal(false)} 
-        title="API Key Settings" 
-        footer={
-          <div className="flex justify-between w-full">
-            <Button 
-              onClick={handleClearApiKey} 
-              variant="destructive"
-            >
-              Remove API Key
-            </Button>
-            <Button 
-              onClick={() => setShowApiSettingsModal(false)} 
-              variant="outline"
-            >
-              Close
-            </Button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-medium mb-2">OpenRouter API Key</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Your API key is securely stored in your Supabase account.
-            </p>
-            
-            <div className="flex items-center space-x-2 mb-4">
-              <Input 
-                type="password" 
-                value={apiKey} 
-                onChange={e => setApiKey(e.target.value)} 
-                className="flex-1" 
-                placeholder="sk-or-v1-xxxxxxxx"
-              />
-              <Button 
-                onClick={async () => {
-                  if (apiKey.trim()) {
-                    const success = await saveApiKey("openrouter", apiKey.trim());
-                    if (success) {
-                      toast.success("API key updated");
-                    } else {
-                      toast.error("Failed to update API key");
-                    }
-                  } else {
-                    toast.error("Please enter a valid API key");
-                  }
-                }}
-                size="sm"
-              >
-                Update
-              </Button>
-            </div>
-          </div>
-          
-          <div className="text-xs text-gray-500 border-t pt-4 mt-4">
-            <p>Your API key is stored securely and used for:</p>
-            <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li>Travel buddy conversations</li>
-              <li>City recommendations</li>
-              <li>Translation services</li>
-            </ul>
-          </div>
-        </div>
-      </Modal>
+      <ApiSettingsModal
+        isOpen={showApiSettingsModal}
+        onClose={() => setShowApiSettingsModal(false)}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
+        onClearApiKey={handleClearApiKey}
+      />
 
-      {/* Login Modal */}
-      <Modal 
-        isOpen={showLoginModal} 
-        onClose={() => setShowLoginModal(false)} 
-        title="Login or Create Account" 
-        footer={
-          <div className="flex justify-between w-full">
-            <Button onClick={handleSignup} variant="outline">
-              Sign Up
-            </Button>
-            <Button onClick={handleLogin}>
-              Login
-            </Button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Please log in or create an account to securely store your API key.
-          </p>
-          
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input 
-              id="email"
-              type="email" 
-              value={email} 
-              onChange={e => setEmail(e.target.value)} 
-              placeholder="your@email.com" 
-              className="w-full mt-1" 
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input 
-              id="password"
-              type="password" 
-              value={password} 
-              onChange={e => setPassword(e.target.value)} 
-              placeholder="********" 
-              className="w-full mt-1" 
-            />
-          </div>
-        </div>
-      </Modal>
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        onLogin={handleLogin}
+        onSignup={handleSignup}
+      />
 
-      {/* Chat Modal */}
-      <Modal 
-        isOpen={chatOpen} 
-        onClose={handleCloseChat} 
-        title={selectedBuddy ? `Chat with ${selectedBuddy.name}` : "Chat with Travel Buddy"}
-      >
-        <div className="flex flex-col h-[60vh]">
-          <div className="flex-1 overflow-y-auto mb-4 space-y-4 p-4 bg-gray-50 rounded-md">
-            {messages.filter(msg => msg.role !== "system").map((message, index) => (
-              <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] p-3 rounded-lg ${message.role === "user" ? "bg-blue-500 text-white rounded-br-none" : "bg-white border rounded-bl-none shadow-sm"}`}>
-                  <div className="flex items-center mb-1">
-                    {message.role === "assistant" && selectedBuddy && (
-                      <img 
-                        src={selectedBuddy.avatar} 
-                        alt={selectedBuddy.name} 
-                        className="w-6 h-6 rounded-full mr-2 object-cover" 
-                      />
-                    )}
-                    <span className="text-xs font-medium">
-                      {message.role === "user" ? "You" : selectedBuddy?.name}
-                    </span>
-                  </div>
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                </div>
-              </div>
-            ))}
-            
-            {loading && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%] p-3 rounded-lg bg-white border rounded-bl-none shadow-sm">
-                  <div className="flex items-center">
-                    {selectedBuddy && (
-                      <img 
-                        src={selectedBuddy.avatar} 
-                        alt={selectedBuddy.name} 
-                        className="w-6 h-6 rounded-full mr-2 object-cover" 
-                      />
-                    )}
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          <div className="flex gap-2">
-            <Input 
-              placeholder="Ask your travel buddy a question..." 
-              value={inputMessage} 
-              onChange={e => setInputMessage(e.target.value)} 
-              onKeyPress={e => e.key === "Enter" && !loading && handleSendMessage()} 
-              className="flex-1" 
-              disabled={loading} 
-            />
-            <Button 
-              onClick={handleSendMessage} 
-              disabled={!inputMessage.trim() || loading} 
-              size="icon"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      <ChatModal
+        isOpen={chatOpen}
+        onClose={handleCloseChat}
+        selectedBuddy={selectedBuddy}
+        messages={messages}
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+        loading={loading}
+        onSendMessage={handleSendMessage}
+      />
 
-      {/* Recommendations Modal */}
-      <Modal 
-        isOpen={recommendationsOpen} 
-        onClose={() => setRecommendationsOpen(false)} 
-        title={selectedDay ? `Recommendations for ${selectedDay.city}` : "Recommendations"}
-      >
-        <div className="flex flex-col h-[60vh]">
-          <Tabs defaultValue="dining" value={recommendationTab} onValueChange={setRecommendationTab}>
-            <TabsList className="grid grid-cols-4 mb-4">
-              <TabsTrigger value="dining">Dining</TabsTrigger>
-              <TabsTrigger value="attractions">Attractions</TabsTrigger>
-              <TabsTrigger value="events">Events</TabsTrigger>
-              <TabsTrigger value="adaptation">Adaptation</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="dining">
-              <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2">Restaurant Recommendations</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Discover the best dining options in {selectedDay?.city}
-                </p>
-                <Button 
-                  onClick={() => handleGetRecommendations("dining")} 
-                  disabled={recommendationsLoading || !selectedBuddy} 
-                  className="mb-4"
-                >
-                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Star className="h-4 w-4 mr-2" />}
-                  Get Dining Recommendations
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="attractions">
-              <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2">Local Attractions</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Discover must-see sights and hidden gems in {selectedDay?.city}
-                </p>
-                <Button 
-                  onClick={() => handleGetRecommendations("attractions")} 
-                  disabled={recommendationsLoading || !selectedBuddy} 
-                  className="mb-4"
-                >
-                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <MapPin className="h-4 w-4 mr-2" />}
-                  Get Attraction Recommendations
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="events">
-              <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2">Special Events</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Discover timely events and activities in {selectedDay?.city}
-                </p>
-                <Button 
-                  onClick={() => handleGetRecommendations("events")} 
-                  disabled={recommendationsLoading || !selectedBuddy} 
-                  className="mb-4"
-                >
-                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Star className="h-4 w-4 mr-2" />}
-                  Get Event Recommendations
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="adaptation">
-              <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2">Itinerary Adaptation</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Need to change your plans? Get suggestions for adapting your itinerary
-                </p>
-                <Textarea 
-                  placeholder="Briefly describe why you need to adapt your itinerary (e.g., 'Museum is closed', 'Weather is bad', 'Want to try something different')" 
-                  value={adaptationRequest} 
-                  onChange={e => setAdaptationRequest(e.target.value)} 
-                  className="mb-4" 
-                />
-                <Button 
-                  onClick={() => handleGetRecommendations("adaptation")} 
-                  disabled={recommendationsLoading || !selectedBuddy} 
-                  className="mb-4"
-                >
-                  {recommendationsLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Compass className="h-4 w-4 mr-2" />}
-                  Get Adaptation Suggestions
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
-          
-          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 rounded-md">
-            {recommendationsLoading ? (
-              <div className="flex justify-center items-center h-full">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-              </div>
-            ) : recommendations ? (
-              <div className="whitespace-pre-wrap">
-                {recommendations}
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 h-full flex items-center justify-center">
-                <p>Click the button above to get recommendations from {selectedBuddy?.name}</p>
-              </div>
-            )}
-          </div>
-          
-          {selectedDay?.pointsOfInterest && selectedDay.pointsOfInterest.length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-md font-medium mb-2">Points of Interest in {selectedDay.city}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto p-2">
-                {selectedDay.pointsOfInterest.map((poi, index) => (
-                  <div key={index} className="flex items-start space-x-2 border rounded p-2">
-                    {poi.image && (
-                      <img 
-                        src={poi.image} 
-                        alt={poi.name} 
-                        className="w-16 h-16 object-cover rounded" 
-                      />
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{poi.name}</span>
-                        <Badge variant="outline">{poi.category}</Badge>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {poi.description.length > 100 ? `${poi.description.substring(0, 100)}...` : poi.description}
-                      </p>
-                      {poi.mustSee && (
-                        <Badge className="mt-1 bg-blue-100 text-blue-800 border-blue-300">Must See</Badge>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </Modal>
+      <RecommendationsModal
+        isOpen={recommendationsOpen}
+        onClose={() => setRecommendationsOpen(false)}
+        selectedDay={selectedDay}
+        recommendationTab={recommendationTab}
+        setRecommendationTab={setRecommendationTab}
+        recommendations={recommendations}
+        recommendationsLoading={recommendationsLoading}
+        adaptationRequest={adaptationRequest}
+        setAdaptationRequest={setAdaptationRequest}
+        selectedBuddy={selectedBuddy}
+        handleGetRecommendations={handleGetRecommendations}
+      />
     </div>
   );
 };
