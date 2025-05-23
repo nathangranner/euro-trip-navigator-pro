@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React from 'react';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EditDayModal } from './EditDayModal';
 import { EditActivityModal } from './EditActivityModal';
 import { TripBanner } from './trip/TripBanner';
@@ -14,10 +14,9 @@ import { TravelBuddySection } from './trip/TravelBuddySection';
 import { useTripState } from '@/hooks/useTripState';
 import { useTripCalculations } from '@/hooks/useTripCalculations';
 import { useMapHandlers } from '@/hooks/useMapHandlers';
+import { useTripTabs } from '@/hooks/useTripTabs';
 
 export const EuropeTripPlanner: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("itinerary");
-  
   const {
     tripDays,
     editingDay,
@@ -32,10 +31,7 @@ export const EuropeTripPlanner: React.FC = () => {
 
   const { expensesByDay, purchasesByDay } = useTripCalculations(tripDays);
   const { handleViewMap, handleEditLocation } = useMapHandlers();
-
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-  };
+  const { activeTab, handleTabChange } = useTripTabs();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -55,49 +51,37 @@ export const EuropeTripPlanner: React.FC = () => {
             <TabsTrigger value="translation">Translation</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="itinerary">
-            <ItineraryTab 
-              tripDays={tripDays}
-              onEditDay={handleEditDay}
-              onEditActivity={handleEditActivity}
-            />
-          </TabsContent>
+          <ItineraryTab 
+            tripDays={tripDays}
+            onEditDay={handleEditDay}
+            onEditActivity={handleEditActivity}
+          />
 
-          <TabsContent value="accommodations">
-            <AccommodationsTab 
-              tripDays={tripDays}
-              onViewMap={handleViewMap}
-              onEditLocation={handleEditLocation}
-            />
-          </TabsContent>
+          <AccommodationsTab 
+            tripDays={tripDays}
+            onViewMap={handleViewMap}
+            onEditLocation={handleEditLocation}
+          />
 
-          <TabsContent value="expenses">
-            <ExpensesTab 
-              expensesByDay={expensesByDay}
-              tripDays={tripDays}
-            />
-          </TabsContent>
+          <ExpensesTab 
+            expensesByDay={expensesByDay}
+            tripDays={tripDays}
+          />
 
-          <TabsContent value="purchases">
-            <PurchasesTab 
-              purchasesByDay={purchasesByDay}
-              tripDays={tripDays}
-            />
-          </TabsContent>
+          <PurchasesTab 
+            purchasesByDay={purchasesByDay}
+            tripDays={tripDays}
+          />
 
-          <TabsContent value="city-view">
-            <CityViewTab 
-              tripDays={tripDays}
-              onViewMap={handleViewMap}
-            />
-          </TabsContent>
+          <CityViewTab 
+            tripDays={tripDays}
+            onViewMap={handleViewMap}
+          />
 
-          <TabsContent value="translation">
-            <div className="space-y-6">
-              <TranslationTool />
-              <TravelBuddySection />
-            </div>
-          </TabsContent>
+          <div className="space-y-6">
+            <TranslationTool />
+            <TravelBuddySection />
+          </div>
         </Tabs>
 
         {editingDay && (
@@ -113,6 +97,7 @@ export const EuropeTripPlanner: React.FC = () => {
           <EditActivityModal
             isOpen={!!editingActivity}
             activity={editingActivity.activity}
+            dayId={editingActivity.dayId}
             onClose={() => setEditingActivity(null)}
             onSave={(updatedActivity) => handleSaveActivity(updatedActivity, editingActivity.dayId)}
           />
