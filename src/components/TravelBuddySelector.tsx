@@ -11,12 +11,10 @@ import { saveApiKey, getApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
   content: string;
 }
-
 interface TravelBuddy {
   id: string;
   name: string;
@@ -25,20 +23,17 @@ interface TravelBuddy {
   model: string;
   systemPrompt: string;
 }
-
 interface RecommendationRequest {
   dayNumber: number;
   city: string;
   type: "dining" | "attractions" | "events" | "adaptation";
   context: string;
 }
-
 interface TravelBuddySelectorProps {
   onOpenChat?: () => void;
   isChatOpen?: boolean;
   setIsChatOpen?: (isOpen: boolean) => void;
 }
-
 const TRAVEL_BUDDIES: TravelBuddy[] = [{
   id: "claude",
   name: "Sophie",
@@ -75,11 +70,10 @@ const TRAVEL_BUDDIES: TravelBuddy[] = [{
   model: "anthropic/claude-3-opus",
   systemPrompt: "You are Dr. Elena, an experienced travel physician who has worked across Europe and traveled extensively throughout Italy, Switzerland, and Germany. You provide practical medical advice for travelers dealing with common travel health issues, medication information, and emergency guidance. You can explain local healthcare systems, help find pharmacies or medical facilities, and offer advice on travel insurance. You're knowledgeable about altitude sickness in the Alps, food safety, dealing with jet lag, and staying healthy while traveling. Your advice is practical, calming, and accessible to non-medical travelers. Always remind users that you provide general guidance, not diagnosis, and to seek professional medical help for serious conditions."
 }];
-
-export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({ 
-  onOpenChat, 
-  isChatOpen = false, 
-  setIsChatOpen = () => {} 
+export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
+  onOpenChat,
+  isChatOpen = false,
+  setIsChatOpen = () => {}
 }) => {
   const [selectedBuddy, setSelectedBuddy] = useState<TravelBuddy | null>(null);
   const [chatOpen, setChatOpen] = useState(isChatOpen);
@@ -100,7 +94,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   useEffect(() => {
     setChatOpen(isChatOpen);
   }, [isChatOpen]);
-
   useEffect(() => {
     const storedApiKey = getApiKey("openrouter");
     if (storedApiKey) {
@@ -110,7 +103,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       setShowApiKeyModal(true);
     }
   }, []);
-
   const handleSelectBuddy = (buddy: TravelBuddy) => {
     setSelectedBuddy(buddy);
     setMessages([{
@@ -119,7 +111,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }]);
     toast.success(`${buddy.name} is now your travel buddy!`);
   };
-
   const handleStartChat = () => {
     if (!apiKey) {
       setShowApiKeyModal(true);
@@ -135,12 +126,10 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       toast.error("Please select a travel buddy first");
     }
   };
-
   const handleCloseChat = () => {
     setChatOpen(false);
     setIsChatOpen(false);
   };
-
   const handleSaveApiKey = () => {
     if (apiKey.trim()) {
       saveApiKey("openrouter", apiKey.trim());
@@ -150,7 +139,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       toast.error("Please enter a valid API key");
     }
   };
-
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedBuddy || !apiKey) return;
     const userMessage = {
@@ -201,13 +189,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       setLoading(false);
     }
   };
-
   const handleOpenRecommendations = (day: TripDay) => {
     setSelectedDay(day);
     setRecommendationTab("dining");
     setRecommendationsOpen(true);
   };
-
   const handleGetRecommendations = async (type: string) => {
     if (!selectedDay || !selectedBuddy || !apiKey) return;
     setRecommendationsLoading(true);
@@ -276,9 +262,9 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       setRecommendationsLoading(false);
     }
   };
-
   return <div>
-      <h2 className="text-2xl font-semibold mb-4">Choose Your Travel Buddy</h2>
+      <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge
+CONCIERGE</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
@@ -296,11 +282,7 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       
       <div className="flex flex-col gap-4">
         <div>
-          <Button 
-            onClick={handleStartChat} 
-            disabled={!selectedBuddy} 
-            className="px-6 flex items-center gap-2"
-          >
+          <Button onClick={handleStartChat} disabled={!selectedBuddy} className="px-6 flex items-center gap-2">
             <MessageCircle className="h-4 w-4" />
             Chat with {selectedBuddy ? selectedBuddy.name : "your buddy"}
           </Button>
