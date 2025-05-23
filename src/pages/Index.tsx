@@ -37,7 +37,7 @@ const Index = () => {
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
         <div className="absolute inset-0 w-full h-[120vh]" style={{
-        backgroundImage: "url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2000&auto=format&fit=crop')",
+        backgroundImage: "url('https://images.unsplash.com/photo-1576788498981-244a7a4f8d5d?q=80&w=2000&auto=format&fit=crop')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         filter: "brightness(0.6) contrast(1.1)"
