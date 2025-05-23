@@ -66,18 +66,23 @@ const Index = () => {
           </p>
 
           <div className="mt-12">
-            <div onClick={handleEnvelopeClick} className={`italianate-envelope ${isEnvelopeOpen ? 'italianate-envelope-open' : ''}`}>
-              <div className="italianate-envelope-front">
-                <div className="italianate-envelope-flap"></div>
-                <div className="italianate-envelope-back"></div>
-                <div className="italianate-envelope-icon">
-                  {isEnvelopeOpen ? <MailOpen className="w-3 h-3" /> : <Mail className="w-3 h-3" />}
-                </div>
-                <div className="italianate-filigree-tl"></div>
-                <div className="italianate-filigree-tr"></div>
-                <div className="italianate-filigree-bl"></div>
-                <div className="italianate-filigree-br"></div>
-                <div className="italianate-filigree-center"></div>
+            <div onClick={handleEnvelopeClick} className={`duomo-container ${isEnvelopeOpen ? 'duomo-open' : ''}`}>
+              <div className="duomo-main">
+                <div className="duomo-body"></div>
+                <div className="duomo-central-spire"></div>
+                <div className="duomo-side-spire-left"></div>
+                <div className="duomo-side-spire-right"></div>
+                <div className="duomo-arch-left"></div>
+                <div className="duomo-arch-right"></div>
+                <div className="duomo-rose-window"></div>
+                <div className="duomo-portal"></div>
+                <div className="duomo-buttress-left"></div>
+                <div className="duomo-buttress-right"></div>
+                <div className="duomo-filigree-tl"></div>
+                <div className="duomo-filigree-tr"></div>
+                <div className="duomo-filigree-bl"></div>
+                <div className="duomo-filigree-br"></div>
+                <div className="duomo-filigree-center"></div>
               </div>
             </div>
           </div>

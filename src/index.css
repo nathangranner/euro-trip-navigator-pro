@@ -663,3 +663,341 @@
   transform: rotateX(15deg);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+
+/* Duomo Line Drawing Styles */
+.duomo-container {
+  position: relative;
+  width: 100px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 800px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  margin: 0 auto;
+}
+
+.duomo-container:hover {
+  transform: translateY(-3px);
+}
+
+.duomo-main {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Main cathedral body */
+.duomo-body {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 60%;
+  height: 50%;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+  border-radius: 0;
+}
+
+.duomo-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+.duomo-body::after {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+/* Central spire */
+.duomo-central-spire {
+  position: absolute;
+  bottom: 50%;
+  left: 45%;
+  width: 10%;
+  height: 40%;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+}
+
+.duomo-central-spire::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 8px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-central-spire::after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+/* Side spires */
+.duomo-side-spire-left {
+  position: absolute;
+  bottom: 50%;
+  left: 25%;
+  width: 8%;
+  height: 25%;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+}
+
+.duomo-side-spire-right {
+  position: absolute;
+  bottom: 50%;
+  right: 25%;
+  width: 8%;
+  height: 25%;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+}
+
+/* Gothic arches */
+.duomo-arch-left {
+  position: absolute;
+  bottom: 25%;
+  left: 25%;
+  width: 15%;
+  height: 15%;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-radius: 50% 50% 0 0;
+}
+
+.duomo-arch-right {
+  position: absolute;
+  bottom: 25%;
+  right: 25%;
+  width: 15%;
+  height: 15%;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-radius: 50% 50% 0 0;
+}
+
+/* Rose window */
+.duomo-rose-window {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-radius: 50%;
+}
+
+.duomo-rose-window::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+.duomo-rose-window::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+/* Main portal */
+.duomo-portal {
+  position: absolute;
+  bottom: 0;
+  left: 42.5%;
+  width: 15%;
+  height: 30%;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+  border-radius: 50% 50% 0 0;
+}
+
+.duomo-portal::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-radius: 50% 50% 0 0;
+}
+
+/* Flying buttresses */
+.duomo-buttress-left {
+  position: absolute;
+  bottom: 30%;
+  left: 10%;
+  width: 20%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+  transform: rotate(15deg);
+  transform-origin: right;
+}
+
+.duomo-buttress-right {
+  position: absolute;
+  bottom: 30%;
+  right: 10%;
+  width: 20%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+  transform: rotate(-15deg);
+  transform-origin: left;
+}
+
+/* Filigree decorations - reusing the same classes from envelope */
+.duomo-filigree-tl,
+.duomo-filigree-tr,
+.duomo-filigree-bl,
+.duomo-filigree-br {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.duomo-filigree-tl {
+  top: -5px;
+  left: -5px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-tl::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  top: 3px;
+  left: 3px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-tr {
+  top: -5px;
+  right: -5px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-tr::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  top: 3px;
+  right: 3px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-bl {
+  bottom: -5px;
+  left: -5px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-bl::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  bottom: 3px;
+  left: 3px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-br {
+  bottom: -5px;
+  right: -5px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-br::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  bottom: 3px;
+  right: 3px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.duomo-filigree-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+}
+
+.duomo-filigree-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(255, 240, 200, 0.5);
+  border-radius: 50%;
+}
+
+.duomo-filigree-center::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  border: 1px solid rgba(255, 240, 200, 0.5);
+  border-radius: 50%;
+}
+
+/* Duomo open animation */
+.duomo-open .duomo-main {
+  transform: rotateX(10deg);
+}
+
+.duomo-open .duomo-central-spire {
+  opacity: 0;
+  transform: scale(0.6);
+}
