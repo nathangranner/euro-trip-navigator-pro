@@ -1,7 +1,7 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Keys for offline storage
-const OFFLINE_MODE_KEY = "offline_mode";
 const OFFLINE_QUEUE_KEY = "offline_queue";
 const LAST_SYNC_KEY = "last_sync_timestamp";
 
@@ -10,41 +10,25 @@ export const isOnline = (): boolean => {
   return navigator.onLine;
 };
 
-// Toggle offline mode manually (user preference)
-export const toggleOfflineMode = (forceOffline?: boolean): boolean => {
-  const currentMode = getOfflineMode();
-  const newMode = forceOffline !== undefined ? forceOffline : !currentMode;
-  localStorage.setItem(OFFLINE_MODE_KEY, JSON.stringify(newMode));
-  return newMode;
-};
-
-// Get current offline mode status
-export const getOfflineMode = (): boolean => {
-  const stored = localStorage.getItem(OFFLINE_MODE_KEY);
-  return stored ? JSON.parse(stored) : false;
+// Get the offline operation queue
+export const getOfflineQueue = (): Array<{
+  type: string;
+  data: any;
+  timestamp: number;
+}> => {
+  const stored = localStorage.getItem(OFFLINE_QUEUE_KEY);
+  return stored ? JSON.parse(stored) : [];
 };
 
 // Add operation to offline queue
 export const addToOfflineQueue = (operation: {
   type: string;
-  table: string;
   data: any;
   timestamp: number;
 }): void => {
   const queue = getOfflineQueue();
   queue.push(operation);
   localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
-};
-
-// Get the offline operation queue
-export const getOfflineQueue = (): Array<{
-  type: string;
-  table: string;
-  data: any;
-  timestamp: number;
-}> => {
-  const stored = localStorage.getItem(OFFLINE_QUEUE_KEY);
-  return stored ? JSON.parse(stored) : [];
 };
 
 // Clear the offline queue
@@ -63,6 +47,11 @@ export const getLastSyncTimestamp = (): number => {
   return stored ? parseInt(stored, 10) : 0;
 };
 
+// Check if there are pending changes to sync
+export const hasPendingChanges = (): boolean => {
+  return getOfflineQueue().length > 0;
+};
+
 // Process offline queue when connectivity is restored
 export const processOfflineQueue = async (): Promise<boolean> => {
   if (!isOnline()) return false;
@@ -75,32 +64,15 @@ export const processOfflineQueue = async (): Promise<boolean> => {
     
     for (const operation of queue) {
       try {
+        // Currently we only support trip_update operations
+        // which are already stored in localStorage
         switch (operation.type) {
-          case "insert":
-            await supabase.from(operation.table).insert(operation.data);
-            break;
-          case "update":
-            if (operation.data.id) {
-              await supabase
-                .from(operation.table)
-                .update(operation.data)
-                .eq("id", operation.data.id);
-            }
-            break;
-          case "delete":
-            if (operation.data.id) {
-              await supabase
-                .from(operation.table)
-                .delete()
-                .eq("id", operation.data.id);
-            }
-            break;
           case "trip_update":
-            // Special case for trip data which is stored in localStorage
-            // No server-side action needed as it's already in localStorage
+            // Trip data is already in localStorage, no server-side action needed
+            console.log("Trip data already updated in localStorage");
             break;
           default:
-            console.warn(`Unknown operation type: ${operation.type}`);
+            console.log(`Skipping operation type: ${operation.type} - not supported for server sync`);
         }
       } catch (err) {
         console.error(`Error processing operation: ${JSON.stringify(operation)}`, err);
@@ -122,84 +94,47 @@ export const processOfflineQueue = async (): Promise<boolean> => {
 export const initOfflineListeners = (): void => {
   window.addEventListener("online", async () => {
     console.log("Network connection restored");
-    if (!getOfflineMode()) {
-      // Only auto-sync if user hasn't manually enabled offline mode
-      await processOfflineQueue();
-    }
+    // Auto-sync when connection is restored
+    await processOfflineQueue();
   });
   
   window.addEventListener("offline", () => {
     console.log("Network connection lost");
-    // We don't need to do anything special here,
-    // as operations will automatically be queued when offline
+    // Operations will automatically be queued when offline
   });
 };
 
 // Perform offline-compatible data operations
 export const offlineDataOperation = async (
   type: string,
-  table: string,
   data: any
 ): Promise<any> => {
   const timestamp = Date.now();
-  const operation = { type, table, data, timestamp };
+  const operation = { type, data, timestamp };
   
-  // If we're offline or in offline mode, queue the operation
-  if (!isOnline() || getOfflineMode()) {
+  // If we're offline, queue the operation
+  if (!isOnline()) {
     addToOfflineQueue(operation);
-    console.log(`Added to offline queue: ${type} on ${table}`);
+    console.log(`Added to offline queue: ${type}`);
     
-    // For trip data specifically, we update localStorage directly
-    if (table === "trip_days" || table.includes("trip")) {
-      // This is handled by the existing localStorage utils
-      return { data: operation.data, offline: true };
-    }
-    
-    return { offline: true };
+    // For trip data specifically, no additional action needed
+    // as it's already handled by the localStorage utils
+    return { data: operation.data, offline: true };
   }
   
-  // Otherwise perform the operation online
-  try {
-    let result;
-    switch (type) {
-      case "insert":
-        result = await supabase.from(table).insert(data).select();
-        break;
-      case "update":
-        result = await supabase
-          .from(table)
-          .update(data)
-          .eq("id", data.id)
-          .select();
-        break;
-      case "delete":
-        result = await supabase
-          .from(table)
-          .delete()
-          .eq("id", data.id)
-          .select();
-        break;
-      default:
-        throw new Error(`Unknown operation type: ${type}`);
-    }
-    
-    return { ...result, offline: false };
-  } catch (err) {
-    console.error(`Failed to perform online operation: ${type} on ${table}`, err);
-    // Fall back to offline queue on error
-    addToOfflineQueue(operation);
-    return { error: err, offline: true };
-  }
+  // If we're online, we don't need to do anything special for trip data
+  // as it's already stored in localStorage
+  return { data, offline: false };
 };
 
 // Initialize everything
 export const initOfflineSupport = (): void => {
   initOfflineListeners();
   
-  // Try to process any pending operations immediately
-  if (isOnline() && !getOfflineMode()) {
+  // Try to process any pending operations immediately if online
+  if (isOnline()) {
     processOfflineQueue().then(success => {
-      if (success) {
+      if (success && hasPendingChanges()) {
         console.log("Successfully processed offline queue");
       }
     });

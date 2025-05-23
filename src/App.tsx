@@ -10,19 +10,19 @@ import TripSummary from "./pages/TripSummary";
 import TravelConciergePage from "./pages/TravelConciergePage";
 import { EuropeTripPlanner } from "./components/EuropeTripPlanner";
 import NavHome from "./components/NavHome";
-import { initOfflineSupport, isOnline, getOfflineMode } from "./utils/offlineStorageUtils";
+import { initOfflineSupport, isOnline } from "./utils/offlineStorageUtils";
 import { toast } from "./components/ui/use-toast";
 import { OfflineStatusBar } from "./components/OfflineStatusBar";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Enable retries with exponential backoff for offline scenarios
+      // Don't retry if we're offline
       retry: (failureCount, error) => {
         // Don't retry more than 3 times
         if (failureCount > 3) return false;
-        // Don't retry if we're offline or in offline mode
-        if (!isOnline() || getOfflineMode()) return false;
+        // Don't retry if we're offline
+        if (!isOnline()) return false;
         return true;
       },
       // Keep data fresh for 5 minutes
