@@ -1,116 +1,40 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Euro, Users, Plane, Train, Car, Building, Utensils, Camera, ShoppingBag } from "lucide-react";
-import { ExpenseTracker } from './ExpenseTracker';
-import { PurchaseTracker } from './PurchaseTracker';
-import { TranslationTool } from './TranslationTool';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EditDayModal } from './EditDayModal';
 import { EditActivityModal } from './EditActivityModal';
 import { TripBanner } from './trip/TripBanner';
-import { CityBanner } from './trip/CityBanner';
 import { ItineraryTab } from './trip/ItineraryTab';
 import { AccommodationsTab } from './trip/AccommodationsTab';
 import { ExpensesTab } from './trip/ExpensesTab';
 import { PurchasesTab } from './trip/PurchasesTab';
 import { CityViewTab } from './trip/CityViewTab';
+import { TranslationTool } from './TranslationTool';
 import { TravelBuddySection } from './trip/TravelBuddySection';
+import { useTripState } from '@/hooks/useTripState';
 import { useTripCalculations } from '@/hooks/useTripCalculations';
-import { loadStoredData, saveTripDays } from '@/utils/storageUtils';
-import { europeTrip, TripDay, Activity } from '@/data/tripData';
+import { useMapHandlers } from '@/hooks/useMapHandlers';
 
 export const EuropeTripPlanner: React.FC = () => {
-  
-  const [tripDays, setTripDays] = useState<TripDay[]>([]);
-  const [editingDay, setEditingDay] = useState<TripDay | null>(null);
-  const [editingActivity, setEditingActivity] = useState<{ activity: Activity; dayId: string } | null>(null);
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("itinerary");
+  
+  const {
+    tripDays,
+    editingDay,
+    editingActivity,
+    handleEditDay,
+    handleSaveDay,
+    handleEditActivity,
+    handleSaveActivity,
+    setEditingDay,
+    setEditingActivity
+  } = useTripState();
 
-  const { 
-    totalBudget, 
-    totalExpenses, 
-    remainingBudget, 
-    totalDays, 
-    completedDays,
-    expensesByDay,
-    purchasesByDay 
-  } = useTripCalculations(tripDays);
-
-  useEffect(() => {
-    const storedData = loadStoredData();
-    if (storedData.tripDays && storedData.tripDays.length > 0) {
-      setTripDays(storedData.tripDays);
-    } else {
-      setTripDays(europeTrip.days);
-    }
-  }, []);
-
-  const updateTripDays = (newTripDays: TripDay[]) => {
-    setTripDays(newTripDays);
-    saveTripDays(newTripDays);
-  };
-
-  const handleEditDay = (day: TripDay) => {
-    setEditingDay(day);
-  };
-
-  const handleSaveDay = (updatedDay: TripDay) => {
-    const updatedTripDays = tripDays.map(day => 
-      day.id === updatedDay.id ? updatedDay : day
-    );
-    updateTripDays(updatedTripDays);
-    setEditingDay(null);
-  };
-
-  const handleEditActivity = (activity: Activity, dayId: string) => {
-    setEditingActivity({ activity, dayId });
-  };
-
-  const handleSaveActivity = (updatedActivity: Activity, dayId: string) => {
-    const updatedTripDays = tripDays.map(day => {
-      if (day.id === dayId) {
-        return {
-          ...day,
-          activities: day.activities?.map(activity => 
-            activity.id === updatedActivity.id ? updatedActivity : activity
-          ) || []
-        };
-      }
-      return day;
-    });
-    updateTripDays(updatedTripDays);
-    setEditingActivity(null);
-  };
-
-  const handleViewMap = (day: TripDay) => {
-    // Placeholder for map functionality
-    console.log("View map for:", day.city);
-  };
-
-  const handleEditLocation = (dayIndex: number) => {
-    // Placeholder for edit location functionality
-    console.log("Edit location for day:", dayIndex);
-  };
-
-  const citiesWithDays = tripDays.reduce((acc, day) => {
-    if (!acc[day.city]) {
-      acc[day.city] = [];
-    }
-    acc[day.city].push(day);
-    return acc;
-  }, {} as Record<string, TripDay[]>);
-
-  const uniqueCities = Object.keys(citiesWithDays);
+  const { expensesByDay, purchasesByDay } = useTripCalculations(tripDays);
+  const { handleViewMap, handleEditLocation } = useMapHandlers();
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    if (value !== "city-view") {
-      setSelectedCity(null);
-    }
   };
 
   return (
@@ -189,7 +113,6 @@ export const EuropeTripPlanner: React.FC = () => {
           <EditActivityModal
             isOpen={!!editingActivity}
             activity={editingActivity.activity}
-            dayId={editingActivity.dayId}
             onClose={() => setEditingActivity(null)}
             onSave={(updatedActivity) => handleSaveActivity(updatedActivity, editingActivity.dayId)}
           />

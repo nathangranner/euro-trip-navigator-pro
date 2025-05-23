@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { TripDay, Activity } from "@/data/tripData";
+import { TripDay, Activity } from "@/types/trip";
 import { Map } from "lucide-react";
 import { DayMemento } from "./DayMemento";
 import { loadDayMementoImages, saveDayMementoImage } from "@/utils/mementoUtils";

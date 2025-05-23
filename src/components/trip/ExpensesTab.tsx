@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { TripDay } from "@/data/tripData";
+import { TripDay } from "@/types/trip";
 import { Expense } from "@/components/ExpenseTracker";
 import { 
   ChartContainer as Chart,

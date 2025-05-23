@@ -1,6 +1,6 @@
 
 import React from "react";
-import { TripDay, Activity } from "@/data/tripData";
+import { TripDay, Activity } from "@/types/trip";
 import { DayCard } from "./DayCard";
 import { TabsContent } from "@/components/ui/tabs";
 

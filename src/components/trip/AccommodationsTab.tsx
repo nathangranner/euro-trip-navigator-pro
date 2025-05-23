@@ -1,6 +1,5 @@
-
 import React from "react";
-import { TripDay } from "@/data/tripData";
+import { TripDay } from "@/types/trip";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
