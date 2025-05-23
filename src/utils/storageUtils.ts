@@ -1,87 +1,81 @@
-import { TripDay } from "@/data/tripData";
-import { Expense } from "@/components/ExpenseTracker";
-import { Purchase } from "@/components/PurchaseTracker";
 
-interface StoredData {
-  tripDays?: TripDay[];
-  expenses?: Record<string, Expense[]>;
-  purchases?: Record<string, Purchase[]>;
-  apiKeys?: Record<string, string>;
-}
+import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from "uuid";
 
-const STORAGE_KEY = "europe-trip-data";
+const BUCKET_NAME = "trip_images";
 
-export const loadStoredData = (): StoredData => {
+// Uploads a file to Supabase storage and returns the public URL
+export const uploadImage = async (
+  file: File,
+  folder: string = "misc"
+): Promise<string | null> => {
   try {
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    if (storedData) {
-      return JSON.parse(storedData) as StoredData;
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${uuidv4()}.${fileExt}`;
+    const filePath = `${folder}/${fileName}`;
+
+    // Upload the file
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) {
+      console.error("Error uploading file:", error);
+      return null;
     }
-  } catch (error) {
-    console.error("Error loading stored data:", error);
-  }
-  
-  return {};
-};
 
-export const saveStoredData = (data: StoredData): void => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    // Get the public URL
+    const { data: publicUrlData } = supabase.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(filePath);
+
+    return publicUrlData.publicUrl;
   } catch (error) {
-    console.error("Error saving data to storage:", error);
+    console.error("Error in uploadImage:", error);
+    return null;
   }
 };
 
-export const saveTripDays = (tripDays: TripDay[]): void => {
-  const storedData = loadStoredData();
-  saveStoredData({ ...storedData, tripDays });
-};
-
-export const saveExpenses = (dayId: string, expenses: Expense[]): void => {
-  const storedData = loadStoredData();
-  const updatedExpenses = { ...(storedData.expenses || {}), [dayId]: expenses };
-  saveStoredData({ ...storedData, expenses: updatedExpenses });
-};
-
-export const savePurchases = (dayId: string, purchases: Purchase[]): void => {
-  const storedData = loadStoredData();
-  const updatedPurchases = { ...(storedData.purchases || {}), [dayId]: purchases };
-  saveStoredData({ ...storedData, purchases: updatedPurchases });
-};
-
-export const loadExpenses = (dayId: string): Expense[] => {
-  const storedData = loadStoredData();
-  return storedData.expenses?.[dayId] || [];
-};
-
-export const loadPurchases = (dayId: string): Purchase[] => {
-  const storedData = loadStoredData();
-  return storedData.purchases?.[dayId] || [];
-};
-
-export const exportTripData = (): string => {
-  const data = loadStoredData();
-  return JSON.stringify(data, null, 2);
-};
-
-export const importTripData = (jsonString: string): boolean => {
+// Delete an image from Supabase storage
+export const deleteImage = async (imageUrl: string): Promise<boolean> => {
   try {
-    const data = JSON.parse(jsonString) as StoredData;
-    saveStoredData(data);
+    // Extract the file path from the URL
+    const url = new URL(imageUrl);
+    const pathParts = url.pathname.split("/");
+    const bucketNameIndex = pathParts.findIndex(part => part === BUCKET_NAME);
+    
+    if (bucketNameIndex === -1) {
+      console.error("Not a Supabase storage URL");
+      return false;
+    }
+    
+    // The path should be everything after the bucket name
+    const filePath = pathParts.slice(bucketNameIndex + 1).join("/");
+    
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .remove([filePath]);
+    
+    if (error) {
+      console.error("Error deleting file:", error);
+      return false;
+    }
+    
     return true;
   } catch (error) {
-    console.error("Error importing data:", error);
+    console.error("Error in deleteImage:", error);
     return false;
   }
 };
 
-export const saveApiKey = (service: string, key: string): void => {
-  const storedData = loadStoredData();
-  const updatedApiKeys = { ...(storedData.apiKeys || {}), [service]: key };
-  saveStoredData({ ...storedData, apiKeys: updatedApiKeys });
-};
-
-export const getApiKey = (service: string): string | null => {
-  const storedData = loadStoredData();
-  return storedData.apiKeys?.[service] || null;
+// Check if URL is from Supabase storage
+export const isSupabaseUrl = (url: string): boolean => {
+  try {
+    return url.includes(BUCKET_NAME);
+  } catch {
+    return false;
+  }
 };

@@ -1,10 +1,11 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Image, Upload } from "lucide-react";
+import { Image, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { uploadImage } from "@/utils/storageUtils";
 
 interface DayMementoProps {
   dayNumber: number;
@@ -20,12 +21,16 @@ export const DayMemento: React.FC<DayMementoProps> = ({
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(mementoImage || "");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleSave = () => {
     if (!imageUrl.trim()) {
       toast({
         title: "Image URL Required",
-        description: "Please provide a valid image URL",
+        description: "Please provide a valid image URL or upload an image",
         variant: "destructive",
       });
       return;
@@ -33,10 +38,106 @@ export const DayMemento: React.FC<DayMementoProps> = ({
 
     onMementoChange(dayNumber, imageUrl);
     setIsEditing(false);
+    setPreviewImage(null);
     toast({
       title: "Memento Updated",
       description: `Your memento for Day ${dayNumber} has been updated`,
     });
+  };
+
+  const handleFileUpload = async (file: File) => {
+    // Check if file is an image
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload an image file (JPEG, PNG, etc.)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast({
+        title: "File Too Large",
+        description: "Please upload an image smaller than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      
+      // Show preview before upload
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to Supabase
+      const uploadedUrl = await uploadImage(file, `mementos/day-${dayNumber}`);
+      
+      if (uploadedUrl) {
+        setImageUrl(uploadedUrl);
+        toast({
+          title: "Upload Successful",
+          description: "Memento image has been uploaded successfully",
+        });
+      } else {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast({
+        title: "Upload Error",
+        description: "An error occurred while uploading the image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileUpload(e.target.files[0]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const clearPreview = () => {
+    setPreviewImage(null);
   };
 
   return (
@@ -70,6 +171,58 @@ export const DayMemento: React.FC<DayMementoProps> = ({
       ) : (
         <Card className="p-3">
           <h3 className="text-sm font-medium mb-2">Day {dayNumber} Memento</h3>
+          <div 
+            className={`border-2 border-dashed rounded-lg p-3 mb-3 transition-colors ${
+              dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
+            }`}
+            onDragEnter={handleDrag}
+            onDragOver={handleDrag}
+            onDragLeave={handleDrag}
+            onDrop={handleDrop}
+          >
+            <div className="flex flex-col items-center justify-center">
+              {previewImage ? (
+                <div className="relative w-full max-h-32 overflow-hidden mb-2">
+                  <img 
+                    src={previewImage} 
+                    alt="Preview" 
+                    className="mx-auto max-h-32 object-contain"
+                  />
+                  <button 
+                    onClick={clearPreview}
+                    className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm hover:bg-gray-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Upload className="h-8 w-8 text-gray-400 mb-1" />
+                  <p className="text-xs text-gray-500 text-center mb-1">
+                    Drag & drop or click to select
+                  </p>
+                </>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="text-xs py-1 h-7"
+                onClick={triggerFileInput}
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Select Image"}
+              </Button>
+            </div>
+          </div>
+          
           <div className="space-y-3">
             <div>
               <Input
@@ -79,14 +232,21 @@ export const DayMemento: React.FC<DayMementoProps> = ({
                 className="text-sm"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Add a photo or memento from this day
+                Enter a URL or upload an image above
               </p>
             </div>
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
+              <Button variant="outline" size="sm" onClick={() => {
+                setIsEditing(false);
+                setPreviewImage(null);
+              }}>
                 Cancel
               </Button>
-              <Button size="sm" onClick={handleSave}>
+              <Button 
+                size="sm" 
+                onClick={handleSave}
+                disabled={isUploading}
+              >
                 Save
               </Button>
             </div>
