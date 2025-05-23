@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { toast } from "sonner";
-import { saveApiKey } from "@/utils/storageUtils";
 
 interface ApiSettingsModalProps {
   isOpen: boolean;
@@ -47,44 +46,12 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
         <div>
           <h3 className="font-medium mb-2">OpenRouter API Key</h3>
           <p className="text-sm text-gray-600 mb-4">
-            Your API key is securely stored in your Supabase account.
+            This feature is no longer needed. Travel Buddy now works without requiring personal API keys.
           </p>
           
-          <div className="flex items-center space-x-2 mb-4">
-            <Input 
-              type="password" 
-              value={apiKey} 
-              onChange={e => setApiKey(e.target.value)} 
-              className="flex-1" 
-              placeholder="sk-or-v1-xxxxxxxx"
-            />
-            <Button 
-              onClick={async () => {
-                if (apiKey.trim()) {
-                  const success = await saveApiKey("openrouter", apiKey.trim());
-                  if (success) {
-                    toast.success("API key updated");
-                  } else {
-                    toast.error("Failed to update API key");
-                  }
-                } else {
-                  toast.error("Please enter a valid API key");
-                }
-              }}
-              size="sm"
-            >
-              Update
-            </Button>
+          <div className="text-xs text-gray-500 border-t pt-4 mt-4">
+            <p>The travel buddy feature now uses server-side processing and no longer requires personal API keys.</p>
           </div>
-        </div>
-        
-        <div className="text-xs text-gray-500 border-t pt-4 mt-4">
-          <p>Your API key is stored securely and used for:</p>
-          <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li>Travel buddy conversations</li>
-            <li>City recommendations</li>
-            <li>Translation services</li>
-          </ul>
         </div>
       </div>
     </Modal>

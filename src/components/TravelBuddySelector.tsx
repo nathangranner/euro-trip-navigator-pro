@@ -3,18 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Loader2, MessageCircle, User, Key, Settings, LogIn, Compass } from "lucide-react";
-import { saveApiKey, getApiKey, hasApiKey, clearApiKey } from "@/utils/storageUtils";
+import { Loader2, MessageCircle, Compass } from "lucide-react";
 import { europeTrip, TripDay } from '@/data/tripData';
-import { supabase } from "@/integrations/supabase/client";
 import { TravelBuddy, TravelBuddyMessage, TravelBuddySelectorProps } from './travel-buddy/types';
 import { TRAVEL_BUDDIES } from './travel-buddy/travel-buddy-data';
 import { TravelBuddyCard } from './travel-buddy/TravelBuddyCard';
-import { ApiKeyModal } from './travel-buddy/ApiKeyModal';
-import { ApiSettingsModal } from './travel-buddy/ApiSettingsModal';
-import { LoginModal } from './travel-buddy/LoginModal';
 import { ChatModal } from './travel-buddy/ChatModal';
 import { RecommendationsModal } from './travel-buddy/RecommendationsModal';
+import { supabase } from "@/integrations/supabase/client";
 
 export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   onOpenChat,
@@ -26,14 +22,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   const [messages, setMessages] = useState<TravelBuddyMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState<string>("");
-  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  const [showApiSettingsModal, setShowApiSettingsModal] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
   const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
   const [selectedDay, setSelectedDay] = useState<TripDay | null>(null);
   const [recommendationsOpen, setRecommendationsOpen] = useState(false);
@@ -47,27 +35,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     setChatOpen(isChatOpen);
   }, [isChatOpen]);
 
-  // Check user auth status on mount
-  useEffect(() => {
-    const checkUser = async () => {
-      setCheckingAuth(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      setIsLoggedIn(!!user);
-      setCheckingAuth(false);
-      
-      if (user) {
-        // Check for saved API key
-        const keyExists = await hasApiKey("openrouter");
-        if (keyExists) {
-          const storedKey = await getApiKey("openrouter");
-          setApiKey(storedKey);
-        }
-      }
-    };
-    
-    checkUser();
-  }, []);
-
   const handleSelectBuddy = (buddy: TravelBuddy) => {
     setSelectedBuddy(buddy);
     setMessages([{
@@ -78,16 +45,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   };
 
   const handleStartChat = () => {
-    if (!apiKey) {
-      // Check if user is logged in
-      if (!isLoggedIn) {
-        setShowLoginModal(true);
-        return;
-      }
-      setShowApiKeyModal(true);
-      return;
-    }
-    
     if (selectedBuddy) {
       setChatOpen(true);
       setIsChatOpen(true);
@@ -104,111 +61,8 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     setIsChatOpen(false);
   };
 
-  const handleSaveApiKey = async () => {
-    if (!apiKey.trim()) {
-      toast.error("Please enter a valid API key");
-      return;
-    }
-    
-    if (!isLoggedIn) {
-      toast.error("Please log in to save your API key");
-      setShowLoginModal(true);
-      return;
-    }
-    
-    const success = await saveApiKey("openrouter", apiKey.trim());
-    
-    if (success) {
-      setShowApiKeyModal(false);
-      toast.success("OpenRouter API key saved");
-      
-      // Now try chatting again if a buddy is selected
-      if (selectedBuddy) {
-        handleStartChat();
-      }
-    } else {
-      toast.error("Failed to save API key. Please try again.");
-    }
-  };
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      
-      if (data.user) {
-        setIsLoggedIn(true);
-        setShowLoginModal(false);
-        toast.success("Login successful!");
-        
-        // If we have an API key in state, save it now
-        if (apiKey) {
-          await saveApiKey("openrouter", apiKey);
-        }
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Login failed. Please try again.");
-    }
-  };
-
-  const handleSignup = async () => {
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      
-      toast.success("Account created! Please check your email for verification.");
-    } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Signup failed. Please try again.");
-    }
-  };
-
-  const handleOpenApiSettings = () => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
-    setShowApiSettingsModal(true);
-  };
-
-  const handleClearApiKey = async () => {
-    const success = await clearApiKey("openrouter");
-    if (success) {
-      setApiKey("");
-      toast.success("API key removed");
-      setShowApiSettingsModal(false);
-    } else {
-      toast.error("Failed to remove API key");
-    }
-  };
-
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !selectedBuddy || !apiKey) return;
+    if (!inputMessage.trim() || !selectedBuddy) return;
     
     const userMessage = {
       role: "user" as const,
@@ -220,44 +74,33 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     setLoading(true);
     
     try {
-      // Prepare messages for the API call
-      const apiMessages = [...messages, userMessage];
-
-      // Make request to OpenRouter API
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Europe Trip Planner'
-        },
-        body: JSON.stringify({
+      // Call the Supabase Edge Function for travel buddy chat
+      const { data, error } = await supabase.functions.invoke('travel-buddy-chat', {
+        body: {
+          messages: [...messages, userMessage].filter(msg => msg.role !== "system" || (msg.role === "system" && [...messages, userMessage].indexOf(msg) === 0)),
           model: selectedBuddy.model,
-          messages: apiMessages.filter(msg => msg.role !== "system" || (msg.role === "system" && apiMessages.indexOf(msg) === 0))
-        })
+          systemPrompt: selectedBuddy.systemPrompt
+        }
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to get response from travel buddy');
+
+      if (error) {
+        throw new Error(error.message || 'Failed to get response from travel buddy');
       }
-      
-      const data = await response.json();
       
       const assistantMessage = {
         role: "assistant" as const,
-        content: data.choices[0]?.message?.content || "I'm sorry, I couldn't process your request."
+        content: data.response || "I'm sorry, I couldn't process your request."
       };
       
       setMessages([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error communicating with travel buddy:', error);
-      toast.error("Couldn't connect with your travel buddy. Please check your API key.");
+      toast.error("Couldn't connect with your travel buddy. Please try again.");
 
       // Fallback response if API call fails
       const fallbackMessage = {
         role: "assistant" as const,
-        content: "I'm having trouble connecting right now. Please check your OpenRouter API key and try again."
+        content: "I'm having trouble connecting right now. Please try again in a moment."
       };
       
       setMessages([...messages, userMessage, fallbackMessage]);
@@ -273,7 +116,7 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   };
 
   const handleGetRecommendations = async (type: string) => {
-    if (!selectedDay || !selectedBuddy || !apiKey) return;
+    if (!selectedDay || !selectedBuddy) return;
     
     setRecommendationsLoading(true);
     setRecommendations("");
@@ -311,88 +154,38 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }
     
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Europe Trip Planner'
-        },
-        body: JSON.stringify({
-          model: selectedBuddy.model,
+      const { data, error } = await supabase.functions.invoke('travel-buddy-chat', {
+        body: {
           messages: [{
             role: "system",
             content: selectedBuddy.systemPrompt
           }, {
             role: "user",
             content: prompt
-          }]
-        })
+          }],
+          model: selectedBuddy.model,
+          systemPrompt: selectedBuddy.systemPrompt
+        }
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to get recommendations');
+
+      if (error) {
+        throw new Error(error.message || 'Failed to get recommendations');
       }
       
-      const data = await response.json();
-      setRecommendations(data.choices[0]?.message?.content || "No recommendations available.");
+      setRecommendations(data.response || "No recommendations available.");
     } catch (error) {
       console.error('Error getting recommendations:', error);
-      setRecommendations("I couldn't retrieve recommendations right now. Please check your connection and API key.");
+      setRecommendations("I couldn't retrieve recommendations right now. Please try again.");
       toast.error("Couldn't get recommendations");
     } finally {
       setRecommendationsLoading(false);
     }
   };
 
-  if (checkingAuth) {
-    return (
-      <div>
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
-      
-      {!isLoggedIn && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-md">
-          <div className="flex items-center">
-            <LogIn className="h-5 w-5 text-amber-500 mr-2" />
-            <p className="text-amber-800 font-medium">Sign in to save your API key</p>
-          </div>
-          <p className="text-sm text-amber-700 mt-1">
-            Log in or create an account to securely store your OpenRouter API key for future sessions.
-          </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShowLoginModal(true)} 
-            className="mt-2"
-          >
-            Login or Sign up
-          </Button>
-        </div>
-      )}
-      
-      <div className="flex justify-end mb-4">
-        <Button 
-          variant="outline" 
-          onClick={handleOpenApiSettings}
-          className="flex items-center gap-2"
-          size="sm"
-        >
-          <Key className="h-4 w-4" />
-          Manage API Key
-        </Button>
-      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {TRAVEL_BUDDIES.map(buddy => (
@@ -456,33 +249,6 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
       </div>
 
       {/* Modals */}
-      <ApiKeyModal
-        isOpen={showApiKeyModal}
-        onClose={() => setShowApiKeyModal(false)}
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-        onSave={handleSaveApiKey}
-      />
-      
-      <ApiSettingsModal
-        isOpen={showApiSettingsModal}
-        onClose={() => setShowApiSettingsModal(false)}
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-        onClearApiKey={handleClearApiKey}
-      />
-
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        email={email}
-        setEmail={setEmail}
-        password={password}
-        setPassword={setPassword}
-        onLogin={handleLogin}
-        onSignup={handleSignup}
-      />
-
       <ChatModal
         isOpen={chatOpen}
         onClose={handleCloseChat}
