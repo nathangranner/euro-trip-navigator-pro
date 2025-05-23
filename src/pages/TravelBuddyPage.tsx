@@ -49,7 +49,7 @@ const TravelBuddyPage: React.FC = () => {
       {/* Content */}
       <div className="container mx-auto py-8 relative z-10">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">AI Travel Buddy</h1>
+          <h1 className="text-3xl font-cursive">AI Travel Buddy</h1>
           <Button 
             onClick={() => navigate(-1)} 
             variant="outline" 
@@ -69,7 +69,7 @@ const TravelBuddyPage: React.FC = () => {
             <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 backdrop-blur-sm shadow-lg">
               <div className="flex items-center mb-2">
                 <Map className="h-5 w-5 mr-2 text-blue-600" />
-                <h3 className="font-semibold">Cultural Insights</h3>
+                <h3 className="font-cursive text-lg">Cultural Insights</h3>
               </div>
               <p className="text-sm text-gray-700">Discover local history, art, and traditions from experts</p>
             </Card>
@@ -77,7 +77,7 @@ const TravelBuddyPage: React.FC = () => {
             <Card className="p-4 bg-gradient-to-br from-green-50 to-green-100 border-green-200 backdrop-blur-sm shadow-lg">
               <div className="flex items-center mb-2">
                 <Route className="h-5 w-5 mr-2 text-green-600" />
-                <h3 className="font-semibold">Navigation Assistant</h3>
+                <h3 className="font-cursive text-lg">Navigation Assistant</h3>
               </div>
               <p className="text-sm text-gray-700">Get help with directions, road signs, and mileage calculations</p>
             </Card>
@@ -85,7 +85,7 @@ const TravelBuddyPage: React.FC = () => {
             <Card className="p-4 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 backdrop-blur-sm shadow-lg">
               <div className="flex items-center mb-2">
                 <Languages className="h-5 w-5 mr-2 text-amber-600" />
-                <h3 className="font-semibold">Language Translation</h3>
+                <h3 className="font-cursive text-lg">Language Translation</h3>
               </div>
               <p className="text-sm text-gray-700">Translate phrases and get pronunciation help with Gemini Pro</p>
             </Card>
@@ -93,7 +93,7 @@ const TravelBuddyPage: React.FC = () => {
             <Card className="p-4 bg-gradient-to-br from-red-50 to-red-100 border-red-200 backdrop-blur-sm shadow-lg">
               <div className="flex items-center mb-2">
                 <Ambulance className="h-5 w-5 mr-2 text-red-600" />
-                <h3 className="font-semibold">Travel Health</h3>
+                <h3 className="font-cursive text-lg">Travel Health</h3>
               </div>
               <p className="text-sm text-gray-700">Medical advice, finding pharmacies, and health guidance abroad</p>
             </Card>
@@ -101,8 +101,8 @@ const TravelBuddyPage: React.FC = () => {
           
           <Tabs defaultValue="assistant" className="mb-8">
             <TabsList className="grid w-full grid-cols-2 bg-white/50 backdrop-blur-sm">
-              <TabsTrigger value="assistant">Travel Assistant</TabsTrigger>
-              <TabsTrigger value="translator">Translator</TabsTrigger>
+              <TabsTrigger value="assistant" className="font-cursive text-lg">Travel Assistant</TabsTrigger>
+              <TabsTrigger value="translator" className="font-cursive text-lg">Translator</TabsTrigger>
             </TabsList>
             <TabsContent value="assistant">
               <Card className="p-6 bg-white/70 backdrop-blur-md">
