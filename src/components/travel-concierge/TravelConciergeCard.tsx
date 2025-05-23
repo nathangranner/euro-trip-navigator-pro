@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { TravelConcierge } from './types';
+import { WifiOff } from 'lucide-react';
 
 interface TravelConciergeCardProps {
   concierge: TravelConcierge;
@@ -21,8 +22,16 @@ export const TravelConciergeCard: React.FC<TravelConciergeCardProps> = ({ concie
           alt={concierge.name} 
           className="w-12 h-12 rounded-full mr-3 object-cover" 
         />
-        <div>
-          <h3 className="font-semibold">{concierge.name}</h3>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">{concierge.name}</h3>
+            {concierge.availableOffline && (
+              <span className="inline-flex items-center text-xs text-slate-500" title="Available offline">
+                <WifiOff className="h-3 w-3 mr-1" />
+                Offline Ready
+              </span>
+            )}
+          </div>
           <p className="text-sm text-gray-500">{concierge.model.split('/')[0]}</p>
         </div>
       </div>

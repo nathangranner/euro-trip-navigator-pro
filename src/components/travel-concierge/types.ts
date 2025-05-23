@@ -2,6 +2,8 @@
 export interface TravelConciergeMessage {
   role: "user" | "assistant" | "system";
   content: string;
+  timestamp?: number;
+  offline?: boolean;
 }
 
 export interface TravelConcierge {
@@ -11,6 +13,7 @@ export interface TravelConcierge {
   description: string;
   model: string;
   systemPrompt: string;
+  availableOffline?: boolean;
 }
 
 export interface RecommendationRequest {
