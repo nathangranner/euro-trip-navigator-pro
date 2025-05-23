@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,11 +45,11 @@ export const CityBanner: React.FC<CityBannerProps> = ({
   };
 
   const handleFileUpload = async (file: File) => {
-    // Check if file is an image
+    // Check if file is an image (including WebP)
     if (!file.type.startsWith("image/")) {
       toast({
         title: "Invalid File Type",
-        description: "Please upload an image file (JPEG, PNG, etc.)",
+        description: "Please upload an image file (JPEG, PNG, WebP, etc.)",
         variant: "destructive",
       });
       return;
@@ -206,7 +205,7 @@ export const CityBanner: React.FC<CityBannerProps> = ({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/*,.webp"
                 onChange={handleFileInputChange}
                 className="hidden"
               />
@@ -234,7 +233,7 @@ export const CityBanner: React.FC<CityBannerProps> = ({
                 placeholder="https://example.com/your-city-image.jpg"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Enter a direct URL to an image or upload a file above
+                Enter a direct URL to an image or upload a file above (JPEG, PNG, WebP supported)
               </p>
             </div>
             <div className="flex justify-end space-x-2">
