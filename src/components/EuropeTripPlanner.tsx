@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
@@ -535,8 +536,8 @@ export const EuropeTripPlanner: React.FC = () => {
               <div className="text-sm text-gray-500 mb-1">Day {currentDayData.dayNumber} of {tripDays.length}</div>
               <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto">
                 <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{
-                width: `${currentDayData.dayNumber / tripDays.length * 100}%`
-              }}></div>
+                  width: `${currentDayData.dayNumber / tripDays.length * 100}%`
+                }}></div>
               </div>
               
               {/* Add day selector dropdown */}
@@ -545,9 +546,11 @@ export const EuropeTripPlanner: React.FC = () => {
                   <SelectValue placeholder="Jump to day..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {tripDays.map((day, index) => <SelectItem key={index} value={index.toString()}>
+                  {tripDays.map((day, index) => (
+                    <SelectItem key={index} value={index.toString()}>
                       Day {day.dayNumber}: {day.city}
-                    </SelectItem>)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
