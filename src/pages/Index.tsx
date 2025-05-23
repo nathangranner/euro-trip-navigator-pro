@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Mail, MailOpen, ArrowLeft } from "lucide-react";
+
 const Index = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ const Index = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col bg-travel-orange">
+      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col">
         {/* Header with luxury brand style */}
         <header className="pt-12 pb-8 flex justify-between items-center">
           <div className="text-2xl font-light tracking-[0.3em] uppercase">EUROTRIP25</div>
@@ -51,15 +52,17 @@ const Index = () => {
 
         {/* Main Title Section */}
         <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
-          <h1 ref={titleRef} style={{
-          letterSpacing: "0.15em"
-        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8">
-            EUROPE<span className="font-thin">25</span>
+          <h1 
+            ref={titleRef} 
+            style={{ letterSpacing: "0.15em" }} 
+            className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8"
+          >
+            EUROTRIP<span className="font-thin">25</span>
           </h1>
           
           <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90">
             Your exclusive journey through Europe's most coveted destinations. 
-            An experience designed for the discerning traveler.
+            An experience designed for Jamie and Nathan.
           </p>
 
           <div className="mt-12">
@@ -138,4 +141,5 @@ const Index = () => {
       <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white/0 via-white/30 to-white/0"></div>
     </div>;
 };
+
 export default Index;
