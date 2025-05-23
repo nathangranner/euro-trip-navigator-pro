@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText, MessageCircle, Image } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText, MessageCircle } from 'lucide-react';
 import { europeTrip, TripDay, Activity } from '@/data/tripData';
 import { EditDayModal } from './EditDayModal';
 import { ExpenseTracker, Expense } from './ExpenseTracker';
@@ -17,8 +16,6 @@ import { PurchaseTracker, Purchase } from './PurchaseTracker';
 import { EditActivityModal } from './EditActivityModal';
 import { TravelBuddySelector } from './TravelBuddySelector';
 import { loadStoredData, saveTripDays, saveExpenses, savePurchases, loadExpenses, loadPurchases, exportTripData, importTripData } from '@/utils/storageUtils';
-import { saveCityBannerImage, getCityBannerImage } from '@/utils/bannerUtils';
-
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
@@ -31,8 +28,6 @@ export const EuropeTripPlanner: React.FC = () => {
   const [importExportOpen, setImportExportOpen] = useState(false);
   const [exportData, setExportData] = useState('');
   const [importData, setImportData] = useState('');
-  const [headerImageUrl, setHeaderImageUrl] = useState('');
-  const [headerUploadOpen, setHeaderUploadOpen] = useState(false);
   const [newActivity, setNewActivity] = useState({
     time: '',
     activity: '',
@@ -58,16 +53,7 @@ export const EuropeTripPlanner: React.FC = () => {
     if (storedData.purchases) {
       setPurchasesByDay(storedData.purchases);
     }
-    
-    // Check for existing city banner image
-    if (currentDayData) {
-      const savedBanner = getCityBannerImage(currentDayData.city);
-      if (savedBanner) {
-        // Update the trip days with the saved banner
-        updateDayBgImage(savedBanner);
-      }
-    }
-  }, [currentDay]);
+  }, []);
 
   // Helper function to format dates
   const formatDate = (dateString: string) => {
@@ -95,7 +81,6 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.info(`Switched to ${tripDays[nextDayIndex].city} - ${tripDays[nextDayIndex].title}`);
     }
   };
-  
   const prevDay = () => {
     if (currentDay > 0) {
       const prevDayIndex = currentDay - 1;
@@ -113,34 +98,6 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.info(`Switched to ${tripDays[dayIndex].city} - ${tripDays[dayIndex].title}`);
     }
   };
-  
-  // Update day background image function
-  const updateDayBgImage = (imageUrl: string) => {
-    if (!imageUrl.trim() || !currentDayData) return;
-    
-    const updatedTripDays = [...tripDays];
-    updatedTripDays[currentDay] = {
-      ...currentDayData,
-      bgImage: imageUrl
-    };
-    
-    setTripDays(updatedTripDays);
-    saveTripDays(updatedTripDays);
-    
-    // Also save to city banners
-    saveCityBannerImage(currentDayData.city, imageUrl);
-    
-    setHeaderImageUrl('');
-    setHeaderUploadOpen(false);
-    toast.success(`Updated header image for ${currentDayData.city}`);
-  };
-
-  // Header image dialog handlers
-  const openHeaderImageDialog = () => {
-    setHeaderUploadOpen(true);
-    setHeaderImageUrl(currentDayData?.bgImage || '');
-  };
-
   const toggleActivity = (index: number) => {
     setExpandedActivity(expandedActivity === index ? null : index);
   };
@@ -421,20 +378,17 @@ export const EuropeTripPlanner: React.FC = () => {
 
   // Add a new state for the travel buddy section
   const [showTravelBuddySection, setShowTravelBuddySection] = useState(true);
-  
   if (!currentDayData) {
     return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
   }
-  
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       {/* Hero Header */}
       <div className="hero-header bg-gradient-to-br text-white relative overflow-hidden shadow-md" style={{
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentDayData.bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minHeight: '250px'
-      }}>
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentDayData.bgImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      minHeight: '250px'
+    }}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
@@ -449,19 +403,10 @@ export const EuropeTripPlanner: React.FC = () => {
               </div>}
           </div>
           
-          <div className="mt-4 flex justify-end space-x-2">
+          <div className="mt-4 flex justify-end">
             <Button variant="ghost" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white" onClick={() => setEditDayModalOpen(true)}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Day Info
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
-              onClick={openHeaderImageDialog}
-            >
-              <Image className="h-4 w-4 mr-2" />
-              Change Header Image
             </Button>
           </div>
           
@@ -475,55 +420,6 @@ export const EuropeTripPlanner: React.FC = () => {
         </div>
       </div>
 
-      {/* Header Image Upload Dialog */}
-      <Dialog open={headerUploadOpen} onOpenChange={setHeaderUploadOpen}>
-        <DialogContent className="sm:max-w-[550px]">
-          <DialogHeader>
-            <DialogTitle>Update Header Image</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label htmlFor="headerImageUrl" className="block text-sm font-medium mb-2">
-                Image URL
-              </label>
-              <Input
-                id="headerImageUrl"
-                value={headerImageUrl}
-                onChange={(e) => setHeaderImageUrl(e.target.value)}
-                placeholder="https://example.com/your-header-image.jpg"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Enter a direct URL to an image (JPG, PNG, or GIF)
-              </p>
-              
-              <div className="mt-4">
-                {headerImageUrl && (
-                  <div className="relative w-full h-40 mb-4 border rounded-lg overflow-hidden">
-                    <img 
-                      src={headerImageUrl} 
-                      alt="Header preview" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://placehold.co/600x400?text=Invalid+Image+URL";
-                      }}
-                    />
-                  </div>
-                )}
-                
-                <div className="flex justify-end space-x-2 mt-4">
-                  <Button variant="outline" onClick={() => setHeaderUploadOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => updateDayBgImage(headerImageUrl)}>
-                    Save Image
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Navigation Bar - Modified with day selector */}
       <div className="sticky top-0 bg-white shadow-sm z-10">
         <div className="container mx-auto px-4 py-3">
@@ -532,12 +428,12 @@ export const EuropeTripPlanner: React.FC = () => {
               <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
             
-            <div className="text-center flex flex-col items-center">
+            <div className="text-center flex flex-col items-center rounded-sm, but more importantly, all the dates are not there. We need bologne, firenza, lucerne between Stutty and leipzig  then ending in Milan again\n">
               <div className="text-sm text-gray-500 mb-1">Day {currentDayData.dayNumber} of {tripDays.length}</div>
               <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto">
                 <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{
-                  width: `${currentDayData.dayNumber / tripDays.length * 100}%`
-                }}></div>
+                width: `${currentDayData.dayNumber / tripDays.length * 100}%`
+              }}></div>
               </div>
               
               {/* Add day selector dropdown */}
@@ -546,11 +442,9 @@ export const EuropeTripPlanner: React.FC = () => {
                   <SelectValue placeholder="Jump to day..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {tripDays.map((day, index) => (
-                    <SelectItem key={index} value={index.toString()}>
+                  {tripDays.map((day, index) => <SelectItem key={index} value={index.toString()}>
                       Day {day.dayNumber}: {day.city}
-                    </SelectItem>
-                  ))}
+                    </SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
@@ -695,19 +589,19 @@ export const EuropeTripPlanner: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
                   <Input type="time" value={newActivity.time} onChange={e => setNewActivity({
-                    ...newActivity,
-                    time: e.target.value
-                  })} className="w-full" />
+                ...newActivity,
+                time: e.target.value
+              })} className="w-full" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                   <Select value={newActivity.type} onValueChange={value => {
-                    setNewActivity({
-                      ...newActivity,
-                      type: value,
-                      icon: getActivityIcon(value)
-                    });
-                  }}>
+                setNewActivity({
+                  ...newActivity,
+                  type: value,
+                  icon: getActivityIcon(value)
+                });
+              }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -731,17 +625,17 @@ export const EuropeTripPlanner: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Activity Name</label>
                 <Input type="text" value={newActivity.activity} onChange={e => setNewActivity({
-                  ...newActivity,
-                  activity: e.target.value
-                })} placeholder="What are you doing?" className="w-full" />
+              ...newActivity,
+              activity: e.target.value
+            })} placeholder="What are you doing?" className="w-full" />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                 <Textarea value={newActivity.note} onChange={e => setNewActivity({
-                  ...newActivity,
-                  note: e.target.value
-                })} placeholder="Any additional details..." className="w-full" rows={2} />
+              ...newActivity,
+              note: e.target.value
+            })} placeholder="Any additional details..." className="w-full" rows={2} />
               </div>
               
               <div className="flex justify-end">
@@ -783,9 +677,9 @@ export const EuropeTripPlanner: React.FC = () => {
                       
                       <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => {
-                          e.stopPropagation();
-                          handleEditActivity(activity);
-                        }}>
+                  e.stopPropagation();
+                  handleEditActivity(activity);
+                }}>
                           <Edit className="h-4 w-4 text-gray-500" />
                         </Button>
                         
@@ -794,6 +688,7 @@ export const EuropeTripPlanner: React.FC = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
                   
                   {expandedActivity === index && <div className="bg-gray-50 p-4 border-t">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1029,6 +924,5 @@ export const EuropeTripPlanner: React.FC = () => {
           {showAddActivity ? <X className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
