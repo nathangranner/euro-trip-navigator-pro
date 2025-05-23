@@ -8,15 +8,15 @@ const NavHome: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="absolute top-6 left-6 z-10">
+    <div className="absolute top-8 left-8 z-10 opacity-80 hover:opacity-100 transition-opacity">
       <Button 
         onClick={() => navigate("/")}
         variant="outline"
         size="sm"
-        className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+        className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 tracking-wider px-4 py-2 shadow-lg transition-all duration-300 hover:shadow-xl"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Return Home
+        HOME
       </Button>
     </div>
   );
