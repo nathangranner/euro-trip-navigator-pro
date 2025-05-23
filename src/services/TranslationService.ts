@@ -1,6 +1,5 @@
 
 import { toast } from "sonner";
-import { getApiKey } from "@/utils/storageUtils";
 
 export interface TranslationRequest {
   text: string;
@@ -14,9 +13,7 @@ export interface TranslationResult {
   pronunciation?: string;
 }
 
-export const translateText = async (request: TranslationRequest): Promise<TranslationResult> => {
-  const apiKey = getApiKey("openrouter");
-  
+export const translateText = async (request: TranslationRequest, apiKey: string): Promise<TranslationResult> => {
   if (!apiKey) {
     toast.error("OpenRouter API key is required for translation");
     throw new Error("API key not found");

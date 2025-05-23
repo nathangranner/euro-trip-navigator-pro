@@ -5,14 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { translateText, getSupportedLanguages, TranslationResult } from "@/services/TranslationService";
-import { Loader2, Languages, ArrowDown, VolumeX, Volume2, ArrowRightLeft, Key } from "lucide-react";
+import { Loader2, Languages, ArrowDown, VolumeX, Volume2, ArrowRightLeft, Key, LogIn } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { getApiKey, saveApiKey, isApiKeyPermanent } from "@/utils/storageUtils";
+import { getApiKey, saveApiKey, hasApiKey, clearApiKey } from "@/utils/storageUtils";
 import { Modal } from "@/components/ui/modal";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 
 export const TranslationTool: React.FC = () => {
   const [inputText, setInputText] = useState("");
@@ -23,25 +24,45 @@ export const TranslationTool: React.FC = () => {
   const [recentTranslations, setRecentTranslations] = useState<Array<{input: string, result: TranslationResult, source: string, target: string}>>([]);
   const [apiKey, setApiKey] = useState<string>("");
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  const [rememberApiKey, setRememberApiKey] = useState(true);
-
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingUser, setCheckingUser] = useState(true);
+  
   const languages = getSupportedLanguages();
   const sourceLanguages = ["Auto-detect", ...languages];
   
-  // Check for saved API key on component mount
+  // Check user auth status on mount
   useEffect(() => {
-    const storedApiKey = getApiKey("openrouter");
-    const isPermanent = isApiKeyPermanent("openrouter");
+    const checkUser = async () => {
+      setCheckingUser(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user);
+      setCheckingUser(false);
+      
+      if (user) {
+        // Check for saved API key
+        const keyExists = await hasApiKey("openrouter");
+        if (keyExists) {
+          const storedKey = await getApiKey("openrouter");
+          setApiKey(storedKey);
+        }
+      }
+    };
     
-    if (storedApiKey) {
-      setApiKey(storedApiKey);
-      setRememberApiKey(isPermanent);
-    }
+    checkUser();
   }, []);
   
   const handleTranslate = async () => {
     if (!inputText.trim()) {
       toast.error("Please enter text to translate");
+      return;
+    }
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
       return;
     }
     
@@ -57,7 +78,7 @@ export const TranslationTool: React.FC = () => {
         text: inputText,
         sourceLanguage: sourceLanguage === "Auto-detect" ? undefined : sourceLanguage,
         targetLanguage: targetLanguage
-      });
+      }, apiKey);
       
       setTranslation(result);
       
@@ -77,17 +98,85 @@ export const TranslationTool: React.FC = () => {
     }
   };
 
-  const handleSaveApiKey = () => {
-    if (apiKey.trim()) {
-      // Save the API key, and mark it as permanent if the switch is checked
-      saveApiKey("openrouter", apiKey.trim(), rememberApiKey);
+  const handleSaveApiKey = async () => {
+    if (!apiKey.trim()) {
+      toast.error("Please enter a valid API key");
+      return;
+    }
+    
+    if (!isLoggedIn) {
+      toast.error("Please log in to save your API key");
+      setShowLoginModal(true);
+      return;
+    }
+    
+    const success = await saveApiKey("openrouter", apiKey.trim());
+    
+    if (success) {
       setShowApiKeyModal(false);
       toast.success("OpenRouter API key saved");
       
       // Now try translating again
       handleTranslate();
     } else {
-      toast.error("Please enter a valid API key");
+      toast.error("Failed to save API key. Please try again.");
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      
+      if (data.user) {
+        setIsLoggedIn(true);
+        setShowLoginModal(false);
+        toast.success("Login successful!");
+        
+        // If we have an API key in state, save it now
+        if (apiKey) {
+          await saveApiKey("openrouter", apiKey);
+        }
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please try again.");
+    }
+  };
+
+  const handleSignup = async () => {
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      
+      toast.success("Account created! Please check your email for verification.");
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error("Signup failed. Please try again.");
     }
   };
 
@@ -124,10 +213,41 @@ export const TranslationTool: React.FC = () => {
     }
   };
   
+  if (checkingUser) {
+    return (
+      <Card className="p-6">
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2">Loading...</span>
+        </div>
+      </Card>
+    );
+  }
+  
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Travel Translator</h2>
       <p className="text-gray-600 mb-6">Translate phrases during your European adventure</p>
+      
+      {!isLoggedIn && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <div className="flex items-center">
+            <LogIn className="h-5 w-5 text-amber-500 mr-2" />
+            <p className="text-amber-800 font-medium">Sign in to save your API key</p>
+          </div>
+          <p className="text-sm text-amber-700 mt-1">
+            Log in or create an account to securely store your OpenRouter API key for future sessions.
+          </p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowLoginModal(true)} 
+            className="mt-2"
+          >
+            Login or Sign up
+          </Button>
+        </div>
+      )}
       
       <div className="space-y-4">
         <div>
@@ -255,18 +375,56 @@ export const TranslationTool: React.FC = () => {
             className="w-full" 
           />
           
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id="remember-api-key-translation" 
-              checked={rememberApiKey}
-              onCheckedChange={setRememberApiKey} 
+          <p className="text-xs text-gray-500">
+            Your API key will be securely stored in your account for future use.
+          </p>
+        </div>
+      </Modal>
+      
+      {/* Login Modal */}
+      <Modal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+        title="Login or Create Account" 
+        footer={
+          <div className="flex justify-between w-full">
+            <Button onClick={handleSignup} variant="outline">
+              Sign Up
+            </Button>
+            <Button onClick={handleLogin}>
+              Login
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Please log in or create an account to securely store your API key.
+          </p>
+          
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              id="email"
+              type="email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              placeholder="your@email.com" 
+              className="w-full mt-1" 
             />
-            <Label htmlFor="remember-api-key-translation">Remember this API key permanently</Label>
           </div>
           
-          <p className="text-xs text-gray-500">
-            Your API key is stored locally in your browser and never sent to our servers.
-          </p>
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input 
+              id="password"
+              type="password" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              placeholder="********" 
+              className="w-full mt-1" 
+            />
+          </div>
         </div>
       </Modal>
     </Card>
