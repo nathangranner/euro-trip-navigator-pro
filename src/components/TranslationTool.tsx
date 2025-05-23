@@ -5,19 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { translateText, getSupportedLanguages, TranslationResult } from "@/services/TranslationService";
-import { Loader2, Languages, ArrowDown, VolumeX, Volume2 } from "lucide-react";
+import { Loader2, Languages, ArrowDown, VolumeX, Volume2, ArrowRightLeft } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export const TranslationTool: React.FC = () => {
   const [inputText, setInputText] = useState("");
+  const [sourceLanguage, setSourceLanguage] = useState("Auto-detect");
   const [targetLanguage, setTargetLanguage] = useState("Italian");
   const [translation, setTranslation] = useState<TranslationResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [recentTranslations, setRecentTranslations] = useState<Array<{input: string, result: TranslationResult, target: string}>>([]);
+  const [recentTranslations, setRecentTranslations] = useState<Array<{input: string, result: TranslationResult, source: string, target: string}>>([]);
 
   const languages = getSupportedLanguages();
+  const sourceLanguages = ["Auto-detect", ...languages];
   
   const handleTranslate = async () => {
     if (!inputText.trim()) {
@@ -29,6 +31,7 @@ export const TranslationTool: React.FC = () => {
     try {
       const result = await translateText({
         text: inputText,
+        sourceLanguage: sourceLanguage === "Auto-detect" ? undefined : sourceLanguage,
         targetLanguage: targetLanguage
       });
       
@@ -37,7 +40,7 @@ export const TranslationTool: React.FC = () => {
       // Save to recent translations (limited to 5)
       setRecentTranslations(prev => {
         const newTranslations = [
-          { input: inputText, result, target: targetLanguage },
+          { input: inputText, result, source: sourceLanguage, target: targetLanguage },
           ...prev
         ].slice(0, 5);
         return newTranslations;
@@ -47,6 +50,15 @@ export const TranslationTool: React.FC = () => {
       console.error("Translation error:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const swapLanguages = () => {
+    if (sourceLanguage !== "Auto-detect") {
+      setSourceLanguage(targetLanguage);
+      setTargetLanguage(sourceLanguage);
+      // Clear current translation when swapping
+      setTranslation(null);
     }
   };
   
@@ -90,11 +102,30 @@ export const TranslationTool: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <div className="text-sm text-gray-500">Auto-detect</div>
-          <ArrowDown className="h-4 w-4" />
+          <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="From language" />
+            </SelectTrigger>
+            <SelectContent>
+              {sourceLanguages.map(lang => (
+                <SelectItem key={lang} value={lang}>{lang}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={swapLanguages}
+            disabled={sourceLanguage === "Auto-detect"}
+            className="flex-shrink-0"
+          >
+            <ArrowRightLeft className="h-4 w-4" />
+          </Button>
+          
           <Select value={targetLanguage} onValueChange={setTargetLanguage}>
             <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Select language" />
+              <SelectValue placeholder="To language" />
             </SelectTrigger>
             <SelectContent>
               {languages.map(lang => (
@@ -139,6 +170,7 @@ export const TranslationTool: React.FC = () => {
               {recentTranslations.map((item, index) => (
                 <Card key={index} className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => {
                   setInputText(item.input);
+                  setSourceLanguage(item.source);
                   setTargetLanguage(item.target);
                   setTranslation(item.result);
                 }}>
@@ -147,7 +179,11 @@ export const TranslationTool: React.FC = () => {
                       <span className="text-sm font-medium">{item.input}</span>
                       <p className="text-xs text-gray-600 truncate">{item.result.translatedText}</p>
                     </div>
-                    <Badge variant="outline" className="text-xs">{item.target}</Badge>
+                    <div className="flex gap-1">
+                      <Badge variant="outline" className="text-xs">{item.source}</Badge>
+                      <ArrowDown className="h-3 w-3 mt-1" />
+                      <Badge variant="outline" className="text-xs">{item.target}</Badge>
+                    </div>
                   </div>
                 </Card>
               ))}
