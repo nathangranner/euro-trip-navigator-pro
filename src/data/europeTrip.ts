@@ -1,8 +1,9 @@
+
 import { Trip } from "@/types/trip";
 
 export const europeTrip: Trip = {
   name: "Europe Trip 2025",
-  description: "A 21-day journey through Italy, Switzerland, and Germany",
+  description: "Nathan & Jamie Granner's European Adventure - A 21-day journey through Italy, Switzerland, and Germany",
   startDate: "2025-06-05",
   endDate: "2025-06-26",
   days: [
@@ -10,13 +11,26 @@ export const europeTrip: Trip = {
       id: "day-1",
       dayNumber: 1,
       date: "2025-06-05",
-      city: "Santa Maria to Los Angeles",
+      city: "LAX to Frankfurt",
       country: "USA",
-      description: "Departure day - Start of the trip",
+      description: "Departure day - Start of the European adventure",
       title: "Begin the Journey",
-      accommodationName: "Flight",
-      accommodationNotes: "Overnight flight to Europe",
-      activities: []
+      activities: [
+        {
+          id: "flight-1",
+          time: "6:40 PM",
+          activity: "Depart LAX on UA8900 (operated by Lufthansa)",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          flightInfo: "UA8900 - Duration: 11hr 15min",
+          location: "Los Angeles International Airport"
+        }
+      ],
+      accommodation: {
+        name: "Overnight Flight",
+        address: "In-flight accommodation"
+      }
     },
     {
       id: "day-2",
@@ -26,27 +40,60 @@ export const europeTrip: Trip = {
       country: "Italy",
       description: "Arrival in Milan, Italy",
       title: "Hello Milano",
-      accommodationName: "Milano City Center Apartment",
-      accommodationAddress: "Via Paolo Sarpi 18, Milan",
-      accommodationCheckIn: "2025-06-06",
-      accommodationCheckOut: "2025-06-08",
-      accommodationConfirmation: "TBD",
-      accommodationWifi: "MilanoGuest2025",
-      bgImage: "https://images.unsplash.com/photo-1574203419920-f74e7d79e87c?w=800&auto=format&fit=crop",
-      activities: [],
-      pointsOfInterest: [
+      activities: [
         {
-          name: "Duomo di Milano",
-          description: "Gothic cathedral in the heart of Milan",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1574203419920-f74e7d79e87c?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "arrival-1",
+          time: "2:55 PM",
+          activity: "Arrive Frankfurt",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          location: "Frankfurt Airport"
         },
         {
-          name: "Galleria Vittorio Emanuele II",
-          description: "Historic shopping arcade near the Duomo",
-          category: "Shopping",
-          image: "https://images.unsplash.com/photo-1585132758447-5cf5db365524?w=800&auto=format&fit=crop"
+          id: "flight-2",
+          time: "5:25 PM",
+          activity: "Depart Frankfurt for Milan on UA9090",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          flightInfo: "UA9090 - Duration: 1hr 20min"
+        },
+        {
+          id: "arrival-2",
+          time: "6:45 PM",
+          activity: "Arrive Milan MXP",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          location: "Malpensa Airport"
+        },
+        {
+          id: "car-pickup",
+          time: "7:00 PM",
+          activity: "Pick up rental car - Volkswagen T-cross",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          location: "Malpensa Airport",
+          note: "Confirmation: 23010030US1, Budget Fastbreak: RapidRez ID #V6H02R"
+        }
+      ],
+      accommodation: {
+        name: "Apartment 4 beds + parking, Navigli - Bocconi",
+        address: "Viale Bligny, 13/a, 4th floor, Milano, Lombardia 20136",
+        checkin: "June 6, after 3:00 PM",
+        checkout: "June 9, 11:00 AM",
+        confirmationNumber: "HMFMP3K4ZT",
+        contactPhone: "+39 349 146 7840",
+        parking: "Private parking in courtyard",
+        wifi: "Self check-in with lockbox, Code: 5172"
+      },
+      warnings: [
+        {
+          type: "warning",
+          message: "Milan ZTL (Restricted Traffic Zone) - Historic center restricted Mon-Fri 7:30-19:30, Sat 8:00-18:00",
+          fine: "€87+ fine for violations"
         }
       ]
     },
@@ -56,25 +103,60 @@ export const europeTrip: Trip = {
       date: "2025-06-07",
       city: "Milan",
       country: "Italy",
-      description: "Exploring Milan",
+      description: "Full day exploring Milan",
       title: "Discover Milan",
-      accommodationName: "Milano City Center Apartment",
-      accommodationAddress: "Via Paolo Sarpi 18, Milan",
-      activities: [],
-      pointsOfInterest: [
+      activities: [
         {
-          name: "La Scala Opera House",
-          description: "World-renowned opera house in Milan",
-          category: "Culture",
-          image: "https://images.unsplash.com/photo-1581873372796-635b67ca2008?w=800&auto=format&fit=crop"
+          id: "duomo-visit",
+          time: "9:00 AM",
+          activity: "Explore Duomo & Galleria Vittorio Emanuele II",
+          type: "sightseeing",
+          icon: "🏰",
+          completed: false,
+          location: "Duomo di Milano",
+          mustTry: true
         },
         {
-          name: "Sforza Castle",
-          description: "15th-century citadel that now houses museums and art collections",
-          category: "History",
-          image: "https://images.unsplash.com/photo-1634219418498-9d929327ea8f?w=800&auto=format&fit=crop"
+          id: "la-scala",
+          time: "11:00 AM",
+          activity: "Visit La Scala Opera House",
+          type: "culture",
+          icon: "🎭",
+          completed: false,
+          location: "Teatro alla Scala"
+        },
+        {
+          id: "brera-district",
+          time: "2:00 PM",
+          activity: "Explore Brera district & Navigli canals",
+          type: "sightseeing",
+          icon: "🚶",
+          completed: false,
+          location: "Brera"
+        },
+        {
+          id: "shopping",
+          time: "4:00 PM",
+          activity: "Shopping in Quadrilatero della Moda",
+          type: "shopping",
+          icon: "🛍️",
+          completed: false,
+          location: "Fashion Quadrilateral"
+        },
+        {
+          id: "aperitivo",
+          time: "6:00 PM",
+          activity: "Aperitivo culture experience",
+          type: "dining",
+          icon: "🍸",
+          completed: false,
+          location: "Navigli area"
         }
-      ]
+      ],
+      accommodation: {
+        name: "Apartment 4 beds + parking, Navigli - Bocconi",
+        address: "Viale Bligny, 13/a, 4th floor, Milano, Lombardia 20136"
+      }
     },
     {
       id: "day-4",
@@ -82,21 +164,60 @@ export const europeTrip: Trip = {
       date: "2025-06-08",
       city: "Florence",
       country: "Italy",
-      description: "Travel to Florence",
-      title: "Welcome to Firenze",
-      accommodationName: "Graziosa dimora +garage",
-      accommodationAddress: "Via delle Porte Nuove, 34, Florence, Toscana 50144",
-      accommodationCheckIn: "2025-06-08",
-      accommodationCheckOut: "2025-06-12",
-      accommodationConfirmation: "HMXCEBRDD8",
-      activities: [],
-      pointsOfInterest: [
+      description: "Travel from Milan to Florence",
+      title: "Journey to Firenze",
+      activities: [
         {
-          name: "Ponte Vecchio",
-          description: "Medieval stone bridge spanning the Arno River",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "checkout-milan",
+          time: "11:00 AM",
+          activity: "Check out of Milan accommodation",
+          type: "travel",
+          icon: "🧳",
+          completed: false
+        },
+        {
+          id: "drive-florence",
+          time: "11:30 AM",
+          activity: "Drive to Florence (~3 hours)",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~300km",
+          duration: "3 hours"
+        },
+        {
+          id: "checkin-florence",
+          time: "1:00 PM",
+          activity: "Check-in Florence accommodation",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
+        }
+      ],
+      accommodation: {
+        name: "Graziosa dimora +garage accanto al centro storico",
+        address: "Via delle Porte Nuove, 34, Florence, Toscana 50144",
+        checkin: "June 9, 1:00 PM",
+        checkout: "June 12, 11:00 AM",
+        confirmationNumber: "HMXCEBRDD8",
+        wifi: "Energy limit 3KW, quiet hours 10PM-8AM"
+      },
+      warnings: [
+        {
+          type: "critical",
+          message: "Florence ZTL - Entire historic center restricted Mon-Fri 7:30-19:30, Thur-Sat 7:30-2:00AM",
+          fine: "€87+ fine",
+          times: "Cameras at entrances"
+        }
+      ],
+      parkingTips: [
+        {
+          name: "Garage Via Palazzuolo",
+          price: "€18/day"
+        },
+        {
+          name: "Parcheggio Parterre",
+          price: "€20/day"
         }
       ]
     },
@@ -106,25 +227,62 @@ export const europeTrip: Trip = {
       date: "2025-06-09",
       city: "Florence",
       country: "Italy",
-      description: "Exploring Florence",
-      title: "Art Day in Florence",
-      accommodationName: "Graziosa dimora +garage",
-      activities: [],
-      pointsOfInterest: [
+      description: "First full day exploring Florence",
+      title: "Renaissance Florence",
+      activities: [
         {
-          name: "Uffizi Gallery",
-          description: "Art museum with a vast collection of Renaissance masterpieces",
-          category: "Museum",
-          image: "https://images.unsplash.com/photo-1579198060175-32362e3f91f3?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "uffizi",
+          time: "9:00 AM",
+          activity: "Uffizi Gallery visit",
+          type: "museum",
+          icon: "🎨",
+          completed: false,
+          location: "Uffizi Gallery",
+          mustTry: true,
+          booked: true
         },
         {
-          name: "Piazza della Signoria",
-          description: "Historic square with outdoor sculpture gallery",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1626155934850-066a8a471f58?w=800&auto=format&fit=crop"
+          id: "ponte-vecchio",
+          time: "12:00 PM",
+          activity: "Walk across Ponte Vecchio",
+          type: "sightseeing",
+          icon: "🌉",
+          completed: false,
+          location: "Ponte Vecchio"
+        },
+        {
+          id: "lunch-pinos",
+          time: "1:00 PM",
+          activity: "Lunch at Pinos Panini",
+          type: "dining",
+          icon: "🥪",
+          completed: false,
+          location: "Pinos Panini",
+          mustTry: true
+        },
+        {
+          id: "palazzo-pitti",
+          time: "3:00 PM",
+          activity: "Palazzo Pitti visit",
+          type: "museum",
+          icon: "🏛️",
+          completed: false,
+          location: "Palazzo Pitti"
+        },
+        {
+          id: "piazzale-michelangelo",
+          time: "5:00 PM",
+          activity: "Sunset at Piazzale Michelangelo",
+          type: "sightseeing",
+          icon: "🌅",
+          completed: false,
+          location: "Piazzale Michelangelo"
         }
-      ]
+      ],
+      accommodation: {
+        name: "Graziosa dimora +garage",
+        address: "Via delle Porte Nuove, 34, Florence"
+      }
     },
     {
       id: "day-6",
@@ -132,24 +290,62 @@ export const europeTrip: Trip = {
       date: "2025-06-10",
       city: "Florence",
       country: "Italy",
-      description: "Day trip to Tuscany countryside",
-      title: "Tuscany Exploration",
-      accommodationName: "Graziosa dimora +garage",
-      activities: [],
-      pointsOfInterest: [
+      description: "Second day in Florence",
+      title: "Art & Culture Day",
+      activities: [
         {
-          name: "Siena",
-          description: "Medieval hill town in Tuscany known for its fan-shaped central square",
-          category: "Day Trip",
-          image: "https://images.unsplash.com/photo-1557110377-ae38e07e6ad7?w=800&auto=format&fit=crop"
+          id: "duomo-complex",
+          time: "9:00 AM",
+          activity: "Duomo complex & climb dome",
+          type: "sightseeing",
+          icon: "⛪",
+          completed: false,
+          location: "Cathedral of Santa Maria del Fiore",
+          mustTry: true
         },
         {
-          name: "San Gimignano",
-          description: "Small walled medieval town known for its tower houses",
-          category: "Day Trip",
-          image: "https://images.unsplash.com/photo-1598867559312-754c7b0b3d21?w=800&auto=format&fit=crop"
+          id: "gusta-pizza",
+          time: "12:30 PM",
+          activity: "Lunch at Gusta Pizza (Santo Spirito)",
+          type: "dining",
+          icon: "🍕",
+          completed: false,
+          location: "Gusta Pizza",
+          mustTry: true
+        },
+        {
+          id: "mercato-san-lorenzo",
+          time: "2:00 PM",
+          activity: "Explore Mercato di San Lorenzo",
+          type: "shopping",
+          icon: "🛒",
+          completed: false,
+          location: "San Lorenzo Market"
+        },
+        {
+          id: "santa-croce",
+          time: "4:00 PM",
+          activity: "Santa Croce area exploration",
+          type: "sightseeing",
+          icon: "⛪",
+          completed: false,
+          location: "Santa Croce"
+        },
+        {
+          id: "all-antico-vinaio",
+          time: "6:00 PM",
+          activity: "All'antico Vinaio for aperitivo",
+          type: "dining",
+          icon: "🥙",
+          completed: false,
+          location: "All'antico Vinaio",
+          mustTry: true
         }
-      ]
+      ],
+      accommodation: {
+        name: "Graziosa dimora +garage",
+        address: "Via delle Porte Nuove, 34, Florence"
+      }
     },
     {
       id: "day-7",
@@ -159,23 +355,51 @@ export const europeTrip: Trip = {
       country: "Italy",
       description: "Final day in Florence",
       title: "Florence Finale",
-      accommodationName: "Graziosa dimora +garage",
-      activities: [],
-      pointsOfInterest: [
+      activities: [
         {
-          name: "Galleria dell'Accademia",
-          description: "Home to Michelangelo's David and other Renaissance masterpieces",
-          category: "Museum",
-          image: "https://images.unsplash.com/photo-1628370091655-8200e49d0a2f?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "il-coccolo",
+          time: "9:00 AM",
+          activity: "Breakfast at Il Coccolo",
+          type: "dining",
+          icon: "☕",
+          completed: false,
+          location: "Il Coccolo",
+          mustTry: true
         },
         {
-          name: "Piazzale Michelangelo",
-          description: "Square offering panoramic views of Florence",
-          category: "Viewpoint",
-          image: "https://images.unsplash.com/photo-1534445867742-43195f401b6c?w=800&auto=format&fit=crop"
+          id: "truffle-pasta",
+          time: "12:00 PM",
+          activity: "Truffle pasta lunch (reservation needed)",
+          type: "dining",
+          icon: "🍝",
+          completed: false,
+          booked: true,
+          mustTry: true,
+          note: "Reservation required"
+        },
+        {
+          id: "ditta-artiginale",
+          time: "3:00 PM",
+          activity: "Coffee at Ditta Artiginale",
+          type: "dining",
+          icon: "☕",
+          completed: false,
+          location: "Ditta Artiginale",
+          mustTry: true
+        },
+        {
+          id: "last-minute-shopping",
+          time: "4:00 PM",
+          activity: "Last minute shopping and souvenirs",
+          type: "shopping",
+          icon: "🛍️",
+          completed: false
         }
-      ]
+      ],
+      accommodation: {
+        name: "Graziosa dimora +garage",
+        address: "Via delle Porte Nuove, 34, Florence"
+      }
     },
     {
       id: "day-8",
@@ -185,79 +409,197 @@ export const europeTrip: Trip = {
       country: "Italy",
       description: "Travel to Bologna",
       title: "Bologna Adventure",
-      accommodationName: "SWING HOUSE",
-      accommodationAddress: "Via delle Lame 71/A, Bologna",
-      accommodationCheckIn: "2025-06-12",
-      accommodationCheckOut: "2025-06-14",
-      accommodationConfirmation: "HMMDH5ZARB",
-      accommodationNotes: "Free parking 100m away (book 24h in advance)",
-      accommodationContact: "Cristina +39 344 066 1776",
-      activities: [],
-      pointsOfInterest: [
+      activities: [
         {
-          name: "Two Towers",
-          description: "Iconic leaning towers in the center of Bologna",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1581604893136-031bd5bd1414?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "checkout-florence",
+          time: "11:00 AM",
+          activity: "Check out of Florence",
+          type: "travel",
+          icon: "🧳",
+          completed: false
         },
         {
-          name: "Quadrilatero",
-          description: "Medieval market district with food stalls and restaurants",
-          category: "Food",
-          image: "https://images.unsplash.com/photo-1631881383186-fa0a1c0acbbd?w=800&auto=format&fit=crop"
+          id: "drive-bologna",
+          time: "11:30 AM",
+          activity: "Drive to Bologna (~1.5 hours)",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~105km",
+          duration: "1.5 hours"
+        },
+        {
+          id: "checkin-bologna",
+          time: "4:00 PM",
+          activity: "Check-in Bologna accommodation",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
+        },
+        {
+          id: "evening-exploration",
+          time: "6:00 PM",
+          activity: "Evening exploration of Bologna center",
+          type: "sightseeing",
+          icon: "🚶",
+          completed: false
         }
-      ]
+      ],
+      accommodation: {
+        name: "SWING HOUSE - free parking, historic centre, NO ZTL",
+        address: "Via delle Lame 71/A, Bologna, Emilia-Romagna 40122",
+        checkin: "June 12, 4:00 PM",
+        checkout: "June 14, 10:00 AM",
+        confirmationNumber: "HMMDH5ZARB",
+        contactPhone: "+39 344 066 1776",
+        parking: "Free private parking 100m away (book 24h ahead)",
+        wifi: "Via delle Lame is OUTSIDE ZTL (safe!)"
+      }
     },
     {
       id: "day-9",
       dayNumber: 9,
       date: "2025-06-13",
-      city: "Como",
+      city: "Bologna",
       country: "Italy",
-      description: "Travel to Lake Como",
-      title: "Lake Como Getaway",
-      accommodationName: "TBD",
-      accommodationCheckIn: "2025-06-14",
-      accommodationCheckOut: "2025-06-15",
-      accommodationConfirmation: "TBD",
-      activities: [],
-      pointsOfInterest: [
+      description: "Full day exploring Bologna",
+      title: "Bologna Full Day",
+      activities: [
         {
-          name: "Lake Como",
-          description: "Beautiful lake surrounded by mountains and luxury villas",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1583562835057-a62d1beffbf3?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "piazza-maggiore",
+          time: "9:00 AM",
+          activity: "Piazza Maggiore & Basilica San Petronio",
+          type: "sightseeing",
+          icon: "🏛️",
+          completed: false,
+          location: "Piazza Maggiore",
+          mustTry: true
         },
         {
-          name: "Villa del Balbianello",
-          description: "Elegant historic villa on the shore of Lake Como",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1658340498981-c051f3cef537?w=800&auto=format&fit=crop"
+          id: "two-towers",
+          time: "11:00 AM",
+          activity: "Two Towers (Asinelli & Garisenda)",
+          type: "sightseeing",
+          icon: "🗼",
+          completed: false,
+          location: "Due Torri",
+          mustTry: true
+        },
+        {
+          id: "tortellini-lunch",
+          time: "12:30 PM",
+          activity: "Traditional Tortellini lunch",
+          type: "dining",
+          icon: "🍝",
+          completed: false,
+          mustTry: true,
+          note: "Local specialty"
+        },
+        {
+          id: "quadrilatero-market",
+          time: "2:00 PM",
+          activity: "Quadrilatero market area",
+          type: "shopping",
+          icon: "🛒",
+          completed: false,
+          location: "Quadrilatero"
+        },
+        {
+          id: "university",
+          time: "3:30 PM",
+          activity: "University of Bologna visit",
+          type: "culture",
+          icon: "🎓",
+          completed: false,
+          location: "Archiginnasio"
+        },
+        {
+          id: "porticoes",
+          time: "5:00 PM",
+          activity: "Historic Porticoes walk",
+          type: "sightseeing",
+          icon: "🚶",
+          completed: false,
+          culturalNote: "UNESCO World Heritage site"
+        },
+        {
+          id: "tagliatelle-dinner",
+          time: "7:00 PM",
+          activity: "Tagliatelle al ragù dinner",
+          type: "dining",
+          icon: "🍝",
+          completed: false,
+          mustTry: true,
+          note: "Bologna specialty"
         }
-      ]
+      ],
+      accommodation: {
+        name: "SWING HOUSE",
+        address: "Via delle Lame 71/A, Bologna"
+      }
     },
     {
       id: "day-10",
       dayNumber: 10,
       date: "2025-06-14",
-      city: "Lucerne",
-      country: "Switzerland",
-      description: "Travel to Lucerne, Switzerland",
-      title: "Hello Switzerland",
-      accommodationName: "TBD",
-      accommodationCheckIn: "2025-06-15",
-      accommodationCheckOut: "2025-06-17",
-      accommodationConfirmation: "TBD",
-      activities: [],
-      pointsOfInterest: [
+      city: "Lake Como",
+      country: "Italy",
+      description: "Travel to Lake Como/Vezio",
+      title: "Lake Como Getaway",
+      activities: [
         {
-          name: "Chapel Bridge",
-          description: "Iconic wooden covered bridge in Lucerne",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1559886367-694dce0850cc?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "checkout-bologna",
+          time: "10:00 AM",
+          activity: "Check-out Bologna",
+          type: "travel",
+          icon: "🧳",
+          completed: false
+        },
+        {
+          id: "drive-como",
+          time: "10:30 AM",
+          activity: "Drive to Vezio (~3.5 hours)",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~280km",
+          duration: "3.5 hours"
+        },
+        {
+          id: "checkin-como",
+          time: "3:00 PM",
+          activity: "Check-in Casa Chicca",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false,
+          location: "Vezio"
+        },
+        {
+          id: "lake-evening",
+          time: "5:00 PM",
+          activity: "Evening by the lake",
+          type: "relaxation",
+          icon: "🌊",
+          completed: false,
+          location: "Lake Como"
+        }
+      ],
+      accommodation: {
+        name: "Casa Chicca, relax and lake",
+        address: "Via del Castellano, 9, Vezio, Lombardia 23828",
+        checkin: "June 14, 3:00 PM",
+        checkout: "June 16, 11:00 AM",
+        confirmationNumber: "HM4K483EX2",
+        contactPhone: "+39 335 129 7553"
+      },
+      parkingTips: [
+        {
+          name: "Varenna free parking",
+          price: "Via Croce (free)"
+        },
+        {
+          name: "Bellagio parking",
+          price: "€15/day"
         }
       ]
     },
@@ -265,24 +607,73 @@ export const europeTrip: Trip = {
       id: "day-11",
       dayNumber: 11,
       date: "2025-06-15",
-      city: "Lucerne",
-      country: "Switzerland",
-      description: "Exploring Lucerne",
-      accommodationName: "TBD",
-      pointsOfInterest: [
+      city: "Lake Como",
+      country: "Italy",
+      description: "Full day exploring Lake Como",
+      title: "Como Magic",
+      activities: [
         {
-          name: "Lake Lucerne",
-          description: "Scenic lake surrounded by mountains",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1542046272227-d247df21628a?w=800&auto=format&fit=crop"
+          id: "varenna-village",
+          time: "9:00 AM",
+          activity: "Varenna village & Villa Monastero",
+          type: "sightseeing",
+          icon: "🏘️",
+          completed: false,
+          location: "Varenna",
+          mustTry: true
         },
         {
-          name: "Mount Pilatus",
-          description: "Mountain offering panoramic views, accessible by cable car",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1613484619036-94596b7af073?w=800&auto=format&fit=crop"
+          id: "ferry-bellagio",
+          time: "11:30 AM",
+          activity: "Ferry to Bellagio",
+          type: "travel",
+          icon: "⛵",
+          completed: false,
+          location: "Lake Como Ferry"
+        },
+        {
+          id: "bellagio-explore",
+          time: "12:00 PM",
+          activity: "Explore Bellagio",
+          type: "sightseeing",
+          icon: "🏘️",
+          completed: false,
+          location: "Bellagio",
+          mustTry: true
+        },
+        {
+          id: "villa-balbianello",
+          time: "2:30 PM",
+          activity: "Villa del Balbianello visit",
+          type: "sightseeing",
+          icon: "🏰",
+          completed: false,
+          location: "Villa del Balbianello",
+          mustTry: true
+        },
+        {
+          id: "como-town",
+          time: "4:30 PM",
+          activity: "Como town & cathedral",
+          type: "sightseeing",
+          icon: "⛪",
+          completed: false,
+          location: "Como"
+        },
+        {
+          id: "cable-car",
+          time: "6:00 PM",
+          activity: "Cable car to Brunate",
+          type: "sightseeing",
+          icon: "🚠",
+          completed: false,
+          location: "Como-Brunate Funicular"
         }
-      ]
+      ],
+      accommodation: {
+        name: "Casa Chicca",
+        address: "Via del Castellano, 9, Vezio"
+      }
     },
     {
       id: "day-12",
@@ -290,14 +681,61 @@ export const europeTrip: Trip = {
       date: "2025-06-16",
       city: "Lucerne",
       country: "Switzerland",
-      description: "Day trip to the Swiss Alps",
-      accommodationName: "TBD",
-      pointsOfInterest: [
+      description: "Travel to Lucerne, Switzerland",
+      title: "Hello Switzerland",
+      activities: [
         {
-          name: "Mount Titlis",
-          description: "Year-round snow and glacier experiences",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1575398242121-94896e7bf9c5?w=800&auto=format&fit=crop"
+          id: "checkout-como",
+          time: "11:00 AM",
+          activity: "Check-out Casa Chicca",
+          type: "travel",
+          icon: "🧳",
+          completed: false
+        },
+        {
+          id: "drive-lucerne",
+          time: "11:30 AM",
+          activity: "Drive to Lucerne (~3 hours)",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~220km",
+          duration: "3 hours",
+          warning: "Swiss vignette required (CHF 40)"
+        },
+        {
+          id: "swiss-vignette",
+          time: "12:00 PM",
+          activity: "Purchase Swiss highway vignette",
+          type: "travel",
+          icon: "🎫",
+          completed: false,
+          note: "CHF 40 (€37) - Buy at border or gas station"
+        },
+        {
+          id: "lucerne-arrival",
+          time: "2:30 PM",
+          activity: "Arrive Lucerne and check-in",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
+        },
+        {
+          id: "chapel-bridge",
+          time: "4:00 PM",
+          activity: "Visit Chapel Bridge",
+          type: "sightseeing",
+          icon: "🌉",
+          completed: false,
+          location: "Kapellbrücke",
+          mustTry: true
+        }
+      ],
+      warnings: [
+        {
+          type: "warning",
+          message: "Swiss highway vignette required - CHF 40",
+          times: "Must stick on windscreen, valid entire year"
         }
       ]
     },
@@ -308,21 +746,57 @@ export const europeTrip: Trip = {
       city: "Stuttgart",
       country: "Germany",
       description: "Travel to Stuttgart, Germany",
-      accommodationName: "Adina Apartment Hotel Stuttgart",
-      accommodationAddress: "Kriegsbergstraße 24, 70174 Stuttgart",
-      accommodationCheckIn: "2025-06-17",
-      accommodationCheckOut: "2025-06-21",
-      accommodationConfirmation: "CI5EKCQU",
-      accommodationContact: "+49-711-4909290",
-      accommodationPrice: 623.32,
-      accommodationCurrency: "EUR",
-      accommodationEmail: "stuttgart@adina.eu",
-      pointsOfInterest: [
+      title: "Germany Bound",
+      activities: [
         {
-          name: "Mercedes-Benz Museum",
-          description: "Museum showcasing the history of Mercedes-Benz",
-          category: "Museum",
-          image: "https://images.unsplash.com/photo-1562426209-1488d598648d?w=800&auto=format&fit=crop"
+          id: "checkout-lucerne",
+          time: "10:00 AM",
+          activity: "Check-out Lucerne",
+          type: "travel",
+          icon: "🧳",
+          completed: false
+        },
+        {
+          id: "drive-stuttgart",
+          time: "10:30 AM",
+          activity: "Drive to Stuttgart (~3 hours)",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~250km",
+          duration: "3 hours"
+        },
+        {
+          id: "checkin-stuttgart",
+          time: "2:00 PM",
+          activity: "Check-in Stuttgart accommodation",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
+        },
+        {
+          id: "city-exploration",
+          time: "4:00 PM",
+          activity: "Initial city exploration",
+          type: "sightseeing",
+          icon: "🚶",
+          completed: false,
+          location: "Stuttgart city center"
+        }
+      ],
+      accommodation: {
+        name: "Adina Apartment Hotel Stuttgart",
+        address: "Kriegsbergstraße 24, 70174 Stuttgart",
+        checkin: "June 17, 2025",
+        checkout: "June 21, 2025",
+        confirmationNumber: "CI5EKCQU",
+        contactPhone: "+49-711-4909290",
+        totalPrice: "623.32 EUR"
+      },
+      parkingTips: [
+        {
+          name: "City center garages",
+          price: "€15-25/day"
         }
       ]
     },
@@ -332,22 +806,60 @@ export const europeTrip: Trip = {
       date: "2025-06-18",
       city: "Stuttgart",
       country: "Germany",
-      description: "Exploring Stuttgart",
-      accommodationName: "Adina Apartment Hotel Stuttgart",
-      pointsOfInterest: [
+      description: "Pre-audition preparation day",
+      title: "Stuttgart Pre-Audition",
+      activities: [
         {
-          name: "Porsche Museum",
-          description: "Museum dedicated to Porsche sports cars",
-          category: "Museum",
-          image: "https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?w=800&auto=format&fit=crop"
+          id: "vocal-warmups",
+          time: "9:00 AM",
+          activity: "Vocal warm-ups and practice",
+          type: "preparation",
+          icon: "🎵",
+          completed: false,
+          importance: "Critical preparation"
         },
         {
-          name: "Schlossplatz",
-          description: "Large square in the center of Stuttgart with the New Palace",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1564520017466-903bbd9a3d43?w=800&auto=format&fit=crop"
+          id: "venue-visit",
+          time: "11:00 AM",
+          activity: "Visit audition venue - Staatsoper Stuttgart",
+          type: "preparation",
+          icon: "🎭",
+          completed: false,
+          location: "Stuttgart Opera House",
+          importance: "Venue familiarization"
+        },
+        {
+          id: "repertoire-review",
+          time: "2:00 PM",
+          activity: "Review repertoire and audition materials",
+          type: "preparation",
+          icon: "📚",
+          completed: false,
+          note: "Classical roles: Rodolfo, Don José, Radamès"
+        },
+        {
+          id: "mercedes-museum",
+          time: "4:00 PM",
+          activity: "Mercedes-Benz Museum (relaxation)",
+          type: "sightseeing",
+          icon: "🚗",
+          completed: false,
+          location: "Mercedes-Benz Museum"
+        },
+        {
+          id: "rest-preparation",
+          time: "7:00 PM",
+          activity: "Rest and mental preparation",
+          type: "preparation",
+          icon: "🧘",
+          completed: false,
+          importance: "Rest before audition"
         }
-      ]
+      ],
+      accommodation: {
+        name: "Adina Apartment Hotel Stuttgart",
+        address: "Kriegsbergstraße 24, 70174 Stuttgart"
+      }
     },
     {
       id: "day-15",
@@ -355,17 +867,53 @@ export const europeTrip: Trip = {
       date: "2025-06-19",
       city: "Stuttgart",
       country: "Germany",
-      description: "Day trip from Stuttgart",
-      accommodationName: "Adina Apartment Hotel Stuttgart",
-      pointsOfInterest: [
+      description: "Opera audition day at Staatsoper Stuttgart",
+      title: "AUDITION DAY 🎭",
+      specialEvent: true,
+      activities: [
         {
-          name: "Hohenzollern Castle",
-          description: "Ancestral seat of the Hohenzollern family",
-          category: "Day Trip",
-          image: "https://images.unsplash.com/photo-1605641532626-3962be3a9901?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "morning-prep",
+          time: "8:00 AM",
+          activity: "Final vocal warm-up and preparation",
+          type: "preparation",
+          icon: "🎵",
+          completed: false,
+          importance: "Final preparation"
+        },
+        {
+          id: "audition",
+          time: "TBD",
+          activity: "Opera audition at Staatsoper Stuttgart",
+          type: "audition",
+          icon: "🎭",
+          completed: false,
+          location: "Stuttgart Opera House",
+          importance: "Main event",
+          note: "Connect with European casting directors and GMDs"
+        },
+        {
+          id: "networking",
+          time: "After audition",
+          activity: "Meet casting directors & GMDs",
+          type: "networking",
+          icon: "🤝",
+          completed: false,
+          note: "European opera house representatives"
+        },
+        {
+          id: "celebration",
+          time: "Evening",
+          activity: "Celebrate completion of audition",
+          type: "celebration",
+          icon: "🎉",
+          completed: false
         }
-      ]
+      ],
+      accommodation: {
+        name: "Adina Apartment Hotel Stuttgart",
+        address: "Kriegsbergstraße 24, 70174 Stuttgart"
+      },
+      encouragement: "Today is the day! All your preparation has led to this moment. Trust in your talent and training. Break a leg! 🎭✨"
     },
     {
       id: "day-16",
@@ -373,17 +921,50 @@ export const europeTrip: Trip = {
       date: "2025-06-20",
       city: "Stuttgart",
       country: "Germany",
-      description: "Stuttgart Opera Audition",
-      accommodationName: "Adina Apartment Hotel Stuttgart",
-      pointsOfInterest: [
+      description: "Post-audition exploration of Stuttgart",
+      title: "Stuttgart Post-Audition",
+      activities: [
         {
-          name: "Stuttgart Opera",
-          description: "Special event: Opera Audition",
-          category: "Performance",
-          image: "https://images.unsplash.com/photo-1522775559573-2f76d540932b?w=800&auto=format&fit=crop",
-          mustSee: true
+          id: "celebration-brunch",
+          time: "10:00 AM",
+          activity: "Celebration brunch",
+          type: "dining",
+          icon: "🥐",
+          completed: false,
+          note: "Well-deserved celebration!"
+        },
+        {
+          id: "porsche-museum",
+          time: "11:30 AM",
+          activity: "Porsche Museum visit",
+          type: "sightseeing",
+          icon: "🏎️",
+          completed: false,
+          location: "Porsche Museum"
+        },
+        {
+          id: "schlossplatz",
+          time: "2:00 PM",
+          activity: "Explore Schlossplatz and New Palace",
+          type: "sightseeing",
+          icon: "🏰",
+          completed: false,
+          location: "Schlossplatz"
+        },
+        {
+          id: "local-restaurant",
+          time: "6:00 PM",
+          activity: "Dinner at local restaurant",
+          type: "dining",
+          icon: "🍽️",
+          completed: false,
+          note: "Traditional German cuisine"
         }
-      ]
+      ],
+      accommodation: {
+        name: "Adina Apartment Hotel Stuttgart",
+        address: "Kriegsbergstraße 24, 70174 Stuttgart"
+      }
     },
     {
       id: "day-17",
@@ -392,16 +973,53 @@ export const europeTrip: Trip = {
       city: "Black Forest",
       country: "Germany",
       description: "Travel to Black Forest region",
-      accommodationName: "TBD",
-      accommodationCheckIn: "2025-06-21",
-      accommodationCheckOut: "2025-06-23",
-      accommodationConfirmation: "TBD",
-      pointsOfInterest: [
+      title: "Black Forest Adventure",
+      activities: [
         {
-          name: "Triberg Waterfalls",
-          description: "One of Germany's highest waterfalls",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1583856014103-5318690c1750?w=800&auto=format&fit=crop"
+          id: "checkout-stuttgart",
+          time: "10:00 AM",
+          activity: "Check-out Stuttgart",
+          type: "travel",
+          icon: "🧳",
+          completed: false
+        },
+        {
+          id: "hohenzollern-castle",
+          time: "11:00 AM",
+          activity: "Visit Burg Hohenzollern castle",
+          type: "sightseeing",
+          icon: "🏰",
+          completed: false,
+          location: "Hohenzollern Castle",
+          mustTry: true,
+          note: "Ancestral seat of the Hohenzollern family"
+        },
+        {
+          id: "drive-black-forest",
+          time: "3:00 PM",
+          activity: "Drive into Black Forest region",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          location: "Schwarzwald"
+        },
+        {
+          id: "triberg-waterfalls",
+          time: "4:30 PM",
+          activity: "Visit Triberg Waterfalls",
+          type: "nature",
+          icon: "💧",
+          completed: false,
+          location: "Triberg",
+          note: "One of Germany's highest waterfalls"
+        },
+        {
+          id: "checkin-black-forest",
+          time: "6:00 PM",
+          activity: "Check-in Black Forest accommodation",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
         }
       ]
     },
@@ -411,20 +1029,56 @@ export const europeTrip: Trip = {
       date: "2025-06-22",
       city: "Black Forest",
       country: "Germany",
-      description: "Exploring Black Forest",
-      accommodationName: "TBD",
-      pointsOfInterest: [
+      description: "Exploring Black Forest region",
+      title: "Black Forest Exploration",
+      activities: [
         {
-          name: "Lake Titisee",
-          description: "Popular lake in the heart of the Black Forest",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1564750608547-5f201a3544b9?w=800&auto=format&fit=crop"
+          id: "lake-titisee",
+          time: "9:00 AM",
+          activity: "Visit Lake Titisee",
+          type: "nature",
+          icon: "🌊",
+          completed: false,
+          location: "Titisee",
+          note: "Popular lake in the heart of the Black Forest"
         },
         {
-          name: "Cuckoo Clock Workshops",
-          description: "Traditional craftsmanship of the Black Forest region",
-          category: "Culture",
-          image: "https://images.unsplash.com/photo-1511357840105-748c95f0a7d7?w=800&auto=format&fit=crop"
+          id: "cuckoo-clocks",
+          time: "11:30 AM",
+          activity: "Cuckoo Clock Workshops",
+          type: "culture",
+          icon: "🕐",
+          completed: false,
+          location: "Black Forest",
+          note: "Traditional craftsmanship of the region"
+        },
+        {
+          id: "schwarzwaldbahn",
+          time: "2:00 PM",
+          activity: "Schwarzwaldbahn scenic train to Hausach",
+          type: "sightseeing",
+          icon: "🚂",
+          completed: false,
+          location: "Black Forest Railway"
+        },
+        {
+          id: "freudenstadt",
+          time: "4:00 PM",
+          activity: "Explore Freudenstadt",
+          type: "sightseeing",
+          icon: "🏘️",
+          completed: false,
+          location: "Freudenstadt"
+        },
+        {
+          id: "local-dinner",
+          time: "7:00 PM",
+          activity: "Traditional Black Forest dinner",
+          type: "dining",
+          icon: "🍽️",
+          completed: false,
+          mustTry: true,
+          note: "Black Forest specialties"
         }
       ]
     },
@@ -434,23 +1088,61 @@ export const europeTrip: Trip = {
       date: "2025-06-23",
       city: "Zurich",
       country: "Switzerland",
-      description: "Travel to Zurich",
-      accommodationName: "TBD",
-      accommodationCheckIn: "2025-06-23",
-      accommodationCheckOut: "2025-06-24",
-      accommodationConfirmation: "TBD",
-      pointsOfInterest: [
+      description: "Travel to Zurich via scenic route",
+      title: "Scenic Route to Zurich",
+      activities: [
         {
-          name: "Lake Zurich",
-          description: "Beautiful lake in the heart of Zurich",
-          category: "Nature",
-          image: "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=800&auto=format&fit=crop"
+          id: "checkout-black-forest",
+          time: "9:00 AM",
+          activity: "Check-out Black Forest accommodation",
+          type: "travel",
+          icon: "🧳",
+          completed: false
         },
         {
-          name: "Old Town (Altstadt)",
-          description: "Historic center of Zurich with medieval houses",
-          category: "Sightseeing",
-          image: "https://images.unsplash.com/photo-1589969181793-05524a3196d4?w=800&auto=format&fit=crop"
+          id: "lindau-bodensee",
+          time: "10:30 AM",
+          activity: "Stop in Lindau on the Bodensee",
+          type: "sightseeing",
+          icon: "🌊",
+          completed: false,
+          location: "Lindau",
+          note: "Beautiful lake town"
+        },
+        {
+          id: "lichtenstein-castle",
+          time: "1:00 PM",
+          activity: "Visit Lichtenstein Castle",
+          type: "sightseeing",
+          icon: "🏰",
+          completed: false,
+          location: "Schloss Lichtenstein"
+        },
+        {
+          id: "drive-zurich",
+          time: "3:00 PM",
+          activity: "Continue drive to Zurich",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~200km"
+        },
+        {
+          id: "zurich-arrival",
+          time: "5:00 PM",
+          activity: "Arrive Zurich and check-in",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
+        },
+        {
+          id: "lake-zurich-walk",
+          time: "6:30 PM",
+          activity: "Evening walk by Lake Zurich",
+          type: "sightseeing",
+          icon: "🚶",
+          completed: false,
+          location: "Lake Zurich"
         }
       ]
     },
@@ -460,16 +1152,61 @@ export const europeTrip: Trip = {
       date: "2025-06-24",
       city: "Milan",
       country: "Italy",
-      description: "Return to Milan",
-      accommodationName: "TBD",
-      accommodationCheckIn: "2025-06-24",
-      accommodationCheckOut: "2025-06-25",
-      accommodationConfirmation: "TBD",
-      pointsOfInterest: [
+      description: "Return to Milan for final night",
+      title: "Return to Milan",
+      activities: [
         {
-          name: "Last minute shopping",
-          description: "Final shopping opportunities in Milan",
-          category: "Shopping"
+          id: "zurich-old-town",
+          time: "9:00 AM",
+          activity: "Explore Zurich Old Town (Altstadt)",
+          type: "sightseeing",
+          icon: "🏘️",
+          completed: false,
+          location: "Zurich Altstadt"
+        },
+        {
+          id: "checkout-zurich",
+          time: "11:00 AM",
+          activity: "Check-out Zurich",
+          type: "travel",
+          icon: "🧳",
+          completed: false
+        },
+        {
+          id: "drive-milan",
+          time: "11:30 AM",
+          activity: "Drive back to Milan",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~280km",
+          duration: "3.5 hours"
+        },
+        {
+          id: "checkin-milan-final",
+          time: "3:00 PM",
+          activity: "Check-in final Milan accommodation",
+          type: "accommodation",
+          icon: "🏨",
+          completed: false
+        },
+        {
+          id: "last-shopping",
+          time: "4:00 PM",
+          activity: "Last minute shopping in Milan",
+          type: "shopping",
+          icon: "🛍️",
+          completed: false,
+          location: "Quadrilatero della Moda"
+        },
+        {
+          id: "farewell-dinner",
+          time: "7:00 PM",
+          activity: "Farewell dinner in Milan",
+          type: "dining",
+          icon: "🍽️",
+          completed: false,
+          note: "Final Italian meal"
         }
       ]
     },
@@ -480,8 +1217,33 @@ export const europeTrip: Trip = {
       city: "Milan to Los Angeles",
       country: "Italy/USA",
       description: "Departure from Europe",
-      accommodationName: "Flight",
-      accommodationNotes: "Overnight flight to USA"
+      title: "Journey Home",
+      activities: [
+        {
+          id: "car-return",
+          time: "2:00 PM",
+          activity: "Return rental car at Malpensa Airport",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          location: "MXP Airport",
+          note: "Return by 2:00 PM"
+        },
+        {
+          id: "departure-flight",
+          time: "3:20 PM",
+          activity: "Depart Milan MXP on UA415",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          flightInfo: "UA415 to Chicago ORD - Duration: 9hr 50min",
+          location: "Malpensa Airport"
+        }
+      ],
+      accommodation: {
+        name: "In-flight",
+        address: "Transatlantic flight"
+      }
     },
     {
       id: "day-22",
@@ -489,12 +1251,63 @@ export const europeTrip: Trip = {
       date: "2025-06-26",
       city: "Los Angeles to Santa Maria",
       country: "USA",
-      description: "Return home",
-      pointsOfInterest: [
+      description: "Return home to Santa Maria",
+      title: "Home Sweet Home",
+      activities: [
         {
-          name: "Car Rental Return",
-          description: "Return rental car at Santa Maria Airport",
-          category: "Travel"
+          id: "arrive-chicago",
+          time: "6:10 PM",
+          activity: "Arrive Chicago ORD (June 25)",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          location: "Chicago O'Hare"
+        },
+        {
+          id: "connecting-flight",
+          time: "9:40 PM",
+          activity: "Depart Chicago on UA1936",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          flightInfo: "UA1936 to LAX - Duration: 4hr 33min"
+        },
+        {
+          id: "arrive-lax",
+          time: "12:13 AM",
+          activity: "Arrive LAX (June 26)",
+          type: "travel",
+          icon: "✈️",
+          completed: false,
+          location: "Los Angeles International"
+        },
+        {
+          id: "car-rental-lax",
+          time: "1:30 AM",
+          activity: "Pick up LAX rental car",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          note: "Confirmation: 23786281US1"
+        },
+        {
+          id: "drive-home",
+          time: "2:00 AM",
+          activity: "Drive home to Santa Maria",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          distance: "~200 miles",
+          duration: "3 hours"
+        },
+        {
+          id: "home-arrival",
+          time: "5:00 AM",
+          activity: "Arrive home in Santa Maria",
+          type: "arrival",
+          icon: "🏠",
+          completed: false,
+          note: "End of European adventure!"
         }
       ]
     }
