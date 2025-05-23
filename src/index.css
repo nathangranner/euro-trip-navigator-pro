@@ -664,7 +664,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Duomo Line Drawing Styles */
+/* Duomo di Firenze Line Drawing Styles */
 .duomo-container {
   position: relative;
   width: 100px;
@@ -690,63 +690,19 @@
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Main cathedral body */
+/* Main cathedral body - wider Renaissance facade */
 .duomo-body {
   position: absolute;
   bottom: 0;
-  left: 20%;
-  width: 60%;
-  height: 50%;
+  left: 15%;
+  width: 70%;
+  height: 45%;
   border: 1px solid rgba(255, 240, 200, 0.7);
   border-bottom: none;
   border-radius: 0;
 }
 
 .duomo-body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 15%;
-  width: 70%;
-  height: 1px;
-  background: rgba(255, 240, 200, 0.7);
-}
-
-.duomo-body::after {
-  content: '';
-  position: absolute;
-  top: 30%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: rgba(255, 240, 200, 0.7);
-}
-
-/* Central spire */
-.duomo-central-spire {
-  position: absolute;
-  bottom: 50%;
-  left: 45%;
-  width: 10%;
-  height: 40%;
-  border: 1px solid rgba(255, 240, 200, 0.7);
-  border-bottom: none;
-}
-
-.duomo-central-spire::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 3px solid transparent;
-  border-right: 3px solid transparent;
-  border-bottom: 8px solid rgba(255, 240, 200, 0.7);
-}
-
-.duomo-central-spire::after {
   content: '';
   position: absolute;
   top: 20%;
@@ -756,32 +712,110 @@
   background: rgba(255, 240, 200, 0.7);
 }
 
-/* Side spires */
+.duomo-body::after {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+/* Famous Brunelleschi's Dome */
+.duomo-central-spire {
+  position: absolute;
+  bottom: 45%;
+  left: 35%;
+  width: 30%;
+  height: 35%;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+  border-radius: 50% 50% 0 0;
+}
+
+.duomo-central-spire::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 12px;
+  border: 1px solid rgba(255, 240, 200, 0.7);
+  border-bottom: none;
+}
+
+.duomo-central-spire::after {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+/* Giotto's Bell Tower (Campanile) */
 .duomo-side-spire-left {
   position: absolute;
-  bottom: 50%;
-  left: 25%;
-  width: 8%;
-  height: 25%;
+  bottom: 45%;
+  left: 20%;
+  width: 10%;
+  height: 40%;
   border: 1px solid rgba(255, 240, 200, 0.7);
   border-bottom: none;
 }
 
+.duomo-side-spire-left::before {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+.duomo-side-spire-left::after {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 240, 200, 0.7);
+}
+
+/* Baptistery representation */
 .duomo-side-spire-right {
   position: absolute;
-  bottom: 50%;
-  right: 25%;
-  width: 8%;
+  bottom: 0;
+  right: 20%;
+  width: 12%;
   height: 25%;
   border: 1px solid rgba(255, 240, 200, 0.7);
   border-bottom: none;
 }
 
-/* Gothic arches */
+.duomo-side-spire-right::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid rgba(255, 240, 200, 0.7);
+}
+
+/* Renaissance arches on facade */
 .duomo-arch-left {
   position: absolute;
-  bottom: 25%;
-  left: 25%;
+  bottom: 15%;
+  left: 20%;
   width: 15%;
   height: 15%;
   border-top: 1px solid rgba(255, 240, 200, 0.7);
@@ -790,22 +824,22 @@
 
 .duomo-arch-right {
   position: absolute;
-  bottom: 25%;
-  right: 25%;
+  bottom: 15%;
+  right: 20%;
   width: 15%;
   height: 15%;
   border-top: 1px solid rgba(255, 240, 200, 0.7);
   border-radius: 50% 50% 0 0;
 }
 
-/* Rose window */
+/* Large rose window on facade */
 .duomo-rose-window {
   position: absolute;
-  top: 15%;
+  top: 25%;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border: 1px solid rgba(255, 240, 200, 0.7);
   border-radius: 50%;
 }
@@ -830,53 +864,54 @@
   background: rgba(255, 240, 200, 0.7);
 }
 
-/* Main portal */
+/* Main portal with Renaissance styling */
 .duomo-portal {
   position: absolute;
   bottom: 0;
-  left: 42.5%;
-  width: 15%;
-  height: 30%;
+  left: 45%;
+  width: 10%;
+  height: 25%;
   border: 1px solid rgba(255, 240, 200, 0.7);
   border-bottom: none;
-  border-radius: 50% 50% 0 0;
+  border-radius: 0;
 }
 
 .duomo-portal::before {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 20%;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
   width: 60%;
-  height: 60%;
+  height: 40%;
   border-top: 1px solid rgba(255, 240, 200, 0.7);
   border-radius: 50% 50% 0 0;
 }
 
-/* Flying buttresses */
+/* Architectural details */
 .duomo-buttress-left {
   position: absolute;
-  bottom: 30%;
-  left: 10%;
-  width: 20%;
+  bottom: 35%;
+  left: 12%;
+  width: 15%;
   height: 1px;
   background: rgba(255, 240, 200, 0.7);
-  transform: rotate(15deg);
+  transform: rotate(25deg);
   transform-origin: right;
 }
 
 .duomo-buttress-right {
   position: absolute;
-  bottom: 30%;
-  right: 10%;
-  width: 20%;
+  bottom: 35%;
+  right: 12%;
+  width: 15%;
   height: 1px;
   background: rgba(255, 240, 200, 0.7);
-  transform: rotate(-15deg);
+  transform: rotate(-25deg);
   transform-origin: left;
 }
 
-/* Filigree decorations - reusing the same classes from envelope */
+/* Filigree decorations - same as before */
 .duomo-filigree-tl,
 .duomo-filigree-tr,
 .duomo-filigree-bl,
