@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -68,18 +69,19 @@ const Index = () => {
           <div className="mt-12">
             <div 
               onClick={handleEnvelopeClick} 
-              className={`envelope-container ${isEnvelopeOpen ? 'envelope-open' : ''}`}
+              className={`italianate-envelope ${isEnvelopeOpen ? 'italianate-envelope-open' : ''}`}
             >
-              <div className="envelope-front">
-                <div className="envelope-flap"></div>
-                <div className="envelope-back"></div>
-                <div className="envelope-icon">
-                  {isEnvelopeOpen ? <MailOpen className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
+              <div className="italianate-envelope-front">
+                <div className="italianate-envelope-flap"></div>
+                <div className="italianate-envelope-back"></div>
+                <div className="italianate-envelope-icon">
+                  {isEnvelopeOpen ? <MailOpen className="w-3 h-3" /> : <Mail className="w-3 h-3" />}
                 </div>
-                <div className="envelope-filigree-tl"></div>
-                <div className="envelope-filigree-tr"></div>
-                <div className="envelope-filigree-bl"></div>
-                <div className="envelope-filigree-br"></div>
+                <div className="italianate-filigree-tl"></div>
+                <div className="italianate-filigree-tr"></div>
+                <div className="italianate-filigree-bl"></div>
+                <div className="italianate-filigree-br"></div>
+                <div className="italianate-filigree-center"></div>
               </div>
             </div>
           </div>
