@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +54,7 @@ const TravelBuddyPage: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-futura tracking-wider uppercase text-slate-800">AI Travel Buddy</h1>
           <Button 
-            onClick={() => navigate(-1)} 
+            onClick={() => navigate("/")} 
             variant="outline" 
             className="flex items-center gap-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm"
           >
