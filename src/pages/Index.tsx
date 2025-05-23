@@ -1,7 +1,9 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Mail, MailOpen, ArrowLeft } from "lucide-react";
+
 const Index = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -22,6 +24,7 @@ const Index = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   const handleEnvelopeClick = () => {
     setIsEnvelopeOpen(true);
     // Delay navigation to allow envelope animation to complete
@@ -29,20 +32,22 @@ const Index = () => {
       navigate("/planner");
     }, 1200);
   };
-  return <div className="relative min-h-screen overflow-hidden bg-black text-white">
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
         <div className="absolute inset-0 w-full h-[120vh]" style={{
-        backgroundImage: "url('https://images.unsplash.com/photo-1576788498981-244a7a4f8d5d?q=80&w=2000&auto=format&fit=crop')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        filter: "brightness(0.6) contrast(1.1)"
-      }} />
+          backgroundImage: "url('https://images.unsplash.com/photo-1576788498981-244a7a4f8d5d?q=80&w=2000&auto=format&fit=crop')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "brightness(0.6) contrast(1.1)"
+        }} />
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col bg-amber-600">
+      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col">
         {/* Header with luxury brand style */}
         <header className="pt-12 pb-8 flex justify-between items-center">
           <div className="text-2xl font-light tracking-[0.3em] uppercase">EUROTRIP25</div>
@@ -51,9 +56,11 @@ const Index = () => {
 
         {/* Main Title Section */}
         <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
-          <h1 ref={titleRef} style={{
-          letterSpacing: "0.15em"
-        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect. Text reads: \"EUROTRIP25\"">
+          <h1 
+            ref={titleRef} 
+            style={{ letterSpacing: "0.15em" }} 
+            className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8"
+          >
             EUROPE<span className="font-thin">25</span>
           </h1>
           
@@ -86,10 +93,10 @@ const Index = () => {
             <div className="group cursor-pointer relative overflow-hidden" onClick={() => navigate("/planner")}>
               <div className="h-72 overflow-hidden">
                 <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110" style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')",
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }} />
+                  backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center"
+                }} />
               </div>
               <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
                 <div>
@@ -103,10 +110,10 @@ const Index = () => {
             <div className="group cursor-pointer relative overflow-hidden" onClick={() => navigate("/travel-buddy")}>
               <div className="h-72 overflow-hidden">
                 <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110" style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')",
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }} />
+                  backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center"
+                }} />
               </div>
               <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
                 <div>
@@ -136,6 +143,8 @@ const Index = () => {
       <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-white/0 via-white/30 to-white/0"></div>
       <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-white/0 via-white/30 to-white/0"></div>
       <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white/0 via-white/30 to-white/0"></div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
