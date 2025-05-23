@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import TripSummary from "./pages/TripSummary";
-import TravelBuddyPage from "./pages/TravelBuddyPage";
+import TravelConciergePage from "./pages/TravelConciergePage";
 import { EuropeTripPlanner } from "./components/EuropeTripPlanner";
 import NavHome from "./components/NavHome";
 
@@ -29,9 +29,13 @@ const App = () => (
             <NavHome />
             <TripSummary />
           </>} />
+          <Route path="/travel-concierge" element={<>
+            <NavHome />
+            <TravelConciergePage />
+          </>} />
           <Route path="/travel-buddy" element={<>
             <NavHome />
-            <TravelBuddyPage />
+            <TravelConciergePage />
           </>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
