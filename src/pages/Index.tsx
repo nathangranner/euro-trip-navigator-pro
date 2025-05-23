@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -110,7 +111,7 @@ const Index = () => {
               </div>
               <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
                 <div>
-                  <h3 className="text-xl uppercase tracking-wider font-light mb-1">Concierge</h3>
+                  <h3 className="text-xl uppercase tracking-wider font-light mb-1">CONCIERGE</h3>
                   <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
                   <p className="text-sm text-white/80">AI-powered travel assistance</p>
                 </div>

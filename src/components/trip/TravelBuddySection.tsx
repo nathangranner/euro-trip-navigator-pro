@@ -12,14 +12,14 @@ export const TravelBuddySection: React.FC = () => {
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold flex items-center">
-          <MessageCircle className="h-6 w-6 mr-2" /> AI Travel Buddy
+          <MessageCircle className="h-6 w-6 mr-2" /> CONCIERGE
         </h2>
         <Button 
           variant="outline"
           onClick={() => navigate("/travel-buddy")}
           className="flex items-center gap-2"
         >
-          Visit Travel Buddy
+          Visit Concierge
         </Button>
       </div>
       
@@ -29,7 +29,7 @@ export const TravelBuddySection: React.FC = () => {
           and trip adaptations during your European adventure.
         </p>
         <Button onClick={() => navigate("/travel-buddy")}>
-          Explore Travel Buddy Features
+          Explore Concierge Features
         </Button>
       </Card>
     </div>
