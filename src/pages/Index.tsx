@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -67,23 +66,22 @@ const Index = () => {
           </p>
 
           <div className="mt-12">
-            <Button 
+            <div 
               onClick={handleEnvelopeClick} 
-              variant="envelope" 
-              size="envelope" 
-              className={`${isEnvelopeOpen ? 'envelope-open' : ''}`}
+              className={`envelope-container ${isEnvelopeOpen ? 'envelope-open' : ''}`}
             >
               <div className="envelope-front">
-                <div className="envelope-paper">
-                  <span className="font-cursive text-3xl">Your Invitation</span>
-                </div>
                 <div className="envelope-flap"></div>
                 <div className="envelope-back"></div>
                 <div className="envelope-icon">
-                  {isEnvelopeOpen ? <MailOpen className="w-10 h-10" /> : <Mail className="w-10 h-10" />}
+                  {isEnvelopeOpen ? <MailOpen className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
                 </div>
+                <div className="envelope-filigree-tl"></div>
+                <div className="envelope-filigree-tr"></div>
+                <div className="envelope-filigree-bl"></div>
+                <div className="envelope-filigree-br"></div>
               </div>
-            </Button>
+            </div>
           </div>
         </div>
 
