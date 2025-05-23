@@ -8,7 +8,7 @@ const NavHome: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="absolute top-6 left-6 z-50">
+    <div className="absolute top-6 left-6 z-10">
       <Button 
         onClick={() => navigate("/")}
         variant="outline"
