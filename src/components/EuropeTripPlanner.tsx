@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
@@ -532,7 +531,7 @@ export const EuropeTripPlanner: React.FC = () => {
               <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
             
-            <div className="text-center flex flex-col items-center rounded-sm, but more importantly, all the dates are not there. We need bologne, firenza, lucerne between Stutty and leipzig  then ending in Milan again\n">
+            <div className="text-center flex flex-col items-center">
               <div className="text-sm text-gray-500 mb-1">Day {currentDayData.dayNumber} of {tripDays.length}</div>
               <div className="w-32 md:w-64 bg-gray-200 rounded-full h-2 mx-auto">
                 <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{
@@ -693,19 +692,19 @@ export const EuropeTripPlanner: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
                   <Input type="time" value={newActivity.time} onChange={e => setNewActivity({
-                ...newActivity,
-                time: e.target.value
-              })} className="w-full" />
+                    ...newActivity,
+                    time: e.target.value
+                  })} className="w-full" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                   <Select value={newActivity.type} onValueChange={value => {
-                setNewActivity({
-                  ...newActivity,
-                  type: value,
-                  icon: getActivityIcon(value)
-                });
-              }}>
+                    setNewActivity({
+                      ...newActivity,
+                      type: value,
+                      icon: getActivityIcon(value)
+                    });
+                  }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -729,17 +728,17 @@ export const EuropeTripPlanner: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Activity Name</label>
                 <Input type="text" value={newActivity.activity} onChange={e => setNewActivity({
-              ...newActivity,
-              activity: e.target.value
-            })} placeholder="What are you doing?" className="w-full" />
+                  ...newActivity,
+                  activity: e.target.value
+                })} placeholder="What are you doing?" className="w-full" />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                 <Textarea value={newActivity.note} onChange={e => setNewActivity({
-              ...newActivity,
-              note: e.target.value
-            })} placeholder="Any additional details..." className="w-full" rows={2} />
+                  ...newActivity,
+                  note: e.target.value
+                })} placeholder="Any additional details..." className="w-full" rows={2} />
               </div>
               
               <div className="flex justify-end">
@@ -781,9 +780,9 @@ export const EuropeTripPlanner: React.FC = () => {
                       
                       <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => {
-                  e.stopPropagation();
-                  handleEditActivity(activity);
-                }}>
+                          e.stopPropagation();
+                          handleEditActivity(activity);
+                        }}>
                           <Edit className="h-4 w-4 text-gray-500" />
                         </Button>
                         
