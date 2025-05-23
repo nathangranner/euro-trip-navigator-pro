@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Loader2, MessageCircle, User, Key, Settings, LogIn } from "lucide-react";
+import { Loader2, MessageCircle, User, Key, Settings, LogIn, Compass } from "lucide-react";
 import { saveApiKey, getApiKey, hasApiKey, clearApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay } from '@/data/tripData';
 import { supabase } from "@/integrations/supabase/client";
