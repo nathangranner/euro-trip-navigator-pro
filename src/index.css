@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -215,4 +216,82 @@
 /* Luxury letter spacing */
 .luxury-spacing {
   letter-spacing: 0.2em;
+}
+
+/* Cursive button styles */
+.cursive-button {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 2.5rem;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease;
+  transform-style: preserve-3d;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.cursive-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+  transform: translateX(-100%);
+  transition: all 0.6s ease;
+  z-index: -1;
+}
+
+.cursive-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.cursive-button:hover::before {
+  transform: translateX(0);
+}
+
+.cursive-button:active {
+  transform: translateY(0) scale(1);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+.cursive-button-swash {
+  position: relative;
+}
+
+.cursive-button-swash::before,
+.cursive-button-swash::after {
+  content: '❦';
+  font-size: 1.5rem;
+  position: absolute;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.cursive-button-swash::before {
+  left: -25px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-15deg);
+}
+
+.cursive-button-swash::after {
+  right: -25px;
+  top: 50%;
+  transform: translateY(-50%) rotate(15deg);
+}
+
+.cursive-button:hover .cursive-button-swash::before {
+  left: -20px;
+  transform: translateY(-50%) rotate(-5deg) scale(1.1);
+}
+
+.cursive-button:hover .cursive-button-swash::after {
+  right: -20px;
+  transform: translateY(-50%) rotate(5deg) scale(1.1);
 }

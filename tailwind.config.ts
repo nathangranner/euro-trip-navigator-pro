@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -22,6 +21,7 @@ export default {
 			fontFamily: {
 				sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
 				futura: ['Red Hat Display', 'Futura', 'Century Gothic', 'Avenir Next', 'Avenir', 'Trebuchet MS', 'Arial', 'sans-serif'],
+				cursive: ['Great Vibes', 'cursive'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

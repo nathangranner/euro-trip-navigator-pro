@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +46,7 @@ const Index = () => {
         <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
           <h1 ref={titleRef} style={{
           letterSpacing: "0.15em"
-        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect  i love this font and style. please use it for the rest of the site\n">
+        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8 glitch-effect i love this font and style. please use it for the rest of the site\n">
             EUROPE<span className="font-thin">25</span>
           </h1>
           
@@ -55,8 +56,13 @@ const Index = () => {
           </p>
 
           <div className="mt-12">
-            <Button onClick={() => navigate("/planner")} className="explore-itinerary">
-              Explore Collection <ChevronRight className="h-4 w-4 ml-2" />
+            <Button 
+              onClick={() => navigate("/planner")} 
+              variant="cursive" 
+              size="cursive" 
+              className="group"
+            >
+              <span className="cursive-button-swash">Enjoy Your Adventure</span>
             </Button>
           </div>
         </div>
