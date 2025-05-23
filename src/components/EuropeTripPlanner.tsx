@@ -15,7 +15,8 @@ import { ExpenseTracker, Expense } from './ExpenseTracker';
 import { PurchaseTracker, Purchase } from './PurchaseTracker';
 import { EditActivityModal } from './EditActivityModal';
 import { TravelBuddySelector } from './TravelBuddySelector';
-import { loadStoredData, saveTripDays, saveExpenses, savePurchases, loadExpenses, loadPurchases, exportTripData, importTripData } from '@/utils/storageUtils';
+import { loadStoredData, saveTripDays, saveExpensesForDay, savePurchasesForDay, loadExpenses, loadPurchases, exportTripData, importTripData } from '@/utils/storageUtils';
+
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
@@ -182,14 +183,14 @@ export const EuropeTripPlanner: React.FC = () => {
       ...prev,
       [dayId]: expenses
     }));
-    saveExpenses(dayId, expenses);
+    saveExpensesForDay(dayId, expenses);
   };
   const handleSavePurchases = (purchases: Purchase[]) => {
     setPurchasesByDay(prev => ({
       ...prev,
       [dayId]: purchases
     }));
-    savePurchases(dayId, purchases);
+    savePurchasesForDay(dayId, purchases);
   };
   const handleUpdateDay = (updatedDay: TripDay) => {
     const updatedTripDays = [...tripDays];
@@ -688,7 +689,6 @@ export const EuropeTripPlanner: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
                   
                   {expandedActivity === index && <div className="bg-gray-50 p-4 border-t">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

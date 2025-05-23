@@ -36,6 +36,19 @@ export const savePurchases = (purchases: Record<string, any>) => {
   localStorage.setItem(PURCHASES_KEY, JSON.stringify(purchases));
 };
 
+// These functions are updated to handle dayId parameter
+export const saveExpensesForDay = (dayId: string, expenses: any[]) => {
+  const allExpenses = loadExpenses();
+  allExpenses[dayId] = expenses;
+  saveExpenses(allExpenses);
+};
+
+export const savePurchasesForDay = (dayId: string, purchases: any[]) => {
+  const allPurchases = loadPurchases();
+  allPurchases[dayId] = purchases;
+  savePurchases(allPurchases);
+};
+
 export const loadExpenses = () => {
   const expensesString = localStorage.getItem(EXPENSES_KEY);
   return expensesString ? JSON.parse(expensesString) : {};
