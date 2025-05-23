@@ -20,7 +20,7 @@ import { CityViewTab } from './trip/CityViewTab';
 import { TravelBuddySection } from './trip/TravelBuddySection';
 import { useTripCalculations } from '@/hooks/useTripCalculations';
 import { loadStoredData, saveTripDays } from '@/utils/storageUtils';
-import { tripData as initialTripData, TripDay, Activity } from '@/data/tripData';
+import { europeTrip, TripDay, Activity } from '@/data/tripData';
 
 export const EuropeTripPlanner: React.FC = () => {
   
@@ -45,7 +45,7 @@ export const EuropeTripPlanner: React.FC = () => {
     if (storedData.tripDays && storedData.tripDays.length > 0) {
       setTripDays(storedData.tripDays);
     } else {
-      setTripDays(initialTripData);
+      setTripDays(europeTrip.days);
     }
   }, []);
 
@@ -117,10 +117,8 @@ export const EuropeTripPlanner: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         <TripBanner 
-          totalExpenses={totalExpenses}
-          remainingBudget={remainingBudget}
-          totalDays={totalDays}
-          completedDays={completedDays}
+          bannerImage={null}
+          onBannerChange={() => {}}
         />
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { TripDay } from "@/data/tripData";
+import { TripDay, Activity } from "@/data/tripData";
 import { Map } from "lucide-react";
 import { DayMemento } from "./DayMemento";
 import { loadDayMementoImages, saveDayMementoImage } from "@/utils/mementoUtils";
@@ -11,10 +11,12 @@ import { loadDayMementoImages, saveDayMementoImage } from "@/utils/mementoUtils"
 interface DayCardProps {
   day: TripDay;
   index: number;
-  onViewMap: (day: TripDay) => void;
+  onViewMap?: (day: TripDay) => void;
+  onEditDay?: (day: TripDay) => void;
+  onEditActivity?: (activity: Activity, dayId: string) => void;
 }
 
-export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap }) => {
+export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap, onEditDay, onEditActivity }) => {
   const [dayMementos, setDayMementos] = useState<Record<number, string>>({});
   
   useEffect(() => {
@@ -41,7 +43,7 @@ export const DayCard: React.FC<DayCardProps> = ({ day, index, onViewMap }) => {
               <h3 className="text-lg font-bold">Day {day.dayNumber}: {day.city}</h3>
               <p className="text-sm text-gray-600">{day.title}</p>
             </div>
-            {day.accommodation && day.accommodation.address && (
+            {onViewMap && day.accommodation && day.accommodation.address && (
               <Button 
                 variant="outline" 
                 size="sm" 

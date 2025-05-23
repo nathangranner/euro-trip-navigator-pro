@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
@@ -12,10 +11,11 @@ interface EditActivityModalProps {
   isOpen: boolean;
   onClose: () => void;
   activity: Activity;
+  dayId: string;
   onSave: (updatedActivity: Activity) => void;
 }
 
-export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, onClose, activity, onSave }) => {
+export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, onClose, activity, dayId, onSave }) => {
   const [formData, setFormData] = useState<Activity>({...activity});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

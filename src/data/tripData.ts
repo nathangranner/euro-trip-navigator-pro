@@ -175,6 +175,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-3",
       dayNumber: 3,
       date: "2025-06-07",
       city: "Milan",
@@ -200,6 +201,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-4",
       dayNumber: 4,
       date: "2025-06-08",
       city: "Florence",
@@ -223,6 +225,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-5",
       dayNumber: 5,
       date: "2025-06-09",
       city: "Florence",
@@ -248,6 +251,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-6",
       dayNumber: 6,
       date: "2025-06-10",
       city: "Florence",
@@ -272,6 +276,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-7",
       dayNumber: 7,
       date: "2025-06-11",
       city: "Florence",
@@ -297,6 +302,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-8",
       dayNumber: 8,
       date: "2025-06-12",
       city: "Bologna",
@@ -328,6 +334,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-9",
       dayNumber: 9,
       date: "2025-06-13",
       city: "Como",
@@ -356,6 +363,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-10",
       dayNumber: 10,
       date: "2025-06-14",
       city: "Lucerne",
@@ -378,6 +386,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-11",
       dayNumber: 11,
       date: "2025-06-15",
       city: "Lucerne",
@@ -400,6 +409,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-12",
       dayNumber: 12,
       date: "2025-06-16",
       city: "Lucerne",
@@ -416,6 +426,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-13",
       dayNumber: 13,
       date: "2025-06-17",
       city: "Stuttgart",
@@ -440,6 +451,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-14",
       dayNumber: 14,
       date: "2025-06-18",
       city: "Stuttgart",
@@ -462,6 +474,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-15",
       dayNumber: 15,
       date: "2025-06-19",
       city: "Stuttgart",
@@ -479,6 +492,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-16",
       dayNumber: 16,
       date: "2025-06-20",
       city: "Stuttgart",
@@ -496,6 +510,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-17",
       dayNumber: 17,
       date: "2025-06-21",
       city: "Black Forest",
@@ -515,6 +530,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-18",
       dayNumber: 18,
       date: "2025-06-22",
       city: "Black Forest",
@@ -537,6 +553,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-19",
       dayNumber: 19,
       date: "2025-06-23",
       city: "Zurich",
@@ -562,6 +579,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-20",
       dayNumber: 20,
       date: "2025-06-24",
       city: "Milan",
@@ -580,6 +598,7 @@ export const europeTrip: Trip = {
       ]
     },
     {
+      id: "day-21",
       dayNumber: 21,
       date: "2025-06-25",
       city: "Milan to Los Angeles",
@@ -589,6 +608,7 @@ export const europeTrip: Trip = {
       accommodationNotes: "Overnight flight to USA"
     },
     {
+      id: "day-22",
       dayNumber: 22,
       date: "2025-06-26",
       city: "Los Angeles to Santa Maria",

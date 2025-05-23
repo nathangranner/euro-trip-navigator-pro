@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -19,25 +20,19 @@ import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
+
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
   const [tripDays, setTripDays] = useState(europeTrip.days);
-  const [expensesByDay, setExpensesByDay] = useState({});
-  const [purchasesByDay, setPurchasesByDay] = useState({});
   const [activeTab, setActiveTab] = useState("itinerary");
   const [bannerImage, setBannerImage] = useState<string | null>(null);
+  
   useEffect(() => {
     const storedData = loadStoredData();
     if (storedData.tripDays && storedData.tripDays.length > 0) {
       setTripDays(storedData.tripDays);
     } else {
       setTripDays(europeTrip.days);
-    }
-    if (storedData.expenses) {
-      setExpensesByDay(storedData.expenses);
-    }
-    if (storedData.purchases) {
-      setPurchasesByDay(storedData.purchases);
     }
 
     // Load banner image
@@ -46,10 +41,11 @@ const TripSummary: React.FC = () => {
       setBannerImage(savedBanner);
     }
   }, []);
+  
   const {
     totalExpenses,
     totalPurchases
-  } = useTripCalculations(expensesByDay, purchasesByDay);
+  } = useTripCalculations(tripDays);
 
   // Handle banner image change
   const handleBannerChange = (newBannerUrl: string) => {
@@ -58,7 +54,7 @@ const TripSummary: React.FC = () => {
   };
 
   // Handle view accommodation on map
-  const handleViewMap = day => {
+  const handleViewMap = (day: any) => {
     if (day.accommodation && day.accommodation.address) {
       // Open Google Maps with the address
       const address = encodeURIComponent(day.accommodation.address);
@@ -67,10 +63,12 @@ const TripSummary: React.FC = () => {
   };
 
   // Navigate to dashboard for location editing
-  const handleEditLocation = dayIndex => {
+  const handleEditLocation = (dayIndex: number) => {
     navigate(`/planner?day=${dayIndex}`);
   };
-  return <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
+
+  return (
+    <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-light tracking-wide text-white bg-yellow-600">Trip Summary</h1>
         <div className="flex space-x-2">
@@ -105,19 +103,21 @@ const TripSummary: React.FC = () => {
         </TabsList>
         
         <div className="bg-white rounded-lg shadow-sm p-4">
-          <ItineraryTab tripDays={tripDays} onViewMap={handleViewMap} />
+          <ItineraryTab tripDays={tripDays} onEditDay={() => {}} onEditActivity={() => {}} />
           
           <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
           
           <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
           
-          <ExpensesTab expensesByDay={expensesByDay} tripDays={tripDays} />
+          <ExpensesTab expensesByDay={{}} tripDays={tripDays} />
           
-          <PurchasesTab purchasesByDay={purchasesByDay} tripDays={tripDays} />
+          <PurchasesTab purchasesByDay={{}} tripDays={tripDays} />
         </div>
       </Tabs>
       
       <TravelBuddySection />
-    </div>;
+    </div>
+  );
 };
+
 export default TripSummary;

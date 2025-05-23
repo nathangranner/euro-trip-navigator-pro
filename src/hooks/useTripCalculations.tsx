@@ -25,9 +25,11 @@ export const useTripCalculations = (tripDays: TripDay[]) => {
     };
 
     Object.values(expensesByDay).forEach(dayExpenses => {
-      dayExpenses.forEach(expense => {
-        totals[expense.currency] = (totals[expense.currency] || 0) + expense.amount;
-      });
+      if (Array.isArray(dayExpenses)) {
+        dayExpenses.forEach(expense => {
+          totals[expense.currency] = (totals[expense.currency] || 0) + expense.amount;
+        });
+      }
     });
 
     return totals;
@@ -43,9 +45,11 @@ export const useTripCalculations = (tripDays: TripDay[]) => {
     };
 
     Object.values(purchasesByDay).forEach(dayPurchases => {
-      dayPurchases.filter(p => p.forCustoms).forEach(purchase => {
-        totals[purchase.currency] = (totals[purchase.currency] || 0) + purchase.price;
-      });
+      if (Array.isArray(dayPurchases)) {
+        dayPurchases.filter(p => p.forCustoms).forEach(purchase => {
+          totals[purchase.currency] = (totals[purchase.currency] || 0) + purchase.price;
+        });
+      }
     });
 
     return totals;
