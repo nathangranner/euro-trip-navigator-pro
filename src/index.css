@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
@@ -299,8 +300,8 @@
 /* Envelope styles */
 .envelope-container {
   position: relative;
-  width: 200px;
-  height: 150px;
+  width: 280px;
+  height: 180px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -311,7 +312,8 @@
 }
 
 .envelope-container:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  filter: drop-shadow(0 10px 15px rgba(255, 255, 255, 0.1));
 }
 
 .envelope-front {
@@ -319,7 +321,7 @@
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .envelope-back {
@@ -328,11 +330,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
   z-index: 1;
 }
 
@@ -342,15 +344,15 @@
   left: 0;
   width: 100%;
   height: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-bottom: none;
   border-radius: 10px 10px 0 0;
   transform-origin: bottom;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transform: rotateX(0deg);
   z-index: 3;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(3px);
 }
 
 .envelope-flap:after {
@@ -359,26 +361,51 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 20px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
 }
 
 .envelope-paper {
   position: absolute;
-  left: 10px;
-  top: 10px;
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
-  background: rgba(255, 255, 255, 0.95);
+  left: 15px;
+  top: 15px;
+  width: calc(100% - 30px);
+  height: calc(100% - 30px);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 8px;
   z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
   transform: translateZ(1px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   color: #333;
+  overflow: hidden;
+}
+
+.envelope-paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: translateX(-100%);
+  animation: paperShimmer 2.5s infinite;
+}
+
+@keyframes paperShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .envelope-icon {
@@ -389,6 +416,7 @@
   color: rgba(255, 255, 255, 0.9);
   transition: all 0.5s ease;
   transform: translateZ(5px);
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
 }
 
 /* Envelope open animation */
@@ -397,11 +425,11 @@
 }
 
 .envelope-open .envelope-paper {
-  transform: translateY(-40px) translateZ(10px);
+  transform: translateY(-60px) translateZ(30px) rotateX(10deg);
 }
 
 .envelope-open .envelope-front {
-  transform: rotateX(10deg) translateY(5px);
+  transform: rotateX(15deg) translateY(10px);
 }
 
 .envelope-open .envelope-icon {
@@ -416,4 +444,5 @@
 
 .envelope-container:hover .envelope-flap:not(.envelope-open .envelope-flap) {
   transform: rotateX(15deg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
