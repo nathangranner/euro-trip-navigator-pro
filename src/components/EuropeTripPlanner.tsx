@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
@@ -425,14 +426,15 @@ export const EuropeTripPlanner: React.FC = () => {
     return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
   }
   
-  return <div className="min-h-screen bg-gray-50">
+  return (
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Header */}
       <div className="hero-header bg-gradient-to-br text-white relative overflow-hidden shadow-md" style={{
-      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentDayData.bgImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      minHeight: '250px'
-    }}>
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentDayData.bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: '250px'
+      }}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
@@ -1025,5 +1027,6 @@ export const EuropeTripPlanner: React.FC = () => {
           {showAddActivity ? <X className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 };
