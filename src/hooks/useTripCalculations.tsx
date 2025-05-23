@@ -1,12 +1,20 @@
 
-import { Expense } from "@/components/ExpenseTracker";
-import { Purchase } from "@/components/PurchaseTracker";
 import { TripDay } from "@/data/tripData";
+import { loadExpenses, loadPurchases } from "@/utils/storageUtils";
 
-export const useTripCalculations = (
-  expensesByDay: Record<string, Expense[]>,
-  purchasesByDay: Record<string, Purchase[]>
-) => {
+export const useTripCalculations = (tripDays: TripDay[]) => {
+  // Load expenses and purchases from storage
+  const expensesByDay = loadExpenses();
+  const purchasesByDay = loadPurchases();
+
+  // Calculate total budget from accommodations
+  const totalBudget = tripDays.reduce((total, day) => {
+    if (day.accommodationPrice) {
+      return total + day.accommodationPrice;
+    }
+    return total;
+  }, 5000); // Base budget estimate
+
   // Calculate total expenses by currency
   const calculateTotalExpensesByCurrency = () => {
     const totals: Record<string, number> = {
@@ -43,8 +51,25 @@ export const useTripCalculations = (
     return totals;
   };
 
+  const totalExpenses = calculateTotalExpensesByCurrency();
+  const totalPurchases = calculateTotalPurchasesByCurrency();
+  
+  // Calculate remaining budget (simplified - using EUR as primary currency)
+  const remainingBudget = totalBudget - (totalExpenses.EUR || 0);
+  
+  // Calculate completed days
+  const completedDays = tripDays.filter(day => 
+    day.activities?.some(activity => activity.completed)
+  ).length;
+
   return {
-    totalExpenses: calculateTotalExpensesByCurrency(),
-    totalPurchases: calculateTotalPurchasesByCurrency(),
+    totalBudget,
+    totalExpenses,
+    totalPurchases,
+    remainingBudget,
+    totalDays: tripDays.length,
+    completedDays,
+    expensesByDay,
+    purchasesByDay,
   };
 };

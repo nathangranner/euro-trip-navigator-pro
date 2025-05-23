@@ -85,6 +85,7 @@ export interface Route {
 }
 
 export interface TripDay {
+  id: string;
   dayNumber: number;
   date: string;
   city: string;
@@ -130,6 +131,7 @@ export const europeTrip: Trip = {
   endDate: "2025-06-26",
   days: [
     {
+      id: "day-1",
       dayNumber: 1,
       date: "2025-06-05",
       city: "Santa Maria to Los Angeles",
@@ -141,6 +143,7 @@ export const europeTrip: Trip = {
       activities: []
     },
     {
+      id: "day-2",
       dayNumber: 2,
       date: "2025-06-06",
       city: "Milan",
@@ -601,3 +604,6 @@ export const europeTrip: Trip = {
     }
   ]
 };
+
+// Export the days array as tripData for backward compatibility
+export const tripData = europeTrip.days;

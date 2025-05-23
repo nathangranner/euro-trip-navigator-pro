@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,15 @@ export const EuropeTripPlanner: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("itinerary");
 
-  const { totalBudget, totalExpenses, remainingBudget, totalDays, completedDays } = useTripCalculations(tripDays);
+  const { 
+    totalBudget, 
+    totalExpenses, 
+    remainingBudget, 
+    totalDays, 
+    completedDays,
+    expensesByDay,
+    purchasesByDay 
+  } = useTripCalculations(tripDays);
 
   useEffect(() => {
     const storedData = loadStoredData();
@@ -66,15 +75,25 @@ export const EuropeTripPlanner: React.FC = () => {
       if (day.id === dayId) {
         return {
           ...day,
-          activities: day.activities.map(activity => 
+          activities: day.activities?.map(activity => 
             activity.id === updatedActivity.id ? updatedActivity : activity
-          )
+          ) || []
         };
       }
       return day;
     });
     updateTripDays(updatedTripDays);
     setEditingActivity(null);
+  };
+
+  const handleViewMap = (day: TripDay) => {
+    // Placeholder for map functionality
+    console.log("View map for:", day.city);
+  };
+
+  const handleEditLocation = (dayIndex: number) => {
+    // Placeholder for edit location functionality
+    console.log("Edit location for day:", dayIndex);
   };
 
   const citiesWithDays = tripDays.reduce((acc, day) => {
@@ -98,7 +117,6 @@ export const EuropeTripPlanner: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         <TripBanner 
-          totalBudget={totalBudget}
           totalExpenses={totalExpenses}
           remainingBudget={remainingBudget}
           totalDays={totalDays}
@@ -124,23 +142,31 @@ export const EuropeTripPlanner: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="accommodations">
-            <AccommodationsTab tripDays={tripDays} />
+            <AccommodationsTab 
+              tripDays={tripDays}
+              onViewMap={handleViewMap}
+              onEditLocation={handleEditLocation}
+            />
           </TabsContent>
 
           <TabsContent value="expenses">
-            <ExpensesTab tripDays={tripDays} />
+            <ExpensesTab 
+              expensesByDay={expensesByDay}
+              tripDays={tripDays}
+            />
           </TabsContent>
 
           <TabsContent value="purchases">
-            <PurchasesTab tripDays={tripDays} />
+            <PurchasesTab 
+              purchasesByDay={purchasesByDay}
+              tripDays={tripDays}
+            />
           </TabsContent>
 
           <TabsContent value="city-view">
             <CityViewTab 
-              uniqueCities={uniqueCities}
-              selectedCity={selectedCity}
-              setSelectedCity={setSelectedCity}
-              citiesWithDays={citiesWithDays}
+              tripDays={tripDays}
+              onViewMap={handleViewMap}
             />
           </TabsContent>
 
@@ -154,6 +180,7 @@ export const EuropeTripPlanner: React.FC = () => {
 
         {editingDay && (
           <EditDayModal
+            isOpen={!!editingDay}
             day={editingDay}
             onClose={() => setEditingDay(null)}
             onSave={handleSaveDay}
@@ -162,10 +189,11 @@ export const EuropeTripPlanner: React.FC = () => {
 
         {editingActivity && (
           <EditActivityModal
+            isOpen={!!editingActivity}
             activity={editingActivity.activity}
             dayId={editingActivity.dayId}
             onClose={() => setEditingActivity(null)}
-            onSave={handleSaveActivity}
+            onSave={(updatedActivity) => handleSaveActivity(updatedActivity, editingActivity.dayId)}
           />
         )}
       </div>

@@ -11,7 +11,7 @@ import { loadCityBannerImages, saveCityBannerImage } from "@/utils/bannerUtils";
 
 interface CityViewTabProps {
   tripDays: TripDay[];
-  onViewMap: (day: TripDay) => void;
+  onViewMap?: (day: TripDay) => void;
 }
 
 export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap }) => {
@@ -42,7 +42,7 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
   };
 
   return (
-    <TabsContent value="cityview" className="space-y-6">
+    <TabsContent value="city-view" className="space-y-6">
       {Object.entries(citiesWithDays).map(([city, days]) => (
         <div key={city} className="bg-gradient-to-r from-blue-50 to-white rounded-lg shadow-sm p-4">
           <h2 className="text-xl font-bold mb-2 text-blue-800">{city}</h2>
@@ -61,7 +61,7 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
                       <h3 className="font-medium text-blue-700">Day {day.dayNumber}</h3>
                       <p className="text-sm text-gray-700">{day.title}</p>
                     </div>
-                    {day.accommodation && day.accommodation.address && (
+                    {onViewMap && (day.accommodation?.address || day.accommodationAddress) && (
                       <Button 
                         variant="outline" 
                         size="sm" 
@@ -85,10 +85,12 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
                     </div>
                   )}
                   
-                  {day.accommodation && (
+                  {(day.accommodation || day.accommodationName) && (
                     <div className="mt-4">
                       <h4 className="text-sm font-medium text-blue-600">Accommodation</h4>
-                      <p className="text-sm text-gray-700">{day.accommodation.name}</p>
+                      <p className="text-sm text-gray-700">
+                        {day.accommodation?.name || day.accommodationName}
+                      </p>
                     </div>
                   )}
                 </CardContent>
