@@ -10,9 +10,18 @@ export const uploadImage = async (
   folder: string = "misc"
 ): Promise<string | null> => {
   try {
+    // Check if user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("User not authenticated");
+      return null;
+    }
+
     const fileExt = file.name.split(".").pop();
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
+
+    console.log(`Uploading file to: ${BUCKET_NAME}/${filePath}`);
 
     // Upload the file
     const { data, error } = await supabase.storage
@@ -24,18 +33,21 @@ export const uploadImage = async (
 
     if (error) {
       console.error("Error uploading file:", error);
-      return null;
+      throw new Error(`Upload failed: ${error.message}`);
     }
+
+    console.log("Upload successful:", data);
 
     // Get the public URL
     const { data: publicUrlData } = supabase.storage
       .from(BUCKET_NAME)
       .getPublicUrl(filePath);
 
+    console.log("Public URL generated:", publicUrlData.publicUrl);
     return publicUrlData.publicUrl;
   } catch (error) {
     console.error("Error in uploadImage:", error);
-    return null;
+    throw error;
   }
 };
 

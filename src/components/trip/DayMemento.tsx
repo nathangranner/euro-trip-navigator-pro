@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Image, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { uploadImage } from "@/utils/storageUtils";
+import { uploadImage } from "@/utils/imageStorageUtils";
+import { saveDayMementoImage } from "@/utils/mementoUtils";
 
 interface DayMementoProps {
   dayNumber: number;
@@ -35,13 +36,26 @@ export const DayMemento: React.FC<DayMementoProps> = ({
       return;
     }
 
-    onMementoChange(dayNumber, imageUrl);
-    setIsEditing(false);
-    setPreviewImage(null);
-    toast({
-      title: "Memento Updated",
-      description: `Your memento for Day ${dayNumber} has been updated`,
-    });
+    try {
+      // Save to localStorage
+      saveDayMementoImage(dayNumber, imageUrl);
+      // Update parent component
+      onMementoChange(dayNumber, imageUrl);
+      setIsEditing(false);
+      setPreviewImage(null);
+      toast({
+        title: "Memento Saved",
+        description: `Your memento for Day ${dayNumber} has been saved successfully`,
+      });
+      console.log(`Memento saved for day ${dayNumber}:`, imageUrl);
+    } catch (error) {
+      console.error("Error saving memento:", error);
+      toast({
+        title: "Save Failed",
+        description: "Failed to save your memento. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleFileUpload = async (file: File) => {
@@ -76,27 +90,27 @@ export const DayMemento: React.FC<DayMementoProps> = ({
       };
       reader.readAsDataURL(file);
 
+      console.log("Starting upload for memento day", dayNumber);
+      
       // Upload to Supabase
       const uploadedUrl = await uploadImage(file, `mementos/day-${dayNumber}`);
       
       if (uploadedUrl) {
         setImageUrl(uploadedUrl);
+        console.log("Upload successful, URL:", uploadedUrl);
         toast({
           title: "Upload Successful",
           description: "Memento image has been uploaded successfully",
         });
       } else {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload image. Please try again.",
-          variant: "destructive",
-        });
+        throw new Error("Upload returned null URL");
       }
     } catch (error) {
       console.error("Error uploading file:", error);
+      setPreviewImage(null);
       toast({
-        title: "Upload Error",
-        description: "An error occurred while uploading the image",
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload image. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -183,8 +197,12 @@ export const DayMemento: React.FC<DayMementoProps> = ({
                   alt="Memento preview" 
                   className="w-full h-full object-cover"
                   onError={(e) => {
+                    console.error("Failed to load image:", displayImage);
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                  onLoad={() => {
+                    console.log("Image loaded successfully:", displayImage);
                   }}
                 />
                 <div className="hidden w-full h-full bg-gray-100 flex items-center justify-center">
@@ -197,6 +215,7 @@ export const DayMemento: React.FC<DayMementoProps> = ({
             </div>
           )}
 
+          {/* Upload Section */}
           <div 
             className={`border-2 border-dashed rounded-lg p-3 mb-3 transition-colors ${
               dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
