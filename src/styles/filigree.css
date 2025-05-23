@@ -1,0 +1,131 @@
+
+/* Filigree decorations */
+.italianate-filigree-tl,
+.italianate-filigree-tr,
+.italianate-filigree-bl,
+.italianate-filigree-br,
+.duomo-filigree-tl,
+.duomo-filigree-tr,
+.duomo-filigree-bl,
+.duomo-filigree-br {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.italianate-filigree-tl,
+.duomo-filigree-tl {
+  top: -5px;
+  left: -5px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-tl::after,
+.duomo-filigree-tl::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  top: 3px;
+  left: 3px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-tr,
+.duomo-filigree-tr {
+  top: -5px;
+  right: -5px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-tr::after,
+.duomo-filigree-tr::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  top: 3px;
+  right: 3px;
+  border-top: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-bl,
+.duomo-filigree-bl {
+  bottom: -5px;
+  left: -5px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-bl::after,
+.duomo-filigree-bl::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  bottom: 3px;
+  left: 3px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-left: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-br,
+.duomo-filigree-br {
+  bottom: -5px;
+  right: -5px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-br::after,
+.duomo-filigree-br::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  bottom: 3px;
+  right: 3px;
+  border-bottom: 1px solid rgba(255, 240, 200, 0.7);
+  border-right: 1px solid rgba(255, 240, 200, 0.7);
+}
+
+.italianate-filigree-center,
+.duomo-filigree-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+}
+
+.italianate-filigree-center::before,
+.duomo-filigree-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(255, 240, 200, 0.5);
+  border-radius: 50%;
+}
+
+.italianate-filigree-center::after,
+.duomo-filigree-center::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  border: 1px solid rgba(255, 240, 200, 0.5);
+  border-radius: 50%;
+}
