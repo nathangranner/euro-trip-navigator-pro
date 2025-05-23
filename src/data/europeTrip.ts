@@ -2,6 +2,8 @@
 import { Trip } from "@/types/trip";
 import { departureDays } from "./departureDays";
 import { florenceDays } from "./florenceDays";
+import { bolognaDays } from "./bolognaDays";
+import { lakeComoDays } from "./lakeComo";
 import { returnDay } from "./returnDay";
 
 export const europeTrip: Trip = {
@@ -12,6 +14,8 @@ export const europeTrip: Trip = {
   days: [
     ...departureDays,
     ...florenceDays,
+    ...bolognaDays,
+    ...lakeComoDays,
     ...returnDay
   ]
 };
