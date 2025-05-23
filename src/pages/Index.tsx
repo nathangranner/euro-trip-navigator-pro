@@ -1,12 +1,14 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Mail, MailOpen } from "lucide-react";
+
 const Index = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
 
   // Parallax effect on scroll
   useEffect(() => {
@@ -22,6 +24,15 @@ const Index = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleEnvelopeClick = () => {
+    setIsEnvelopeOpen(true);
+    // Delay navigation to allow envelope animation to complete
+    setTimeout(() => {
+      navigate("/planner");
+    }, 1200);
+  };
+
   return <div className="relative min-h-screen overflow-hidden bg-black text-white">
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
@@ -57,12 +68,21 @@ const Index = () => {
 
           <div className="mt-12">
             <Button 
-              onClick={() => navigate("/planner")} 
-              variant="cursive" 
-              size="cursive" 
-              className="group"
+              onClick={handleEnvelopeClick} 
+              variant="envelope" 
+              size="envelope" 
+              className={`${isEnvelopeOpen ? 'envelope-open' : ''}`}
             >
-              <span className="cursive-button-swash">Enjoy Your Adventure</span>
+              <div className="envelope-front">
+                <div className="envelope-paper">
+                  <span className="font-cursive text-3xl">Your Invitation</span>
+                </div>
+                <div className="envelope-flap"></div>
+                <div className="envelope-back"></div>
+                <div className="envelope-icon">
+                  {isEnvelopeOpen ? <MailOpen className="w-10 h-10" /> : <Mail className="w-10 h-10" />}
+                </div>
+              </div>
             </Button>
           </div>
         </div>
