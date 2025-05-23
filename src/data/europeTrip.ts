@@ -1,4 +1,3 @@
-
 import { Trip } from "@/types/trip";
 
 export const europeTrip: Trip = {
@@ -14,8 +13,37 @@ export const europeTrip: Trip = {
       city: "Los Angeles",
       country: "USA",
       description: "Departure day - Start of the European adventure",
-      title: "Los Angeles (Departure)",
+      title: "Santa Maria to Los Angeles (Departure)",
       activities: [
+        {
+          id: "car-pickup",
+          time: "10:00 AM",
+          activity: "Pick up rental car at Santa Maria Public Airport",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          location: "Santa Maria Public Airport, SMX, 3249 Terminal Dr, Santa Maria, CA 93455 US",
+          note: "Confirmation: 23784293US1, Under name: NATHAN"
+        },
+        {
+          id: "drive-to-lax",
+          time: "10:30 AM",
+          activity: "Drive from Santa Maria to LAX",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          location: "Santa Maria to Los Angeles",
+          note: "Approximately 3.5 hour drive"
+        },
+        {
+          id: "car-return",
+          time: "2:00 PM",
+          activity: "Return rental car at LAX",
+          type: "travel",
+          icon: "🚗",
+          completed: false,
+          location: "Los Angeles Intl Airport, LAX, 5251 W 98th St, Los Angeles, CA 90045 US"
+        },
         {
           id: "arrive-lax",
           time: "4:40 PM",
@@ -44,7 +72,7 @@ export const europeTrip: Trip = {
       warnings: [
         {
           type: "warning",
-          message: "Arrive 2-3 hours early for international flight"
+          message: "Return car by 2:00 PM, then arrive 2-3 hours early for international flight"
         }
       ]
     },
@@ -85,7 +113,7 @@ export const europeTrip: Trip = {
           location: "Malpensa Airport"
         },
         {
-          id: "car-pickup",
+          id: "car-pickup-milan",
           time: "7:00 PM",
           activity: "Pick up rental car - Volkswagen T-cross",
           type: "travel",
@@ -101,7 +129,16 @@ export const europeTrip: Trip = {
           type: "travel",
           icon: "🚗",
           completed: false,
-          note: "MXP to Milan: Take A8/Milano, exit Milano Certosa. Approximately 50 minutes"
+          note: "MXP to Milan: Take A8/Milano, exit Milano Certosa. Follow Viale Certosa → Corso Sempione → Via Pagano → Viale Bligny. Approximately 50 minutes"
+        },
+        {
+          id: "dinner-navigli",
+          time: "9:00 PM",
+          activity: "Light dinner near accommodation in Navigli",
+          type: "dining",
+          icon: "🍽️",
+          completed: false,
+          location: "Navigli area"
         }
       ],
       accommodation: {
@@ -197,7 +234,8 @@ export const europeTrip: Trip = {
       ],
       accommodation: {
         name: "Apartment 4 beds + parking, Navigli - Bocconi",
-        address: "Viale Bligny, 13/a, 4th floor, Milano, Lombardia 20136"
+        address: "Viale Bligny, 13/a, 4th floor, Milano, Lombardia 20136",
+        contactPhone: "+39 349 146 7840"
       },
       warnings: [
         {
@@ -263,7 +301,8 @@ export const europeTrip: Trip = {
       ],
       accommodation: {
         name: "Apartment 4 beds + parking, Navigli - Bocconi",
-        address: "Viale Bligny, 13/a, 4th floor, Milano, Lombardia 20136"
+        address: "Viale Bligny, 13/a, 4th floor, Milano, Lombardia 20136",
+        contactPhone: "+39 349 146 7840"
       },
       warnings: [
         {
