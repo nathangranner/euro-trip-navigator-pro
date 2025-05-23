@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText, MessageCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, X, Car, Clock, MapPin, Calendar, Edit, Euro, Map, Save, Upload, Download, Printer, FileText, MessageCircle, Image } from 'lucide-react';
 import { europeTrip, TripDay, Activity } from '@/data/tripData';
 import { EditDayModal } from './EditDayModal';
 import { ExpenseTracker, Expense } from './ExpenseTracker';
@@ -16,6 +16,8 @@ import { PurchaseTracker, Purchase } from './PurchaseTracker';
 import { EditActivityModal } from './EditActivityModal';
 import { TravelBuddySelector } from './TravelBuddySelector';
 import { loadStoredData, saveTripDays, saveExpenses, savePurchases, loadExpenses, loadPurchases, exportTripData, importTripData } from '@/utils/storageUtils';
+import { saveCityBannerImage, getCityBannerImage } from '@/utils/bannerUtils';
+
 export const EuropeTripPlanner: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
@@ -28,6 +30,8 @@ export const EuropeTripPlanner: React.FC = () => {
   const [importExportOpen, setImportExportOpen] = useState(false);
   const [exportData, setExportData] = useState('');
   const [importData, setImportData] = useState('');
+  const [headerImageUrl, setHeaderImageUrl] = useState('');
+  const [headerUploadOpen, setHeaderUploadOpen] = useState(false);
   const [newActivity, setNewActivity] = useState({
     time: '',
     activity: '',
@@ -53,7 +57,16 @@ export const EuropeTripPlanner: React.FC = () => {
     if (storedData.purchases) {
       setPurchasesByDay(storedData.purchases);
     }
-  }, []);
+    
+    // Check for existing city banner image
+    if (currentDayData) {
+      const savedBanner = getCityBannerImage(currentDayData.city);
+      if (savedBanner) {
+        // Update the trip days with the saved banner
+        updateDayBgImage(savedBanner);
+      }
+    }
+  }, [currentDay]);
 
   // Helper function to format dates
   const formatDate = (dateString: string) => {
@@ -81,6 +94,7 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.info(`Switched to ${tripDays[nextDayIndex].city} - ${tripDays[nextDayIndex].title}`);
     }
   };
+  
   const prevDay = () => {
     if (currentDay > 0) {
       const prevDayIndex = currentDay - 1;
@@ -98,6 +112,34 @@ export const EuropeTripPlanner: React.FC = () => {
       toast.info(`Switched to ${tripDays[dayIndex].city} - ${tripDays[dayIndex].title}`);
     }
   };
+  
+  // Update day background image function
+  const updateDayBgImage = (imageUrl: string) => {
+    if (!imageUrl.trim() || !currentDayData) return;
+    
+    const updatedTripDays = [...tripDays];
+    updatedTripDays[currentDay] = {
+      ...currentDayData,
+      bgImage: imageUrl
+    };
+    
+    setTripDays(updatedTripDays);
+    saveTripDays(updatedTripDays);
+    
+    // Also save to city banners
+    saveCityBannerImage(currentDayData.city, imageUrl);
+    
+    setHeaderImageUrl('');
+    setHeaderUploadOpen(false);
+    toast.success(`Updated header image for ${currentDayData.city}`);
+  };
+
+  // Header image dialog handlers
+  const openHeaderImageDialog = () => {
+    setHeaderUploadOpen(true);
+    setHeaderImageUrl(currentDayData?.bgImage || '');
+  };
+
   const toggleActivity = (index: number) => {
     setExpandedActivity(expandedActivity === index ? null : index);
   };
@@ -378,9 +420,11 @@ export const EuropeTripPlanner: React.FC = () => {
 
   // Add a new state for the travel buddy section
   const [showTravelBuddySection, setShowTravelBuddySection] = useState(true);
+  
   if (!currentDayData) {
     return <div className="flex justify-center items-center min-h-screen">Loading trip data...</div>;
   }
+  
   return <div className="min-h-screen bg-gray-50">
       {/* Hero Header */}
       <div className="hero-header bg-gradient-to-br text-white relative overflow-hidden shadow-md" style={{
@@ -403,10 +447,19 @@ export const EuropeTripPlanner: React.FC = () => {
               </div>}
           </div>
           
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex justify-end space-x-2">
             <Button variant="ghost" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white" onClick={() => setEditDayModalOpen(true)}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Day Info
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
+              onClick={openHeaderImageDialog}
+            >
+              <Image className="h-4 w-4 mr-2" />
+              Change Header Image
             </Button>
           </div>
           
@@ -419,6 +472,55 @@ export const EuropeTripPlanner: React.FC = () => {
             </div>}
         </div>
       </div>
+
+      {/* Header Image Upload Dialog */}
+      <Dialog open={headerUploadOpen} onOpenChange={setHeaderUploadOpen}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>Update Header Image</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label htmlFor="headerImageUrl" className="block text-sm font-medium mb-2">
+                Image URL
+              </label>
+              <Input
+                id="headerImageUrl"
+                value={headerImageUrl}
+                onChange={(e) => setHeaderImageUrl(e.target.value)}
+                placeholder="https://example.com/your-header-image.jpg"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Enter a direct URL to an image (JPG, PNG, or GIF)
+              </p>
+              
+              <div className="mt-4">
+                {headerImageUrl && (
+                  <div className="relative w-full h-40 mb-4 border rounded-lg overflow-hidden">
+                    <img 
+                      src={headerImageUrl} 
+                      alt="Header preview" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://placehold.co/600x400?text=Invalid+Image+URL";
+                      }}
+                    />
+                  </div>
+                )}
+                
+                <div className="flex justify-end space-x-2 mt-4">
+                  <Button variant="outline" onClick={() => setHeaderUploadOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => updateDayBgImage(headerImageUrl)}>
+                    Save Image
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Navigation Bar - Modified with day selector */}
       <div className="sticky top-0 bg-white shadow-sm z-10">
@@ -688,7 +790,6 @@ export const EuropeTripPlanner: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
                   
                   {expandedActivity === index && <div className="bg-gray-50 p-4 border-t">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
