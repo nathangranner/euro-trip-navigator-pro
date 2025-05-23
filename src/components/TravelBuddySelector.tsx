@@ -11,6 +11,7 @@ import { saveApiKey, getApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay, PointOfInterest } from "@/data/tripData";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
   content: string;
@@ -263,7 +264,7 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }
   };
   return <div>
-      <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
+      <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
@@ -291,6 +292,10 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
             <h3 className="text-lg font-semibold mb-2">Get Location Recommendations</h3>
             <p className="text-sm text-gray-600 mb-4">
               Let {selectedBuddy.name} suggest interesting places and itinerary adaptations for each day of your trip
+            </p>
+            
+            <p className="text-sm text-gray-500 mb-4">
+              Your journey will take you through regions rich in European history. Italy offers Renaissance masterpieces, ancient Roman ruins, and medieval cities. Switzerland features Alpine traditions and neutral ground during major conflicts. Germany's landscape tells stories from the Holy Roman Empire through the modern era. Your concierge can provide historical context to enhance your travel experience.
             </p>
             
             <div className="space-y-4 mt-4">
