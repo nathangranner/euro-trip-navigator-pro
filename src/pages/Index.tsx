@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ const Index = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+  
   const handleEnvelopeClick = () => {
     setIsEnvelopeOpen(true);
     // Delay navigation to allow envelope animation to complete
@@ -30,16 +32,19 @@ const Index = () => {
       navigate("/planner");
     }, 1200);
   };
-  return <div className="relative min-h-screen overflow-hidden bg-black text-white">
+  
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
-        <div className="absolute inset-0 w-full h-[120vh]" style={{
-        backgroundImage: "url('https://images.unsplash.com/photo-1576788498981-244a7a4f8d5d?q=80&w=2000&auto=format&fit=crop')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        filter: "brightness(0.6) contrast(1.1)"
-      }} />
-        <div className="absolute inset-0 bg-black/40 z-10" />
+        <div 
+          className="absolute inset-0 w-full h-[120vh] bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1576788498981-244a7a4f8d5d?q=80&w=2000&auto=format&fit=crop')",
+            filter: "brightness(0.6) contrast(1.1)"
+          }}
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
       </div>
 
       {/* Content */}
@@ -93,34 +98,36 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 max-w-4xl mx-auto">
             <div className="group cursor-pointer relative overflow-hidden" onClick={() => navigate("/planner")}>
               <div className="h-72 overflow-hidden">
-                <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110" style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')",
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }} />
+                <div 
+                  className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110 bg-cover bg-center"
+                  style={{
+                    backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=1000&auto=format&fit=crop')"
+                  }}
+                />
               </div>
-              <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
+              <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-8 transition-all duration-500 group-hover:bg-black group-hover:bg-opacity-40">
                 <div>
                   <h3 className="text-xl uppercase tracking-wider font-light mb-1">Itinerary</h3>
                   <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
-                  <p className="text-sm text-white/80">Day-by-day curated experiences</p>
+                  <p className="text-sm text-white text-opacity-80">Day-by-day curated experiences</p>
                 </div>
               </div>
             </div>
             
             <div className="group cursor-pointer relative overflow-hidden" onClick={() => navigate("/travel-buddy")}>
               <div className="h-72 overflow-hidden">
-                <div className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110" style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')",
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }} />
+                <div 
+                  className="h-full w-full transform transition-transform duration-1000 group-hover:scale-110 bg-cover bg-center"
+                  style={{
+                    backgroundImage: "url('https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1000&auto=format&fit=crop')"
+                  }}
+                />
               </div>
-              <div className="absolute inset-0 bg-black/20 flex items-end p-8 transition-all duration-500 group-hover:bg-black/40">
+              <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-8 transition-all duration-500 group-hover:bg-black group-hover:bg-opacity-40">
                 <div>
                   <h3 className="text-xl uppercase tracking-wider font-light mb-1">CONCIERGE</h3>
                   <div className="w-8 h-[1px] bg-white mb-3 transition-all duration-500 group-hover:w-16"></div>
-                  <p className="text-sm text-white/80">AI-powered travel assistance</p>
+                  <p className="text-sm text-white text-opacity-80">AI-powered travel assistance</p>
                 </div>
               </div>
             </div>
@@ -128,8 +135,8 @@ const Index = () => {
         </div>
 
         {/* Footer */}
-        <footer className="py-8 border-t border-white/20">
-          <div className="flex flex-col md:flex-row justify-between items-center text-white/70">
+        <footer className="py-8 border-t border-white border-opacity-20">
+          <div className="flex flex-col md:flex-row justify-between items-center text-white text-opacity-70">
             <div className="text-xs tracking-widest mb-4 md:mb-0">
               JUNE 5-26, 2025 · 21 DAYS · 7 DESTINATIONS
             </div>
@@ -141,10 +148,11 @@ const Index = () => {
       </div>
 
       {/* Visual effects - animated borders */}
-      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-white/0 via-white/30 to-white/0"></div>
-      <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-white/0 via-white/30 to-white/0"></div>
-      <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white/0 via-white/30 to-white/0"></div>
-    </div>;
+      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
+      <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
+      <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
+    </div>
+  );
 };
 
 export default Index;
