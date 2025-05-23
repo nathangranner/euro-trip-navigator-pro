@@ -7,13 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map, Ambulance, Key, Settings } from "lucide-react";
-import { saveApiKey, getApiKey, isApiKeyPermanent, clearApiKey } from "@/utils/storageUtils";
+import { Loader2, MessageCircle, User, Send, MapPin, Compass, Star, Route, Navigation, Map, Ambulance, Key, Settings, LogIn } from "lucide-react";
+import { saveApiKey, getApiKey, hasApiKey, clearApiKey } from "@/utils/storageUtils";
 import { europeTrip, TripDay, PointOfInterest } from '@/data/tripData';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TravelBuddyMessage {
   role: "user" | "assistant" | "system";
@@ -88,7 +89,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
   const [apiKey, setApiKey] = useState<string>("");
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showApiSettingsModal, setShowApiSettingsModal] = useState(false);
-  const [rememberApiKey, setRememberApiKey] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
   const [selectedDay, setSelectedDay] = useState<TripDay | null>(null);
   const [recommendationsOpen, setRecommendationsOpen] = useState(false);
@@ -102,15 +107,25 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     setChatOpen(isChatOpen);
   }, [isChatOpen]);
 
-  // Check for saved API key on component mount
+  // Check user auth status on mount
   useEffect(() => {
-    const storedApiKey = getApiKey("openrouter");
-    const isPermanent = isApiKeyPermanent("openrouter");
+    const checkUser = async () => {
+      setCheckingAuth(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user);
+      setCheckingAuth(false);
+      
+      if (user) {
+        // Check for saved API key
+        const keyExists = await hasApiKey("openrouter");
+        if (keyExists) {
+          const storedKey = await getApiKey("openrouter");
+          setApiKey(storedKey);
+        }
+      }
+    };
     
-    if (storedApiKey) {
-      setApiKey(storedApiKey);
-      setRememberApiKey(isPermanent);
-    }
+    checkUser();
   }, []);
 
   const handleSelectBuddy = (buddy: TravelBuddy) => {
@@ -124,6 +139,11 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
 
   const handleStartChat = () => {
     if (!apiKey) {
+      // Check if user is logged in
+      if (!isLoggedIn) {
+        setShowLoginModal(true);
+        return;
+      }
       setShowApiKeyModal(true);
       return;
     }
@@ -144,26 +164,111 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     setIsChatOpen(false);
   };
 
-  const handleSaveApiKey = () => {
-    if (apiKey.trim()) {
-      // Save the API key, and mark it as permanent if the switch is checked
-      saveApiKey("openrouter", apiKey.trim(), rememberApiKey);
+  const handleSaveApiKey = async () => {
+    if (!apiKey.trim()) {
+      toast.error("Please enter a valid API key");
+      return;
+    }
+    
+    if (!isLoggedIn) {
+      toast.error("Please log in to save your API key");
+      setShowLoginModal(true);
+      return;
+    }
+    
+    const success = await saveApiKey("openrouter", apiKey.trim());
+    
+    if (success) {
       setShowApiKeyModal(false);
       toast.success("OpenRouter API key saved");
+      
+      // Now try chatting again if a buddy is selected
+      if (selectedBuddy) {
+        handleStartChat();
+      }
     } else {
-      toast.error("Please enter a valid API key");
+      toast.error("Failed to save API key. Please try again.");
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      
+      if (data.user) {
+        setIsLoggedIn(true);
+        setShowLoginModal(false);
+        toast.success("Login successful!");
+        
+        // If we have an API key in state, save it now
+        if (apiKey) {
+          await saveApiKey("openrouter", apiKey);
+        }
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please try again.");
+    }
+  };
+
+  const handleSignup = async () => {
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      
+      toast.success("Account created! Please check your email for verification.");
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error("Signup failed. Please try again.");
     }
   };
 
   const handleOpenApiSettings = () => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
     setShowApiSettingsModal(true);
   };
 
-  const handleClearApiKey = () => {
-    clearApiKey("openrouter");
-    setApiKey("");
-    toast.success("API key removed");
-    setShowApiSettingsModal(false);
+  const handleClearApiKey = async () => {
+    const success = await clearApiKey("openrouter");
+    if (success) {
+      setApiKey("");
+      toast.success("API key removed");
+      setShowApiSettingsModal(false);
+    } else {
+      toast.error("Failed to remove API key");
+    }
+  };
+
+  const swapLanguages = () => {
+    // Function left empty - not used in this component but kept for consistency
   };
 
   const handleSendMessage = async () => {
@@ -305,10 +410,41 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
     }
   };
 
+  if (checkingAuth) {
+    return (
+      <div>
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
       <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
+      
+      {!isLoggedIn && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <div className="flex items-center">
+            <LogIn className="h-5 w-5 text-amber-500 mr-2" />
+            <p className="text-amber-800 font-medium">Sign in to save your API key</p>
+          </div>
+          <p className="text-sm text-amber-700 mt-1">
+            Log in or create an account to securely store your OpenRouter API key for future sessions.
+          </p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowLoginModal(true)} 
+            className="mt-2"
+          >
+            Login or Sign up
+          </Button>
+        </div>
+      )}
       
       <div className="flex justify-end mb-4">
         <Button 
@@ -420,17 +556,8 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
             className="w-full" 
           />
           
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id="remember-api-key" 
-              checked={rememberApiKey}
-              onCheckedChange={setRememberApiKey} 
-            />
-            <Label htmlFor="remember-api-key">Remember this API key permanently</Label>
-          </div>
-          
           <p className="text-xs text-gray-500">
-            Your API key is stored locally in your browser and never sent to our servers.
+            Your API key will be securely stored in your account for future use.
           </p>
         </div>
       </Modal>
@@ -461,7 +588,7 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
           <div>
             <h3 className="font-medium mb-2">OpenRouter API Key</h3>
             <p className="text-sm text-gray-600 mb-4">
-              Your API key is securely stored {isApiKeyPermanent("openrouter") ? "permanently" : "for this session"} in your browser's local storage.
+              Your API key is securely stored in your Supabase account.
             </p>
             
             <div className="flex items-center space-x-2 mb-4">
@@ -473,10 +600,14 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
                 placeholder="sk-or-v1-xxxxxxxx"
               />
               <Button 
-                onClick={() => {
+                onClick={async () => {
                   if (apiKey.trim()) {
-                    saveApiKey("openrouter", apiKey.trim(), rememberApiKey);
-                    toast.success("API key updated");
+                    const success = await saveApiKey("openrouter", apiKey.trim());
+                    if (success) {
+                      toast.success("API key updated");
+                    } else {
+                      toast.error("Failed to update API key");
+                    }
                   } else {
                     toast.error("Please enter a valid API key");
                   }
@@ -486,30 +617,62 @@ export const TravelBuddySelector: React.FC<TravelBuddySelectorProps> = ({
                 Update
               </Button>
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="remember-api-key-settings" 
-                checked={rememberApiKey}
-                onCheckedChange={(checked) => {
-                  setRememberApiKey(checked);
-                  if (apiKey.trim()) {
-                    saveApiKey("openrouter", apiKey.trim(), checked);
-                    toast.success(checked ? "API key will be remembered permanently" : "API key will only be stored for this session");
-                  }
-                }} 
-              />
-              <Label htmlFor="remember-api-key-settings">Remember API key permanently</Label>
-            </div>
           </div>
           
           <div className="text-xs text-gray-500 border-t pt-4 mt-4">
-            <p>Your API key is stored locally and used for:</p>
+            <p>Your API key is stored securely and used for:</p>
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>Travel buddy conversations</li>
               <li>City recommendations</li>
               <li>Translation services</li>
             </ul>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Login Modal */}
+      <Modal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+        title="Login or Create Account" 
+        footer={
+          <div className="flex justify-between w-full">
+            <Button onClick={handleSignup} variant="outline">
+              Sign Up
+            </Button>
+            <Button onClick={handleLogin}>
+              Login
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Please log in or create an account to securely store your API key.
+          </p>
+          
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              id="email"
+              type="email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              placeholder="your@email.com" 
+              className="w-full mt-1" 
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input 
+              id="password"
+              type="password" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              placeholder="********" 
+              className="w-full mt-1" 
+            />
           </div>
         </div>
       </Modal>
