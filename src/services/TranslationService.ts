@@ -32,19 +32,37 @@ export const translateText = async (request: TranslationRequest): Promise<Transl
         'X-Title': 'Europe Trip Planner'
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o-mini", // Using a valid OpenRouter model
+        model: "meta-llama/llama-3-70b-instruct",
         messages: [
           {
             role: "system",
-            content: `You are a precise language translator. Translate the given text from ${request.sourceLanguage || "auto-detected language"} to ${request.targetLanguage}. 
-            If the target language uses a non-Latin alphabet, also include a simple pronunciation guide in parentheses. 
-            Respond ONLY with the translation and optional pronunciation guide, nothing else.`
+            content: `You are a professional translator specializing in European languages. Your primary function is to provide accurate translations for travelers.
+
+INSTRUCTIONS:
+1. Translate the provided text from ${request.sourceLanguage || "the detected source language"} to ${request.targetLanguage}
+2. Provide ONLY the translation - no explanations, comments, or additional text
+3. If the target language uses non-Latin script (Greek, Russian, etc.), add a simple pronunciation guide in parentheses after the translation
+4. Maintain the original tone and context appropriate for travel situations
+5. For formal phrases, keep them formal; for casual phrases, keep them casual
+
+OUTPUT FORMAT:
+- For Latin script languages: [Translation only]
+- For non-Latin script languages: [Translation] ([simple pronunciation])
+
+EXAMPLE:
+Input: "Where is the bathroom?"
+Output for Italian: "Dove è il bagno?"
+Output for Greek: "Πού είναι η τουαλέτα;" (Pou ine i toualeta?)
+
+Now translate the following text:`
           },
           {
             role: "user",
             content: request.text
           }
-        ]
+        ],
+        temperature: 0.3,
+        max_tokens: 500
       })
     });
 
@@ -53,7 +71,7 @@ export const translateText = async (request: TranslationRequest): Promise<Transl
     }
 
     const data = await response.json();
-    const translationText = data.choices[0]?.message?.content || "";
+    const translationText = data.choices[0]?.message?.content?.trim() || "";
     
     // Parse the response to separate translation and pronunciation if present
     const hasPronunciation = translationText.includes('(') && translationText.includes(')');
