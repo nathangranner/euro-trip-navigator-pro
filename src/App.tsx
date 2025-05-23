@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import TripSummary from "./pages/TripSummary";
 import TravelBuddyPage from "./pages/TravelBuddyPage";
 import { EuropeTripPlanner } from "./components/EuropeTripPlanner";
+import NavHome from "./components/NavHome";
 
 const queryClient = new QueryClient();
 
@@ -20,9 +21,18 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/planner" element={<EuropeTripPlanner />} />
-          <Route path="/summary" element={<TripSummary />} />
-          <Route path="/travel-buddy" element={<TravelBuddyPage />} />
+          <Route path="/planner" element={<>
+            <NavHome />
+            <EuropeTripPlanner />
+          </>} />
+          <Route path="/summary" element={<>
+            <NavHome />
+            <TripSummary />
+          </>} />
+          <Route path="/travel-buddy" element={<>
+            <NavHome />
+            <TravelBuddyPage />
+          </>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
