@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
@@ -400,11 +401,13 @@ export const EuropeTripPlanner: React.FC = () => {
               <p className="text-xl opacity-90">{currentDayData.title}</p>
               <p className="text-sm opacity-75">{formatDate(currentDayData.date)}</p>
             </div>
-            {currentDayData.weather && <div className="mt-4 md:mt-0 bg-white/20 backdrop-blur-sm rounded-lg p-4">
+            {currentDayData.weather && (
+              <div className="mt-4 md:mt-0 bg-white/20 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl">{currentDayData.weather.icon}</div>
                 <div className="text-lg font-semibold">{currentDayData.weather.temp}</div>
                 <div className="text-sm">{currentDayData.weather.condition}</div>
-              </div>}
+              </div>
+            )}
           </div>
           
           <div className="mt-4 flex justify-end">
@@ -414,13 +417,17 @@ export const EuropeTripPlanner: React.FC = () => {
             </Button>
           </div>
           
-          {currentDayData.specialEvent && <div className="mt-4 bg-yellow-400/20 backdrop-blur-sm rounded-lg p-4 animate-pulse-gentle">
+          {currentDayData.specialEvent && (
+            <div className="mt-4 bg-yellow-400/20 backdrop-blur-sm rounded-lg p-4 animate-pulse-gentle">
               <p className="text-lg font-semibold">✨ Special Day! ✨</p>
-            </div>}
+            </div>
+          )}
           
-          {currentDayData.encouragement && <div className="mt-4 bg-pink-500/20 backdrop-blur-sm rounded-lg p-4">
+          {currentDayData.encouragement && (
+            <div className="mt-4 bg-pink-500/20 backdrop-blur-sm rounded-lg p-4">
               <p className="text-lg italic">{currentDayData.encouragement}</p>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
 
