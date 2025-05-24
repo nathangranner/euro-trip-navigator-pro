@@ -82,8 +82,8 @@ export const EuropeTripPlanner: React.FC = () => {
                       <p className="text-gray-600 mt-1">{day.title}</p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className={getStatusBadgeColor(day.status || "Planned")}>
-                        {day.status || "Planned"}
+                      <Badge variant="outline" className={getStatusBadgeColor("Planned")}>
+                        Planned
                       </Badge>
                       <button
                         onClick={() => handleEditDay(day)}
@@ -155,11 +155,20 @@ export const EuropeTripPlanner: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="expenses">
-          <ExpenseTracker />
+          <ExpenseTracker 
+            dayId=""
+            date=""
+            onSave={() => {}}
+          />
         </TabsContent>
 
         <TabsContent value="purchases">
-          <PurchaseTracker />
+          <PurchaseTracker 
+            dayId=""
+            date=""
+            countryName=""
+            onSave={() => {}}
+          />
         </TabsContent>
 
         <TabsContent value="cityview">
@@ -205,7 +214,7 @@ export const EuropeTripPlanner: React.FC = () => {
         <EditDayModal
           day={editingDay}
           onSave={handleSaveDay}
-          onCancel={() => setEditingDay(null)}
+          onClose={() => setEditingDay(null)}
         />
       )}
 
@@ -213,7 +222,7 @@ export const EuropeTripPlanner: React.FC = () => {
         <EditActivityModal
           activity={editingActivity.activity}
           dayId={editingActivity.dayId}
-          onSave={handleSaveActivity}
+          onSave={(updatedActivity) => handleSaveActivity(updatedActivity, editingActivity.dayId)}
           onCancel={() => setEditingActivity(null)}
         />
       )}

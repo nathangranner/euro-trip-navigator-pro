@@ -184,7 +184,7 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
-      <p className="text-gray-600 mb-6">Select an AI companion to help with your European adventure</p>
+      <p className="text-gray-600 mb-6">Select an AI concierge to help with your European adventure</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {TRAVEL_CONCIERGES.map(concierge => (
