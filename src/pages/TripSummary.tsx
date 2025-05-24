@@ -12,7 +12,7 @@ import { Calendar, Compass } from "lucide-react";
 import { TripDurationCard } from "@/components/trip/TripDurationCard";
 import { TripCompletionCard } from "@/components/trip/TripCompletionStats";
 import { ExpenseDisplay } from "@/components/trip/ExpenseDisplay";
-import { StaticItineraryDisplay } from "@/components/trip/StaticItineraryDisplay";
+import ItineraryContainer from "@/components/trip/ItineraryContainer";
 import { CityViewTab } from "@/components/trip/CityViewTab";
 import { AccommodationsTab } from "@/components/trip/AccommodationsTab";
 import { ExpensesTab } from "@/components/trip/ExpensesTab";
@@ -21,6 +21,8 @@ import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
 import { TripDay } from "@/types/trip";
+import { convertTripDayToDatabaseTripDay } from "@/utils/typeConverters";
+import { DatabaseTripDay } from "@/hooks/useTripData";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
@@ -44,6 +46,39 @@ const TripSummary: React.FC = () => {
     totalExpenses,
     totalPurchases
   } = useTripCalculations(tripDays);
+
+  // Convert TripDay[] to DatabaseTripDay[] for the new components
+  const databaseTripDays: DatabaseTripDay[] = tripDays.map((day) => ({
+    id: day.id,
+    trip_id: "default",
+    day_number: day.dayNumber,
+    date: day.date,
+    city: day.city,
+    country: day.country,
+    title: day.title,
+    description: day.description,
+    accommodation_name: day.accommodationName || day.accommodation?.name,
+    accommodation_address: day.accommodationAddress || day.accommodation?.address,
+    accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
+    accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
+    accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
+    accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
+    weather_temp: day.weather?.temp,
+    weather_condition: day.weather?.condition,
+    activities: day.activities?.map(activity => ({
+      id: activity.id,
+      trip_day_id: day.id,
+      time: activity.time,
+      activity: activity.activity,
+      type: activity.type,
+      location: activity.location,
+      notes: activity.note,
+      duration: activity.duration,
+      completed: activity.completed,
+      booking_required: activity.booked || false,
+      contact_info: activity.contactInfo
+    })) || []
+  }));
 
   // Handle banner image change
   const handleBannerChange = (newBannerUrl: string) => {
@@ -102,8 +137,8 @@ const TripSummary: React.FC = () => {
         
         <div className="bg-white rounded-lg shadow-sm p-4">
           <TabsContent value="itinerary">
-            <StaticItineraryDisplay 
-              tripDays={tripDays} 
+            <ItineraryContainer 
+              tripDays={databaseTripDays} 
               onViewMap={handleViewMap}
             />
           </TabsContent>
