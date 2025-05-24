@@ -31,8 +31,8 @@ export const ItineraryTab: React.FC<ItineraryTabProps> = ({
 
   return (
     <div className="space-y-6">
-      {tripDays.map((day) => (
-        <Card key={day.id} className="overflow-hidden">
+      {tripDays.map((day, idx) => (
+        <Card key={`day-${day.id}-${idx}`} className="overflow-hidden">
           <CardContent className="p-0">
             {/* Day Header */}
             <div className="bg-slate-50 p-4">
@@ -103,8 +103,8 @@ export const ItineraryTab: React.FC<ItineraryTabProps> = ({
                     Activities ({day.activities.length})
                   </h4>
                   <div className="space-y-3">
-                    {day.activities.map((activity) => (
-                      <div key={activity.id} className="flex justify-between items-start group border rounded-lg p-3 hover:bg-gray-50">
+                    {day.activities.map((activity, activityIdx) => (
+                      <div key={`activity-${activity.id}-${activityIdx}`} className="flex justify-between items-start group border rounded-lg p-3 hover:bg-gray-50">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-sm">{activity.time}</span>
