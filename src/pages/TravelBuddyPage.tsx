@@ -47,11 +47,13 @@ const TravelBuddyPage: React.FC = () => {
         />
       </div>
       
-      {/* Home navigation button */}
-      <NavHome />
+      {/* Home navigation button with higher z-index */}
+      <div className="relative z-50">
+        <NavHome />
+      </div>
       
-      {/* Content with proper top padding to avoid overlap */}
-      <div className="container mx-auto py-8 pt-24 relative z-10">
+      {/* Content with much more top padding to avoid overlap */}
+      <div className="container mx-auto py-8 pt-32 relative z-10">
         <div className="mb-6">
           <p className="text-gray-700 mb-4 bg-white/30 backdrop-blur-sm p-4 rounded-lg luxury-spacing text-center">Personalized recommendations, language help, trip adaptations, and assistance from your travel experts</p>
           

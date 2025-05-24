@@ -8,7 +8,7 @@ const NavHome: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="absolute top-8 left-8 z-10 opacity-90 hover:opacity-100 transition-opacity">
+    <div className="fixed top-8 left-8 z-50 opacity-90 hover:opacity-100 transition-opacity">
       <Button 
         onClick={() => navigate("/")}
         variant="outline"
