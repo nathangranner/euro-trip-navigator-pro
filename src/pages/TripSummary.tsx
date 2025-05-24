@@ -7,6 +7,7 @@ import { europeTrip } from "@/data/europeTrip";
 import { loadStoredData } from "@/utils/storageUtils";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 import { Calendar, Compass } from "lucide-react";
+import { convertTripDayToDatabaseTripDay } from "@/utils/typeConverters";
 
 // Import components
 import { TripDurationCard } from "@/components/trip/TripDurationCard";
@@ -21,6 +22,7 @@ import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
 import { TripDay } from "@/types/trip";
+import { DatabaseTripDay } from "@/hooks/useTripData";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
@@ -68,6 +70,41 @@ const TripSummary: React.FC = () => {
     navigate(`/planner?day=${dayIndex}`);
   };
 
+  // Convert TripDay[] to DatabaseTripDay[] format for the ItineraryTab
+  const convertedTripDays: DatabaseTripDay[] = tripDays.map((day) => ({
+    id: day.id,
+    trip_id: 'temp-trip-id', // This would come from actual trip selection
+    day_number: day.dayNumber,
+    date: day.date,
+    city: day.city,
+    country: day.country,
+    title: day.title,
+    description: day.description,
+    accommodation_name: day.accommodationName || day.accommodation?.name,
+    accommodation_address: day.accommodationAddress || day.accommodation?.address,
+    accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
+    accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
+    accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
+    accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
+    weather_temp: day.weather?.temp,
+    weather_condition: day.weather?.condition,
+    activities: day.activities?.map(activity => ({
+      id: activity.id,
+      trip_day_id: day.id,
+      time: activity.time,
+      activity: activity.activity,
+      type: activity.type,
+      location: activity.location,
+      notes: activity.note,
+      duration: activity.duration,
+      completed: activity.completed,
+      booking_required: activity.booked || false,
+      contact_info: activity.contactInfo,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })) || []
+  }));
+
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
       <div className="flex justify-between items-center mb-6">
@@ -105,7 +142,12 @@ const TripSummary: React.FC = () => {
         
         <div className="bg-white rounded-lg shadow-sm p-4">
           {activeTab === "itinerary" && (
-            <div>No itinerary data available from database</div>
+            <ItineraryTab 
+              tripDays={convertedTripDays} 
+              onEditDay={() => {}} 
+              onEditActivity={() => {}} 
+              onViewMap={handleViewMap}
+            />
           )}
           
           {activeTab === "cityview" && (
