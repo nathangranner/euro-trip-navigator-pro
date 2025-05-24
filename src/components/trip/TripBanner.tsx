@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Image, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { uploadImage } from "@/utils/storageUtils";
+import { uploadImage } from "@/utils/imageStorageUtils";
 
 interface TripBannerProps {
   bannerImage: string | null;
@@ -33,6 +33,7 @@ export const TripBanner: React.FC<TripBannerProps> = ({
       return;
     }
 
+    console.log("Saving banner image:", imageUrl);
     onBannerChange(imageUrl);
     setIsEditing(false);
     setPreviewImage(null);
@@ -74,27 +75,27 @@ export const TripBanner: React.FC<TripBannerProps> = ({
       };
       reader.readAsDataURL(file);
 
+      console.log("Starting banner image upload...");
+      
       // Upload to Supabase
       const uploadedUrl = await uploadImage(file, "banners");
       
       if (uploadedUrl) {
+        console.log("Banner upload successful:", uploadedUrl);
         setImageUrl(uploadedUrl);
         toast({
           title: "Upload Successful",
           description: "Image has been uploaded successfully",
         });
       } else {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload image. Please try again.",
-          variant: "destructive",
-        });
+        throw new Error("Upload returned null URL");
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error uploading banner file:", error);
+      setPreviewImage(null);
       toast({
         title: "Upload Error",
-        description: "An error occurred while uploading the image",
+        description: error instanceof Error ? error.message : "An error occurred while uploading the image",
         variant: "destructive",
       });
     } finally {
@@ -181,8 +182,12 @@ export const TripBanner: React.FC<TripBannerProps> = ({
                   alt="Banner preview" 
                   className="w-full h-full object-cover"
                   onError={(e) => {
+                    console.error("Failed to load banner image:", displayImage);
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                  onLoad={() => {
+                    console.log("Banner image loaded successfully:", displayImage);
                   }}
                 />
                 <div className="hidden w-full h-full bg-gray-100 flex items-center justify-center">
