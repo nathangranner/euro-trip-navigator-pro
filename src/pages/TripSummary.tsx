@@ -7,7 +7,6 @@ import { europeTrip } from "@/data/europeTrip";
 import { loadStoredData } from "@/utils/storageUtils";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 import { Calendar, Compass } from "lucide-react";
-import { convertTripDayToDatabaseTripDay } from "@/utils/typeConverters";
 
 // Import components
 import { TripDurationCard } from "@/components/trip/TripDurationCard";
@@ -26,15 +25,18 @@ import { DatabaseTripDay } from "@/hooks/useTripData";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
-  const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
+  const [tripDays, setTripDays] = useState<TripDay[]>([]);
   const [activeTab, setActiveTab] = useState("itinerary");
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   
   useEffect(() => {
+    console.log("Loading trip data...");
     const storedData = loadStoredData();
     if (storedData.tripDays && storedData.tripDays.length > 0) {
+      console.log("Loaded stored trip days:", storedData.tripDays.length, "days");
       setTripDays(storedData.tripDays);
     } else {
+      console.log("Using default europe trip data:", europeTrip.days.length, "days");
       setTripDays(europeTrip.days);
     }
 
@@ -58,9 +60,9 @@ const TripSummary: React.FC = () => {
 
   // Handle view accommodation on map
   const handleViewMap = (day: any) => {
-    if (day.accommodation && day.accommodation.address) {
+    if (day.accommodation_address || (day.accommodation && day.accommodation.address)) {
       // Open Google Maps with the address
-      const address = encodeURIComponent(day.accommodation.address);
+      const address = encodeURIComponent(day.accommodation_address || day.accommodation.address);
       window.open(`https://www.google.com/maps?q=${address}`, '_blank');
     }
   };
@@ -71,39 +73,44 @@ const TripSummary: React.FC = () => {
   };
 
   // Convert TripDay[] to DatabaseTripDay[] format for the ItineraryTab
-  const convertedTripDays: DatabaseTripDay[] = tripDays.map((day) => ({
-    id: day.id,
-    trip_id: 'temp-trip-id', // This would come from actual trip selection
-    day_number: day.dayNumber,
-    date: day.date,
-    city: day.city,
-    country: day.country,
-    title: day.title,
-    description: day.description,
-    accommodation_name: day.accommodationName || day.accommodation?.name,
-    accommodation_address: day.accommodationAddress || day.accommodation?.address,
-    accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
-    accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
-    accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
-    accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
-    weather_temp: day.weather?.temp,
-    weather_condition: day.weather?.condition,
-    activities: day.activities?.map(activity => ({
-      id: activity.id,
-      trip_day_id: day.id,
-      time: activity.time,
-      activity: activity.activity,
-      type: activity.type,
-      location: activity.location,
-      notes: activity.note,
-      duration: activity.duration,
-      completed: activity.completed,
-      booking_required: activity.booked || false,
-      contact_info: activity.contactInfo,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    })) || []
-  }));
+  const convertedTripDays: DatabaseTripDay[] = tripDays.map((day) => {
+    console.log(`Converting day ${day.dayNumber}:`, day);
+    return {
+      id: day.id,
+      trip_id: 'temp-trip-id',
+      day_number: day.dayNumber,
+      date: day.date,
+      city: day.city,
+      country: day.country,
+      title: day.title || '',
+      description: day.description || '',
+      accommodation_name: day.accommodationName || day.accommodation?.name,
+      accommodation_address: day.accommodationAddress || day.accommodation?.address,
+      accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
+      accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
+      accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
+      accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
+      weather_temp: day.weather?.temp,
+      weather_condition: day.weather?.condition,
+      activities: day.activities?.map(activity => ({
+        id: activity.id,
+        trip_day_id: day.id,
+        time: activity.time,
+        activity: activity.activity,
+        type: activity.type,
+        location: activity.location,
+        notes: activity.note,
+        duration: activity.duration,
+        completed: activity.completed,
+        booking_required: activity.booked || false,
+        contact_info: activity.contactInfo,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })) || []
+    };
+  });
+
+  console.log("Converted trip days for ItineraryTab:", convertedTripDays.length, "days");
 
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
