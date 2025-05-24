@@ -1,5 +1,7 @@
 # Welcome to your Lovable project
 
+[![CI](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/CI/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions)
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/4bcbc648-1524-4aeb-8368-0a3883ce7a37
