@@ -16,7 +16,7 @@ export const TravelBuddySection: React.FC = () => {
         </h2>
         <Button 
           variant="outline"
-          onClick={() => navigate("/travel-buddy")}
+          onClick={() => navigate("/travel-concierge")}
           className="flex items-center gap-2"
         >
           Visit Concierge
@@ -28,7 +28,7 @@ export const TravelBuddySection: React.FC = () => {
           Your AI travel companion can help with recommendations, language assistance, 
           and trip adaptations during your European adventure.
         </p>
-        <Button onClick={() => navigate("/travel-buddy")}>
+        <Button onClick={() => navigate("/travel-concierge")}>
           Explore Concierge Features
         </Button>
       </Card>
