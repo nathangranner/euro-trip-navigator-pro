@@ -22,6 +22,7 @@ const ensureBucket = async () => {
       return false;
     }
     
+    console.log(`Bucket ${BUCKET_NAME} exists and is ready`);
     return true;
   } catch (error) {
     console.error("Error checking bucket:", error);
@@ -35,39 +36,52 @@ export const uploadImage = async (
   folder: string = "misc"
 ): Promise<string | null> => {
   try {
-    console.log("Starting image upload...", { fileName: file.name, size: file.size, type: file.type });
+    console.log("Starting image upload...", { 
+      fileName: file.name, 
+      size: file.size, 
+      type: file.type,
+      folder: folder 
+    });
 
     // Ensure bucket exists
     const bucketReady = await ensureBucket();
     if (!bucketReady) {
-      throw new Error(`Bucket ${BUCKET_NAME} is not available. Please ensure it exists in Supabase.`);
+      throw new Error(`Bucket ${BUCKET_NAME} is not available. Please check your Supabase storage configuration.`);
     }
 
-    // Check if user is authenticated
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      console.error("User not authenticated:", userError);
-      // For now, allow anonymous uploads by creating a unique folder
-      console.log("Proceeding with anonymous upload");
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      throw new Error("File must be an image");
     }
 
-    const fileExt = file.name.split(".").pop();
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      throw new Error("File size must be less than 10MB");
+    }
+
+    const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
 
     console.log(`Uploading file to: ${BUCKET_NAME}/${filePath}`);
 
-    // Upload the file
+    // Upload the file with proper options
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
+        contentType: file.type,
       });
 
     if (error) {
-      console.error("Error uploading file:", error);
+      console.error("Upload error details:", error);
       throw new Error(`Upload failed: ${error.message}`);
+    }
+
+    if (!data || !data.path) {
+      throw new Error("Upload succeeded but no path returned");
     }
 
     console.log("Upload successful:", data);
@@ -75,7 +89,11 @@ export const uploadImage = async (
     // Get the public URL
     const { data: publicUrlData } = supabase.storage
       .from(BUCKET_NAME)
-      .getPublicUrl(filePath);
+      .getPublicUrl(data.path);
+
+    if (!publicUrlData.publicUrl) {
+      throw new Error("Failed to generate public URL");
+    }
 
     console.log("Public URL generated:", publicUrlData.publicUrl);
     return publicUrlData.publicUrl;

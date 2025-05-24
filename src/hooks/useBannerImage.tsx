@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImage } from "@/utils/imageStorageUtils";
@@ -77,7 +78,6 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
       if (uploadedUrl) {
         console.log("Banner upload successful:", uploadedUrl);
         setImageUrl(uploadedUrl);
-        // Keep the preview but also store the uploaded URL
         toast({
           title: "Upload Successful",
           description: "Image has been uploaded successfully. Click Save to apply it.",
@@ -90,7 +90,7 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
       setPreviewImage(null);
       toast({
         title: "Upload Error",
-        description: error instanceof Error ? error.message : "An error occurred while uploading the image. Please check if the storage bucket is properly configured.",
+        description: error instanceof Error ? error.message : "Failed to upload image. Please try again.",
         variant: "destructive",
       });
     } finally {
