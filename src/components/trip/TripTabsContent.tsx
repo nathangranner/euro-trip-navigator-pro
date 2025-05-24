@@ -8,6 +8,7 @@ import { PurchaseTracker } from "@/components/PurchaseTracker";
 import { CityViewTab } from "./CityViewTab";
 import { TranslationTab } from "./TranslationTab";
 import { TabsContent } from "@/components/ui/tabs";
+import { convertDatabaseTripDayToTripDay } from "@/utils/typeConverters";
 
 interface TripTabsContentProps {
   tripDays: DatabaseTripDay[];
@@ -20,6 +21,9 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
   onEditDay,
   onEditActivity,
 }) => {
+  // Convert database trip days to the format expected by legacy components
+  const convertedTripDays = tripDays.map(convertDatabaseTripDayToTripDay);
+
   return (
     <>
       <TabsContent value="itinerary">
@@ -52,7 +56,7 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
       </TabsContent>
 
       <TabsContent value="cityview">
-        <CityViewTab tripDays={tripDays} />
+        <CityViewTab tripDays={convertedTripDays} />
       </TabsContent>
 
       <TabsContent value="translation">
