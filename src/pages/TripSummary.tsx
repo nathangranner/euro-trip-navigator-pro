@@ -7,7 +7,6 @@ import { europeTrip } from "@/data/europeTrip";
 import { loadStoredData } from "@/utils/storageUtils";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 import { Calendar, Compass } from "lucide-react";
-import { convertTripDayToDatabaseTripDay } from "@/utils/typeConverters";
 
 // Import components
 import { TripDurationCard } from "@/components/trip/TripDurationCard";
@@ -21,10 +20,11 @@ import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
+import { TripDay } from "@/types/trip";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
-  const [tripDays, setTripDays] = useState(europeTrip.days);
+  const [tripDays, setTripDays] = useState<TripDay[]>(europeTrip.days);
   const [activeTab, setActiveTab] = useState("itinerary");
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   
@@ -68,43 +68,6 @@ const TripSummary: React.FC = () => {
     navigate(`/planner?day=${dayIndex}`);
   };
 
-  // Convert TripDay[] to format expected by database components
-  const convertedTripDays = tripDays.map((day, index) => ({
-    id: day.id,
-    trip_id: 'temp-trip-id', // This would come from actual trip selection
-    day_number: day.dayNumber,
-    date: day.date,
-    city: day.city,
-    country: day.country,
-    title: day.title,
-    description: day.description,
-    accommodation_name: day.accommodationName || day.accommodation?.name,
-    accommodation_address: day.accommodationAddress || day.accommodation?.address,
-    accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
-    accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
-    accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
-    accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
-    weather_temp: day.weather?.temp,
-    weather_condition: day.weather?.condition,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    activities: day.activities?.map(activity => ({
-      id: activity.id,
-      trip_day_id: day.id,
-      time: activity.time,
-      activity: activity.activity,
-      type: activity.type,
-      location: activity.location,
-      notes: activity.note,
-      duration: activity.duration,
-      completed: activity.completed,
-      booking_required: activity.booked || false,
-      contact_info: activity.contactInfo,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    })) || []
-  }));
-
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
       <div className="flex justify-between items-center mb-6">
@@ -141,15 +104,25 @@ const TripSummary: React.FC = () => {
         </TabsList>
         
         <div className="bg-white rounded-lg shadow-sm p-4">
-          <ItineraryTab tripDays={convertedTripDays} onEditDay={() => {}} onEditActivity={() => {}} />
+          {activeTab === "itinerary" && (
+            <div>No itinerary data available from database</div>
+          )}
           
-          <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
+          {activeTab === "cityview" && (
+            <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
+          )}
           
-          <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+          {activeTab === "accommodations" && (
+            <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+          )}
           
-          <ExpensesTab expensesByDay={{}} tripDays={tripDays} />
+          {activeTab === "expenses" && (
+            <ExpensesTab expensesByDay={{}} tripDays={tripDays} />
+          )}
           
-          <PurchasesTab purchasesByDay={{}} tripDays={tripDays} />
+          {activeTab === "purchases" && (
+            <PurchasesTab purchasesByDay={{}} tripDays={tripDays} />
+          )}
         </div>
       </Tabs>
       

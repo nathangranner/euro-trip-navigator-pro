@@ -41,7 +41,7 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
       <TabsContent value="expenses">
         <ExpenseTracker 
           dayId={tripDays[0]?.id || ''}
-          date={tripDays[0]?.date || new Date().toISOString()}
+          date={tripDays[0]?.date || new Date().toISOString().split('T')[0]}
           onSave={() => {}}
         />
       </TabsContent>
@@ -49,7 +49,7 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
       <TabsContent value="purchases">
         <PurchaseTracker 
           dayId={tripDays[0]?.id || ''}
-          date={tripDays[0]?.date || new Date().toISOString()}
+          date={tripDays[0]?.date || new Date().toISOString().split('T')[0]}
           countryName={tripDays[0]?.country || "Unknown"}
           onSave={() => {}}
         />
