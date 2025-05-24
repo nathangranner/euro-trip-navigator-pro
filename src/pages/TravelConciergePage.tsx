@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -14,10 +15,6 @@ const TravelConciergePage: React.FC = () => {
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
-  };
-
-  const handleBackToHome = () => {
-    navigate("/");
   };
 
   return (
@@ -58,14 +55,6 @@ const TravelConciergePage: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-futura tracking-wider uppercase text-slate-800">
           </h1>
-          <Button 
-            onClick={handleBackToHome} 
-            variant="outline" 
-            className="flex items-center gap-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </Button>
         </div>
 
         <div className="mb-6">
