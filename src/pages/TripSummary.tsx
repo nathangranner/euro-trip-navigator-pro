@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { europeTrip } from "@/data/europeTrip";
 import { loadStoredData } from "@/utils/storageUtils";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
@@ -30,22 +30,31 @@ const TripSummary: React.FC = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   
   useEffect(() => {
-    console.log("Loading trip data...");
+    console.log("=== LOADING TRIP DATA ===");
     const storedData = loadStoredData();
+    
     if (storedData.tripDays && storedData.tripDays.length > 0) {
-      console.log("Loaded stored trip days:", storedData.tripDays.length, "days");
+      console.log("✅ Found stored trip days:", storedData.tripDays.length, "days");
+      console.log("First stored day sample:", storedData.tripDays[0]);
       setTripDays(storedData.tripDays);
     } else {
-      console.log("Using default europe trip data:", europeTrip.days.length, "days");
+      console.log("📦 Using default europe trip data");
+      console.log("Europe trip days count:", europeTrip.days.length);
+      console.log("Europe trip first day sample:", europeTrip.days[0]);
+      console.log("Europe trip activities sample:", europeTrip.days[0]?.activities);
       setTripDays(europeTrip.days);
     }
-
-    // Load banner image
-    const savedBanner = loadBannerImage();
-    if (savedBanner) {
-      setBannerImage(savedBanner);
-    }
   }, []);
+
+  // Debug tripDays state changes
+  useEffect(() => {
+    console.log("=== TRIP DAYS STATE UPDATED ===");
+    console.log("Total days in state:", tripDays.length);
+    if (tripDays.length > 0) {
+      console.log("First day in state:", tripDays[0]);
+      console.log("Activities in first day:", tripDays[0]?.activities?.length || 0);
+    }
+  }, [tripDays]);
   
   const {
     totalExpenses,
@@ -61,7 +70,6 @@ const TripSummary: React.FC = () => {
   // Handle view accommodation on map
   const handleViewMap = (day: any) => {
     if (day.accommodation_address || (day.accommodation && day.accommodation.address)) {
-      // Open Google Maps with the address
       const address = encodeURIComponent(day.accommodation_address || day.accommodation.address);
       window.open(`https://www.google.com/maps?q=${address}`, '_blank');
     }
@@ -74,7 +82,12 @@ const TripSummary: React.FC = () => {
 
   // Convert TripDay[] to DatabaseTripDay[] format for the ItineraryTab
   const convertedTripDays: DatabaseTripDay[] = tripDays.map((day) => {
-    console.log(`Converting day ${day.dayNumber}:`, day);
+    console.log(`🔄 Converting day ${day.dayNumber}:`, {
+      city: day.city,
+      activitiesCount: day.activities?.length || 0,
+      hasAccommodation: !!day.accommodation || !!day.accommodationName
+    });
+    
     return {
       id: day.id,
       trip_id: 'temp-trip-id',
@@ -110,7 +123,9 @@ const TripSummary: React.FC = () => {
     };
   });
 
-  console.log("Converted trip days for ItineraryTab:", convertedTripDays.length, "days");
+  console.log("=== FINAL CONVERTED DATA ===");
+  console.log("Converted trip days count:", convertedTripDays.length);
+  console.log("Sample converted day:", convertedTripDays[0]);
 
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
@@ -128,7 +143,6 @@ const TripSummary: React.FC = () => {
         </div>
       </div>
 
-      {/* Banner Image Section */}
       <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -148,30 +162,30 @@ const TripSummary: React.FC = () => {
         </TabsList>
         
         <div className="bg-white rounded-lg shadow-sm p-4">
-          {activeTab === "itinerary" && (
+          <TabsContent value="itinerary">
             <ItineraryTab 
               tripDays={convertedTripDays} 
               onEditDay={() => {}} 
               onEditActivity={() => {}} 
               onViewMap={handleViewMap}
             />
-          )}
+          </TabsContent>
           
-          {activeTab === "cityview" && (
+          <TabsContent value="cityview">
             <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
-          )}
+          </TabsContent>
           
-          {activeTab === "accommodations" && (
+          <TabsContent value="accommodations">
             <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
-          )}
+          </TabsContent>
           
-          {activeTab === "expenses" && (
+          <TabsContent value="expenses">
             <ExpensesTab expensesByDay={{}} tripDays={tripDays} />
-          )}
+          </TabsContent>
           
-          {activeTab === "purchases" && (
+          <TabsContent value="purchases">
             <PurchasesTab purchasesByDay={{}} tripDays={tripDays} />
-          )}
+          </TabsContent>
         </div>
       </Tabs>
       
