@@ -221,6 +221,7 @@ export const EuropeTripPlanner: React.FC = () => {
 
       {editingActivity && (
         <EditActivityModal
+          isOpen={true}
           activity={editingActivity.activity}
           dayId={editingActivity.dayId}
           onSave={(updatedActivity) => handleSaveActivity(updatedActivity, editingActivity.dayId)}
