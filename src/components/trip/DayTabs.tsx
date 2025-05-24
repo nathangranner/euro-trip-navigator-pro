@@ -14,7 +14,7 @@ export default function DayTabs({ tripDays, current, onChange }: DayTabsProps) {
     <TabsList className="mb-4">
       {tripDays.map((day, idx) => (
         <TabsTrigger
-          key={`${day.id}-${idx}`}
+          key={`tab-${day.id}-${day.day_number}-${idx}`}
           value={day.id}
           className="text-sm"
         >

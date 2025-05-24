@@ -26,9 +26,9 @@ export default function ItineraryDayList({
 
   return (
     <div className="space-y-6">
-      {tripDays.map((day) => (
+      {tripDays.map((day, index) => (
         <ItineraryDayCard
-          key={day.id}
+          key={`${day.id}-${day.day_number}-${index}`}
           tripDay={day}
           onEditDay={onEditDay}
           onEditActivity={onEditActivity}

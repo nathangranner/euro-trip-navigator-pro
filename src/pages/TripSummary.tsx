@@ -35,10 +35,38 @@ const TripSummary: React.FC = () => {
     
     if (storedData.tripDays && storedData.tripDays.length > 0) {
       console.log("✅ Using stored trip days:", storedData.tripDays.length);
-      setTripDays(storedData.tripDays);
+      
+      // Debug: Check for duplicate IDs
+      const ids = storedData.tripDays.map((day: any) => day.id);
+      const duplicateIds = ids.filter((id: string, index: number) => ids.indexOf(id) !== index);
+      if (duplicateIds.length > 0) {
+        console.warn("⚠️ Found duplicate day IDs:", duplicateIds);
+        // Fix duplicate IDs by ensuring uniqueness
+        const fixedTripDays = storedData.tripDays.map((day: any, index: number) => ({
+          ...day,
+          id: day.id + (duplicateIds.includes(day.id) ? `-fixed-${index}` : '')
+        }));
+        setTripDays(fixedTripDays);
+      } else {
+        setTripDays(storedData.tripDays);
+      }
     } else {
       console.log("📦 Using europe trip data:", europeTrip.days.length);
-      setTripDays(europeTrip.days);
+      
+      // Debug: Check for duplicate IDs in default data
+      const ids = europeTrip.days.map(day => day.id);
+      const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
+      if (duplicateIds.length > 0) {
+        console.warn("⚠️ Found duplicate day IDs in default data:", duplicateIds);
+        // Fix duplicate IDs by ensuring uniqueness
+        const fixedTripDays = europeTrip.days.map((day, index) => ({
+          ...day,
+          id: day.id + (duplicateIds.includes(day.id) ? `-fixed-${index}` : '')
+        }));
+        setTripDays(fixedTripDays);
+      } else {
+        setTripDays(europeTrip.days);
+      }
     }
   }, []);
   
@@ -48,7 +76,7 @@ const TripSummary: React.FC = () => {
   } = useTripCalculations(tripDays);
 
   // Convert TripDay[] to DatabaseTripDay[] for the new components
-  const databaseTripDays: DatabaseTripDay[] = tripDays.map((day) => ({
+  const databaseTripDays: DatabaseTripDay[] = tripDays.map((day, index) => ({
     id: day.id,
     trip_id: "default",
     day_number: day.dayNumber,

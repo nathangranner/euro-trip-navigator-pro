@@ -15,7 +15,7 @@ export default function DayPanels({ tripDays, onEditDay, onEditActivity, onViewM
   return (
     <>
       {tripDays.map((day, idx) => (
-        <TabsContent key={`${day.id}-${idx}`} value={day.id}>
+        <TabsContent key={`content-${day.id}-${day.day_number}-${idx}`} value={day.id}>
           <ItineraryDayContent 
             tripDay={day} 
             onEditDay={onEditDay}
