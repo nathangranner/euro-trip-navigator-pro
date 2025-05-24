@@ -5,6 +5,8 @@ import { florenceDays } from "./florenceDays";
 import { bolognaDays } from "./bolognaDays";
 import { lakeComoDays } from "./lakeComo";
 import { stuttgartDays } from "./stuttgartDays";
+import { blackForestDays } from "./blackForestDays";
+import { returnJourneyDays } from "./returnJourneyDays";
 import { returnDay } from "./returnDay";
 
 export const europeTrip: Trip = {
@@ -18,6 +20,8 @@ export const europeTrip: Trip = {
     ...bolognaDays,
     ...lakeComoDays,
     ...stuttgartDays,
+    ...blackForestDays,
+    ...returnJourneyDays,
     ...returnDay
   ]
 };
