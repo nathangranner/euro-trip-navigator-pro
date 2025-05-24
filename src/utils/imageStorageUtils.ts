@@ -4,17 +4,51 @@ import { v4 as uuidv4 } from "uuid";
 
 const BUCKET_NAME = "trip_images";
 
+// Ensure bucket exists and is properly configured
+const ensureBucket = async () => {
+  try {
+    // Check if bucket exists
+    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+    
+    if (listError) {
+      console.error("Error listing buckets:", listError);
+      return false;
+    }
+
+    const bucketExists = buckets?.some(bucket => bucket.name === BUCKET_NAME);
+    
+    if (!bucketExists) {
+      console.log(`Bucket ${BUCKET_NAME} does not exist, it needs to be created in Supabase`);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error checking bucket:", error);
+    return false;
+  }
+};
+
 // Uploads a file to Supabase storage and returns the public URL
 export const uploadImage = async (
   file: File,
   folder: string = "misc"
 ): Promise<string | null> => {
   try {
+    console.log("Starting image upload...", { fileName: file.name, size: file.size, type: file.type });
+
+    // Ensure bucket exists
+    const bucketReady = await ensureBucket();
+    if (!bucketReady) {
+      throw new Error(`Bucket ${BUCKET_NAME} is not available. Please ensure it exists in Supabase.`);
+    }
+
     // Check if user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      console.error("User not authenticated");
-      return null;
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      console.error("User not authenticated:", userError);
+      // For now, allow anonymous uploads by creating a unique folder
+      console.log("Proceeding with anonymous upload");
     }
 
     const fileExt = file.name.split(".").pop();

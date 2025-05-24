@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImage } from "@/utils/imageStorageUtils";
@@ -13,17 +12,19 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleSave = () => {
-    if (!imageUrl.trim()) {
+    const finalImageUrl = previewImage || imageUrl;
+    
+    if (!finalImageUrl.trim()) {
       toast({
-        title: "Image URL Required",
+        title: "Image Required",
         description: "Please provide a valid image URL or upload an image",
         variant: "destructive",
       });
       return;
     }
 
-    console.log("Saving banner image:", imageUrl);
-    onBannerChange(imageUrl);
+    console.log("Saving banner image:", finalImageUrl);
+    onBannerChange(finalImageUrl);
     setIsEditing(false);
     setPreviewImage(null);
     toast({
@@ -33,7 +34,9 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
   };
 
   const handleFileUpload = async (file: File) => {
-    // Check if file is an image (including WebP)
+    console.log("File upload started:", { name: file.name, size: file.size, type: file.type });
+
+    // Check if file is an image
     if (!file.type.startsWith("image/")) {
       toast({
         title: "Invalid File Type",
@@ -43,12 +46,12 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
       return;
     }
 
-    // Check file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Check file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
       toast({
         title: "File Too Large",
-        description: "Please upload an image smaller than 5MB",
+        description: "Please upload an image smaller than 10MB",
         variant: "destructive",
       });
       return;
@@ -57,14 +60,16 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
     try {
       setIsUploading(true);
       
-      // Show preview before upload
+      // Show preview immediately
       const reader = new FileReader();
       reader.onload = (e) => {
-        setPreviewImage(e.target?.result as string);
+        const result = e.target?.result as string;
+        setPreviewImage(result);
+        console.log("Preview image set");
       };
       reader.readAsDataURL(file);
 
-      console.log("Starting banner image upload...");
+      console.log("Starting banner image upload to Supabase...");
       
       // Upload to Supabase
       const uploadedUrl = await uploadImage(file, "banners");
@@ -72,9 +77,10 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
       if (uploadedUrl) {
         console.log("Banner upload successful:", uploadedUrl);
         setImageUrl(uploadedUrl);
+        // Keep the preview but also store the uploaded URL
         toast({
           title: "Upload Successful",
-          description: "Image has been uploaded successfully",
+          description: "Image has been uploaded successfully. Click Save to apply it.",
         });
       } else {
         throw new Error("Upload returned null URL");
@@ -84,7 +90,7 @@ export const useBannerImage = (bannerImage: string | null, onBannerChange: (newB
       setPreviewImage(null);
       toast({
         title: "Upload Error",
-        description: error instanceof Error ? error.message : "An error occurred while uploading the image",
+        description: error instanceof Error ? error.message : "An error occurred while uploading the image. Please check if the storage bucket is properly configured.",
         variant: "destructive",
       });
     } finally {
