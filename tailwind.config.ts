@@ -20,6 +20,8 @@ export default {
 				sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
 				futura: ['Red Hat Display', 'Futura', 'Century Gothic', 'Avenir Next', 'Avenir', 'Trebuchet MS', 'Arial', 'sans-serif'],
 				cursive: ['Great Vibes', 'cursive'],
+				heading: ['Playfair Display', 'serif'],
+				body: ['Inter', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -71,7 +73,9 @@ export default {
 					purple: '#9b59b6',
 					orange: '#e67e22',
 					red: '#e74c3c'
-				}
+				},
+				gold: '#C29149',
+				'gold-dark': '#A07A3A'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -104,6 +108,9 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-gentle': 'pulse-gentle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+			},
+			lineHeight: {
+				'relaxed': '1.6'
 			}
 		}
 	},
