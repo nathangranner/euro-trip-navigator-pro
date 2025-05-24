@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Mail, MailOpen, ArrowLeft } from "lucide-react";
+import Header from "@/components/Header";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -28,37 +29,54 @@ const Index = () => {
     navigate(path);
   };
 
+  const scrollToItinerary = () => {
+    navigate("/planner");
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-black text-white">
+      {/* Header */}
+      <Header />
+
       {/* Hero Background with Parallax */}
       <div className="absolute inset-0 w-full h-full z-0" ref={parallaxRef}>
-        <div className="absolute inset-0 w-full h-[120vh] bg-cover bg-center" style={{
-        backgroundImage: "url('https://images.unsplash.com/photo-1576788498981-244a7a4f8d5d?q=80&w=2000&auto=format&fit=crop')",
-        filter: "brightness(0.6) contrast(1.1)"
-      }} />
-        <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
+        <div 
+          className="absolute inset-0 w-full h-[120vh] bg-cover bg-center" 
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=2000&auto=format&fit=crop')",
+            filter: "brightness(0.5) contrast(1.1)"
+          }} 
+        />
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-50 z-10" />
       </div>
 
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col bg-travel-orange">
-        {/* Header with luxury brand style */}
-        <header className="pt-12 pb-8 flex justify-between items-center">
-          <div className="text-2xl font-light tracking-[0.3em] uppercase">EUROTRIP25</div>
-          <div className="text-sm tracking-wider uppercase">Summer 2025</div>
-        </header>
-
+      <div className="relative z-20 container mx-auto px-4 min-h-screen flex flex-col">
         {/* Main Title Section */}
-        <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24">
-          <h1 ref={titleRef} style={{
-          letterSpacing: "0.15em"
-        }} className="text-6xl md:text-8xl font-light uppercase tracking-widest mb-8">
-            EUROTRIP<span className="font-thin">25</span>
-          </h1>
-          
-          <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90">
-            Your exclusive journey through Europe's most coveted destinations. 
-            An experience designed for Jamie and Nathan.
-          </p>
+        <div className="flex-1 flex flex-col justify-center items-center text-center my-16 md:my-24 pt-20">
+          <div className="hero-content space-y-6">
+            <h1 
+              ref={titleRef} 
+              className="text-6xl md:text-8xl font-light uppercase tracking-widest text-white"
+              style={{ letterSpacing: "0.15em" }}
+            >
+              EUROTRIP<span className="font-thin">25</span>
+            </h1>
+            
+            <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide text-white/90">
+              Your exclusive journey through Europe's most coveted destinations. 
+              An experience designed for Jamie and Nathan.
+            </p>
+
+            {/* Primary CTA Button */}
+            <button
+              onClick={scrollToItinerary}
+              className="inline-block bg-amber-600 hover:bg-amber-700 px-8 py-4 uppercase tracking-wide font-medium transition-colors duration-200 text-white rounded-none mt-8"
+            >
+              Start Your Journey
+            </button>
+          </div>
 
           <div className="mt-12">
             <div onClick={() => handleNavigate("/planner")} className="duomo-container cursor-pointer">
@@ -79,6 +97,29 @@ const Index = () => {
                 <div className="duomo-filigree-br"></div>
                 <div className="duomo-filigree-center"></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sections for navigation anchors */}
+        <div id="dates" className="mb-20">
+          <div className="text-center py-16">
+            <h2 className="text-3xl font-light uppercase tracking-wider mb-8">Travel Dates</h2>
+            <div className="max-w-2xl mx-auto">
+              <p className="text-xl text-white/80 mb-4">June 5-26, 2025</p>
+              <p className="text-lg text-white/70">21 days across 7 European destinations</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="contact" className="mb-20">
+          <div className="text-center py-16">
+            <h2 className="text-3xl font-light uppercase tracking-wider mb-8">Contact</h2>
+            <div className="max-w-2xl mx-auto">
+              <p className="text-lg text-white/80">
+                This exclusive experience has been designed specifically for Jamie and Nathan.
+              </p>
+              <p className="text-sm text-white/60 mt-4">Have an amazing journey!</p>
             </div>
           </div>
         </div>
