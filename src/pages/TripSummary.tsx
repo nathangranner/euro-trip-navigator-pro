@@ -30,31 +30,16 @@ const TripSummary: React.FC = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   
   useEffect(() => {
-    console.log("=== LOADING TRIP DATA ===");
     const storedData = loadStoredData();
     
     if (storedData.tripDays && storedData.tripDays.length > 0) {
-      console.log("✅ Found stored trip days:", storedData.tripDays.length, "days");
-      console.log("First stored day sample:", storedData.tripDays[0]);
+      console.log("✅ Using stored trip days:", storedData.tripDays.length);
       setTripDays(storedData.tripDays);
     } else {
-      console.log("📦 Using default europe trip data");
-      console.log("Europe trip days count:", europeTrip.days.length);
-      console.log("Europe trip first day sample:", europeTrip.days[0]);
-      console.log("Europe trip activities sample:", europeTrip.days[0]?.activities);
+      console.log("📦 Using europe trip data:", europeTrip.days.length);
       setTripDays(europeTrip.days);
     }
   }, []);
-
-  // Debug tripDays state changes
-  useEffect(() => {
-    console.log("=== TRIP DAYS STATE UPDATED ===");
-    console.log("Total days in state:", tripDays.length);
-    if (tripDays.length > 0) {
-      console.log("First day in state:", tripDays[0]);
-      console.log("Activities in first day:", tripDays[0]?.activities?.length || 0);
-    }
-  }, [tripDays]);
   
   const {
     totalExpenses,
@@ -81,51 +66,45 @@ const TripSummary: React.FC = () => {
   };
 
   // Convert TripDay[] to DatabaseTripDay[] format for the ItineraryTab
-  const convertedTripDays: DatabaseTripDay[] = tripDays.map((day) => {
-    console.log(`🔄 Converting day ${day.dayNumber}:`, {
-      city: day.city,
-      activitiesCount: day.activities?.length || 0,
-      hasAccommodation: !!day.accommodation || !!day.accommodationName
-    });
-    
-    return {
-      id: day.id,
-      trip_id: 'temp-trip-id',
-      day_number: day.dayNumber,
-      date: day.date,
-      city: day.city,
-      country: day.country,
-      title: day.title || '',
-      description: day.description || '',
-      accommodation_name: day.accommodationName || day.accommodation?.name,
-      accommodation_address: day.accommodationAddress || day.accommodation?.address,
-      accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
-      accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
-      accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
-      accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
-      weather_temp: day.weather?.temp,
-      weather_condition: day.weather?.condition,
-      activities: day.activities?.map(activity => ({
-        id: activity.id,
-        trip_day_id: day.id,
-        time: activity.time,
-        activity: activity.activity,
-        type: activity.type,
-        location: activity.location,
-        notes: activity.note,
-        duration: activity.duration,
-        completed: activity.completed,
-        booking_required: activity.booked || false,
-        contact_info: activity.contactInfo,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })) || []
-    };
-  });
+  const convertedTripDays: DatabaseTripDay[] = tripDays.map((day) => ({
+    id: day.id,
+    trip_id: 'temp-trip-id',
+    day_number: day.dayNumber,
+    date: day.date,
+    city: day.city,
+    country: day.country,
+    title: day.title || '',
+    description: day.description || '',
+    accommodation_name: day.accommodationName || day.accommodation?.name,
+    accommodation_address: day.accommodationAddress || day.accommodation?.address,
+    accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
+    accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
+    accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
+    accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
+    weather_temp: day.weather?.temp,
+    weather_condition: day.weather?.condition,
+    activities: day.activities?.map(activity => ({
+      id: activity.id,
+      trip_day_id: day.id,
+      time: activity.time,
+      activity: activity.activity,
+      type: activity.type,
+      location: activity.location,
+      notes: activity.note,
+      duration: activity.duration,
+      completed: activity.completed,
+      booking_required: activity.booked || false,
+      contact_info: activity.contactInfo,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })) || []
+  }));
 
-  console.log("=== FINAL CONVERTED DATA ===");
-  console.log("Converted trip days count:", convertedTripDays.length);
-  console.log("Sample converted day:", convertedTripDays[0]);
+  console.log("🎯 FINAL DATA CHECK:", {
+    originalTripDays: tripDays.length,
+    convertedTripDays: convertedTripDays.length,
+    firstDayActivities: convertedTripDays[0]?.activities?.length || 0
+  });
 
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
