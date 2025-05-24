@@ -18,7 +18,7 @@ export type Expense = {
 };
 
 interface ExpenseTrackerProps {
-  dayId: number;
+  dayId: string;
   date: string;
   initialExpenses?: Expense[];
   onSave: (expenses: Expense[]) => void;

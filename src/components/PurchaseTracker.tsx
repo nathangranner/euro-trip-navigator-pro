@@ -19,7 +19,7 @@ export type Purchase = {
 };
 
 interface PurchaseTrackerProps {
-  dayId: number;
+  dayId: string;
   date: string;
   countryName: string;
   initialPurchases?: Purchase[];
