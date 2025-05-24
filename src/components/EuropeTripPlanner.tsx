@@ -156,17 +156,17 @@ export const EuropeTripPlanner: React.FC = () => {
 
         <TabsContent value="expenses">
           <ExpenseTracker 
-            dayId=""
-            date=""
+            dayId={1}
+            date={new Date().toISOString()}
             onSave={() => {}}
           />
         </TabsContent>
 
         <TabsContent value="purchases">
           <PurchaseTracker 
-            dayId=""
-            date=""
-            countryName=""
+            dayId={1}
+            date={new Date().toISOString()}
+            countryName="Italy"
             onSave={() => {}}
           />
         </TabsContent>
@@ -212,6 +212,7 @@ export const EuropeTripPlanner: React.FC = () => {
       {/* Modals */}
       {editingDay && (
         <EditDayModal
+          isOpen={true}
           day={editingDay}
           onSave={handleSaveDay}
           onClose={() => setEditingDay(null)}
@@ -223,7 +224,7 @@ export const EuropeTripPlanner: React.FC = () => {
           activity={editingActivity.activity}
           dayId={editingActivity.dayId}
           onSave={(updatedActivity) => handleSaveActivity(updatedActivity, editingActivity.dayId)}
-          onCancel={() => setEditingActivity(null)}
+          onClose={() => setEditingActivity(null)}
         />
       )}
     </div>
