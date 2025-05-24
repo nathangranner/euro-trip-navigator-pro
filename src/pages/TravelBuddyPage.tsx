@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -5,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { TravelBuddySelector } from "@/components/TravelBuddySelector";
 import { TranslationTool } from "@/components/TranslationTool";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
+import { Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 import NavHome from "@/components/NavHome";
 
 const TravelBuddyPage: React.FC = () => {
@@ -50,16 +51,7 @@ const TravelBuddyPage: React.FC = () => {
       <NavHome />
       
       {/* Content with proper top padding to avoid overlap */}
-      <div className="container mx-auto py-8 pt-20 relative z-10">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-futura tracking-wider uppercase text-slate-800">
-          </h1>
-          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm">
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </Button>
-        </div>
-
+      <div className="container mx-auto py-8 pt-24 relative z-10">
         <div className="mb-6">
           <p className="text-gray-700 mb-4 bg-white/30 backdrop-blur-sm p-4 rounded-lg luxury-spacing text-center">Personalized recommendations, language help, trip adaptations, and assistance from your travel experts</p>
           
