@@ -7,43 +7,53 @@ import { TranslationTool } from "@/components/TranslationTool";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 import NavHome from "@/components/NavHome";
+
 const TravelBuddyPage: React.FC = () => {
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
+
   const handleOpenChat = () => {
     setIsChatOpen(true);
   };
-  return <div className="relative min-h-screen">
+
+  return (
+    <div className="relative min-h-screen">
       {/* Mediterranean gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-blue-100 to-blue-400 z-0" />
       
       {/* Swoosh effect */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute w-full h-[70%] bottom-0" style={{
-        background: "radial-gradient(ellipse at center bottom, #1e6091 0%, #3498db 50%, transparent 100%)",
-        opacity: 0.6,
-        borderTopLeftRadius: "50% 70%",
-        borderTopRightRadius: "50% 70%",
-        transform: "scale(1.5)",
-        bottom: "-5%"
-      }} />
-        <div className="absolute w-full h-[40%] bottom-0" style={{
-        background: "radial-gradient(ellipse at center bottom, #f5d0a9 0%, transparent 70%)",
-        opacity: 0.4,
-        borderTopLeftRadius: "60% 100%",
-        borderTopRightRadius: "60% 100%",
-        bottom: "10%"
-      }} />
+        <div 
+          className="absolute w-full h-[70%] bottom-0" 
+          style={{
+            background: "radial-gradient(ellipse at center bottom, #1e6091 0%, #3498db 50%, transparent 100%)",
+            opacity: 0.6,
+            borderTopLeftRadius: "50% 70%",
+            borderTopRightRadius: "50% 70%",
+            transform: "scale(1.5)",
+            bottom: "-5%"
+          }} 
+        />
+        <div 
+          className="absolute w-full h-[40%] bottom-0" 
+          style={{
+            background: "radial-gradient(ellipse at center bottom, #f5d0a9 0%, transparent 70%)",
+            opacity: 0.4,
+            borderTopLeftRadius: "60% 100%",
+            borderTopRightRadius: "60% 100%",
+            bottom: "10%"
+          }} 
+        />
       </div>
       
-      {/* Home navigation button (out of the way) */}
+      {/* Home navigation button */}
       <NavHome />
       
-      {/* Content */}
-      <div className="container mx-auto py-8 relative z-10">
+      {/* Content with proper top padding to avoid overlap */}
+      <div className="container mx-auto py-8 pt-20 relative z-10">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-futura tracking-wider uppercase text-slate-800">
-        </h1>
+          </h1>
           <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm">
             <ChevronLeft className="h-4 w-4" />
             Back
@@ -105,6 +115,8 @@ const TravelBuddyPage: React.FC = () => {
           </Tabs>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TravelBuddyPage;
