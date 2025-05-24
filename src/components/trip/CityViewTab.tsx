@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
@@ -41,7 +42,7 @@ export const CityViewTab: React.FC<CityViewTabProps> = ({ tripDays, onViewMap })
   };
 
   return (
-    <TabsContent value="city-view" className="space-y-6">
+    <TabsContent value="cityview" className="space-y-6">
       {Object.entries(citiesWithDays).map(([city, days]) => (
         <div key={city} className="bg-gradient-to-r from-blue-50 to-white rounded-lg shadow-sm p-4">
           <h2 className="text-xl font-bold mb-2 text-blue-800">{city}</h2>
