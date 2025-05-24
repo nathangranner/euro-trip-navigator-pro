@@ -4,6 +4,7 @@ module.exports = {
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    '@storybook/addon-actions',
   ],
   framework: {
     name: '@storybook/react-vite',
