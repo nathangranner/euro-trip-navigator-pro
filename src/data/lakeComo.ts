@@ -1,4 +1,3 @@
-
 import { TripDay } from "@/types/trip";
 
 export const lakeComoDays: TripDay[] = [
@@ -200,6 +199,107 @@ export const lakeComoDays: TripDay[] = [
       {
         type: "warning",
         message: "Varenna has free parking on Via Croce; Bellagio parking €15/day. Check ferry timetables"
+      }
+    ]
+  },
+  {
+    id: "day-12",
+    dayNumber: 12,
+    date: "2025-06-16",
+    city: "Zürich",
+    country: "Switzerland",
+    description: "Travel from Lake Como to Zürich",
+    title: "Lake Como to Zürich",
+    activities: [
+      {
+        id: "checkout-como",
+        time: "11:00 AM",
+        activity: "Check-out from Lake Como accommodation",
+        type: "travel",
+        icon: "🏠",
+        completed: false,
+        location: "Via del Castellano, 9, Vezio"
+      },
+      {
+        id: "depart-vezio",
+        time: "11:30 AM",
+        activity: "Depart Vezio by car",
+        type: "travel",
+        icon: "🚗",
+        completed: false,
+        location: "Vezio",
+        note: "220 km drive to Zürich, approximately 3 hours via SS340 north, cross border at Chiasso"
+      },
+      {
+        id: "buy-vignette",
+        time: "12:30 PM",
+        activity: "Buy Swiss vignette at border",
+        type: "travel",
+        icon: "💳",
+        completed: false,
+        location: "Chiasso border crossing",
+        note: "CHF 40 - mandatory for Swiss highways"
+      },
+      {
+        id: "arrive-zurich",
+        time: "2:30 PM",
+        activity: "Arrive in Zürich",
+        type: "travel",
+        icon: "🚗",
+        completed: false,
+        location: "Zürich",
+        note: "A2 through Gotthard to Zürich"
+      },
+      {
+        id: "checkin-zurich",
+        time: "3:00 PM",
+        activity: "Check-in Zürich accommodation",
+        type: "travel",
+        icon: "🏠",
+        completed: false,
+        location: "Zürich",
+        note: "NEEDS BOOKING"
+      },
+      {
+        id: "zurich-altstadt",
+        time: "4:00 PM",
+        activity: "Zürich Old Town (Altstadt)",
+        type: "sightseeing",
+        icon: "🏘️",
+        completed: false,
+        location: "Altstadt, Zürich",
+        mustTry: true
+      },
+      {
+        id: "lake-zurich-promenade",
+        time: "6:00 PM",
+        activity: "Lake Zürich promenade",
+        type: "sightseeing",
+        icon: "🚶",
+        completed: false,
+        location: "Lake Zürich"
+      },
+      {
+        id: "dinner-swiss",
+        time: "8:00 PM",
+        activity: "Dinner: Swiss specialties",
+        type: "dining",
+        icon: "🍽️",
+        completed: false,
+        location: "Zürich",
+        mustTry: true
+      }
+    ],
+    accommodation: {
+      name: "NEEDS BOOKING",
+      address: "Zürich, Switzerland",
+      checkin: "3:00 PM",
+      checkout: "TBD"
+    },
+    warnings: [
+      {
+        type: "warning",
+        message: "Swiss vignette mandatory for highways (CHF 40). Mountain roads, drive carefully"
       }
     ]
   }
