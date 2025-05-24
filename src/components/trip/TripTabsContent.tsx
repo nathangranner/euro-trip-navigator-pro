@@ -1,6 +1,6 @@
 
 import React from "react";
-import { TripDay } from "@/types/trip";
+import { DatabaseTripDay } from "@/hooks/useTripData";
 import { ItineraryTab } from "./ItineraryTab";
 import { HotelsTab } from "./HotelsTab";
 import { ExpenseTracker } from "@/components/ExpenseTracker";
@@ -10,8 +10,8 @@ import { TranslationTab } from "./TranslationTab";
 import { TabsContent } from "@/components/ui/tabs";
 
 interface TripTabsContentProps {
-  tripDays: TripDay[];
-  onEditDay: (day: TripDay) => void;
+  tripDays: DatabaseTripDay[];
+  onEditDay: (day: DatabaseTripDay) => void;
   onEditActivity: (activity: any, dayId: string) => void;
 }
 
@@ -22,34 +22,42 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
 }) => {
   return (
     <>
-      <ItineraryTab 
-        tripDays={tripDays}
-        onEditDay={onEditDay}
-        onEditActivity={onEditActivity}
-      />
+      <TabsContent value="itinerary">
+        <ItineraryTab 
+          tripDays={tripDays}
+          onEditDay={onEditDay}
+          onEditActivity={onEditActivity}
+        />
+      </TabsContent>
 
-      <HotelsTab tripDays={tripDays} />
+      <TabsContent value="hotels">
+        <HotelsTab tripDays={tripDays} />
+      </TabsContent>
 
       <TabsContent value="expenses">
         <ExpenseTracker 
-          dayId={1}
-          date={new Date().toISOString()}
+          dayId={tripDays[0]?.id || ''}
+          date={tripDays[0]?.date || new Date().toISOString()}
           onSave={() => {}}
         />
       </TabsContent>
 
       <TabsContent value="purchases">
         <PurchaseTracker 
-          dayId={1}
-          date={new Date().toISOString()}
-          countryName="Italy"
+          dayId={tripDays[0]?.id || ''}
+          date={tripDays[0]?.date || new Date().toISOString()}
+          countryName={tripDays[0]?.country || "Unknown"}
           onSave={() => {}}
         />
       </TabsContent>
 
-      <CityViewTab tripDays={tripDays} />
+      <TabsContent value="cityview">
+        <CityViewTab tripDays={tripDays} />
+      </TabsContent>
 
-      <TranslationTab />
+      <TabsContent value="translation">
+        <TranslationTab />
+      </TabsContent>
     </>
   );
 };
