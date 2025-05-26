@@ -7,18 +7,15 @@ import { TripBanner } from "./trip/TripBanner";
 import { TripTabs } from "./trip/TripTabs";
 import { TripTabsContent } from "./trip/TripTabsContent";
 import { TripModals } from "./trip/TripModals";
-import { TripSelector } from "./TripSelector";
-import { CreateTripModal } from "./CreateTripModal";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 
 export const EuropeTripPlanner: React.FC = () => {
-  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [editingDay, setEditingDay] = useState<any>(null);
   const [editingActivity, setEditingActivity] = useState<any>(null);
 
   const { trips, loading } = useTrips();
+  const selectedTrip = trips[0]; // Always use the first trip
   const { 
     tripDays, 
     loading: tripDataLoading, 
@@ -28,29 +25,11 @@ export const EuropeTripPlanner: React.FC = () => {
   } = useTripData(selectedTrip?.id || null);
 
   useEffect(() => {
-    // Auto-select first trip if available and no trip is selected
-    if (trips.length > 0 && !selectedTrip) {
-      console.log('🎯 Auto-selecting first trip:', trips[0].name);
-      setSelectedTrip(trips[0]);
-    }
-  }, [trips, selectedTrip]);
-
-  useEffect(() => {
-    // Load banner image for selected trip
     const savedBanner = loadBannerImage();
     if (savedBanner) {
       setBannerImage(savedBanner);
     }
   }, [selectedTrip]);
-
-  const handleSelectTrip = (trip: Trip) => {
-    console.log('🔄 Switching to trip:', trip.name);
-    setSelectedTrip(trip);
-  };
-
-  const handleTripCreated = (trip: Trip) => {
-    setSelectedTrip(trip);
-  };
 
   const handleBannerChange = (newBannerUrl: string) => {
     setBannerImage(newBannerUrl);
@@ -82,30 +61,26 @@ export const EuropeTripPlanner: React.FC = () => {
   };
 
   // Show loading state while fetching trips
-  if (loading) {
+  if (loading || tripDataLoading) {
     return (
       <div className="container mx-auto py-8">
         <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Loading trips...</p>
+          <p className="text-gray-500">Loading your trip...</p>
         </div>
       </div>
     );
   }
 
-  // Show trip selector if no trip is selected
-  if (!selectedTrip) {
+  // Show message if no trip data available
+  if (!selectedTrip || tripDays.length === 0) {
     return (
       <div className="container mx-auto py-8">
-        <TripSelector
-          onSelectTrip={handleSelectTrip}
-          onCreateTrip={() => setShowCreateModal(true)}
-          selectedTripId={selectedTrip?.id}
-        />
-        <CreateTripModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          onTripCreated={handleTripCreated}
-        />
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <p className="text-gray-500 mb-4">No trip data found. Please run the seed script to populate your itinerary.</p>
+            <p className="text-sm text-gray-400">Run: npx ts-node scripts/seedTrips.ts</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -123,33 +98,20 @@ export const EuropeTripPlanner: React.FC = () => {
             {new Date(selectedTrip.start_date).toLocaleDateString()} - {new Date(selectedTrip.end_date).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex gap-2">
-          <TripSelector
-            onSelectTrip={handleSelectTrip}
-            onCreateTrip={() => setShowCreateModal(true)}
-            selectedTripId={selectedTrip.id}
-          />
-        </div>
       </div>
 
       {/* Banner Section */}
       <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
-      {tripDataLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Loading trip details...</p>
-        </div>
-      ) : (
-        <Tabs defaultValue="itinerary" className="w-full">
-          <TripTabs />
+      <Tabs defaultValue="itinerary" className="w-full">
+        <TripTabs />
 
-          <TripTabsContent
-            tripDays={tripDays}
-            onEditDay={handleEditDay}
-            onEditActivity={handleEditActivity}
-          />
-        </Tabs>
-      )}
+        <TripTabsContent
+          tripDays={tripDays}
+          onEditDay={handleEditDay}
+          onEditActivity={handleEditActivity}
+        />
+      </Tabs>
 
       {/* Modals */}
       <TripModals
@@ -159,12 +121,6 @@ export const EuropeTripPlanner: React.FC = () => {
         onSaveActivity={handleSaveActivity}
         onCloseDay={() => setEditingDay(null)}
         onCloseActivity={() => setEditingActivity(null)}
-      />
-
-      <CreateTripModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onTripCreated={handleTripCreated}
       />
     </div>
   );
