@@ -23,16 +23,23 @@ export const useTrips = () => {
     try {
       const { data, error } = await supabase
         .from('trips')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select(`
+          *,
+          trip_days (
+            *,
+            activities (*)
+          )
+        `)
+        .order('start_date', { ascending: true });
 
       if (error) throw error;
+      console.log('📦 Fetched trips from Supabase:', data?.length || 0);
       setTrips(data || []);
     } catch (error) {
       console.error('Error fetching trips:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch trips",
+        description: "Failed to fetch trips from database",
         variant: "destructive"
       });
     } finally {
@@ -46,7 +53,7 @@ export const useTrips = () => {
         .from('trips')
         .insert([{
           ...tripData,
-          user_id: (await supabase.auth.getUser()).data.user?.id
+          user_id: '00000000-0000-0000-0000-000000000000' // Demo user for public access
         }])
         .select()
         .single();

@@ -18,18 +18,19 @@ export const EuropeTripPlanner: React.FC = () => {
   const [editingDay, setEditingDay] = useState<any>(null);
   const [editingActivity, setEditingActivity] = useState<any>(null);
 
-  const { trips } = useTrips();
+  const { trips, loading } = useTrips();
   const { 
     tripDays, 
-    loading, 
+    loading: tripDataLoading, 
     updateTripDay, 
     updateActivity, 
     createActivity 
   } = useTripData(selectedTrip?.id || null);
 
   useEffect(() => {
-    // Auto-select first trip if no trip is selected
+    // Auto-select first trip if available and no trip is selected
     if (trips.length > 0 && !selectedTrip) {
+      console.log('🎯 Auto-selecting first trip:', trips[0].name);
       setSelectedTrip(trips[0]);
     }
   }, [trips, selectedTrip]);
@@ -43,6 +44,7 @@ export const EuropeTripPlanner: React.FC = () => {
   }, [selectedTrip]);
 
   const handleSelectTrip = (trip: Trip) => {
+    console.log('🔄 Switching to trip:', trip.name);
     setSelectedTrip(trip);
   };
 
@@ -79,6 +81,17 @@ export const EuropeTripPlanner: React.FC = () => {
     setEditingActivity(null);
   };
 
+  // Show loading state while fetching trips
+  if (loading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Loading trips...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show trip selector if no trip is selected
   if (!selectedTrip) {
     return (
@@ -106,6 +119,9 @@ export const EuropeTripPlanner: React.FC = () => {
           {selectedTrip.description && (
             <p className="text-gray-600 mt-1">{selectedTrip.description}</p>
           )}
+          <p className="text-sm text-gray-500 mt-1">
+            {new Date(selectedTrip.start_date).toLocaleDateString()} - {new Date(selectedTrip.end_date).toLocaleDateString()}
+          </p>
         </div>
         <div className="flex gap-2">
           <TripSelector
@@ -119,15 +135,21 @@ export const EuropeTripPlanner: React.FC = () => {
       {/* Banner Section */}
       <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
-      <Tabs defaultValue="itinerary" className="w-full">
-        <TripTabs />
+      {tripDataLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Loading trip details...</p>
+        </div>
+      ) : (
+        <Tabs defaultValue="itinerary" className="w-full">
+          <TripTabs />
 
-        <TripTabsContent
-          tripDays={tripDays}
-          onEditDay={handleEditDay}
-          onEditActivity={handleEditActivity}
-        />
-      </Tabs>
+          <TripTabsContent
+            tripDays={tripDays}
+            onEditDay={handleEditDay}
+            onEditActivity={handleEditActivity}
+          />
+        </Tabs>
+      )}
 
       {/* Modals */}
       <TripModals

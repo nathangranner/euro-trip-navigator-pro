@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { europeTrip } from "@/data/europeTrip";
-import { loadStoredData } from "@/utils/storageUtils";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 import { Calendar, Compass } from "lucide-react";
 
@@ -20,93 +18,33 @@ import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
-import { TripDay } from "@/types/trip";
-import { convertTripDayToDatabaseTripDay } from "@/utils/typeConverters";
-import { DatabaseTripDay } from "@/hooks/useTripData";
+import { useTrips } from "@/hooks/useTrips";
+import { useTripData } from "@/hooks/useTripData";
+import { convertDatabaseTripDayToTripDay } from "@/utils/typeConverters";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
-  const [tripDays, setTripDays] = useState<TripDay[]>([]);
   const [activeTab, setActiveTab] = useState("itinerary");
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   
-  useEffect(() => {
-    const storedData = loadStoredData();
-    
-    if (storedData.tripDays && storedData.tripDays.length > 0) {
-      console.log("✅ Using stored trip days:", storedData.tripDays.length);
-      
-      // Debug: Check for duplicate IDs
-      const ids = storedData.tripDays.map((day: any) => day.id);
-      const duplicateIds = ids.filter((id: string, index: number) => ids.indexOf(id) !== index);
-      if (duplicateIds.length > 0) {
-        console.warn("⚠️ Found duplicate day IDs:", duplicateIds);
-        // Fix duplicate IDs by ensuring uniqueness
-        const fixedTripDays = storedData.tripDays.map((day: any, index: number) => ({
-          ...day,
-          id: day.id + (duplicateIds.includes(day.id) ? `-fixed-${index}` : '')
-        }));
-        setTripDays(fixedTripDays);
-      } else {
-        setTripDays(storedData.tripDays);
-      }
-    } else {
-      console.log("📦 Using europe trip data:", europeTrip.days.length);
-      
-      // Debug: Check for duplicate IDs in default data
-      const ids = europeTrip.days.map(day => day.id);
-      const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
-      if (duplicateIds.length > 0) {
-        console.warn("⚠️ Found duplicate day IDs in default data:", duplicateIds);
-        // Fix duplicate IDs by ensuring uniqueness
-        const fixedTripDays = europeTrip.days.map((day, index) => ({
-          ...day,
-          id: day.id + (duplicateIds.includes(day.id) ? `-fixed-${index}` : '')
-        }));
-        setTripDays(fixedTripDays);
-      } else {
-        setTripDays(europeTrip.days);
-      }
-    }
-  }, []);
+  const { trips, loading } = useTrips();
+  const selectedTrip = trips[0]; // Use first trip for summary
+  const { tripDays } = useTripData(selectedTrip?.id || null);
+  
+  // Convert database trip days to legacy format for components that need it
+  const legacyTripDays = tripDays.map(convertDatabaseTripDayToTripDay);
   
   const {
     totalExpenses,
     totalPurchases
-  } = useTripCalculations(tripDays);
+  } = useTripCalculations(legacyTripDays);
 
-  // Convert TripDay[] to DatabaseTripDay[] for the new components
-  const databaseTripDays: DatabaseTripDay[] = tripDays.map((day, index) => ({
-    id: day.id,
-    trip_id: "default",
-    day_number: day.dayNumber,
-    date: day.date,
-    city: day.city,
-    country: day.country,
-    title: day.title,
-    description: day.description,
-    accommodation_name: day.accommodationName || day.accommodation?.name,
-    accommodation_address: day.accommodationAddress || day.accommodation?.address,
-    accommodation_checkin: day.accommodationCheckIn || day.accommodation?.checkin,
-    accommodation_checkout: day.accommodationCheckOut || day.accommodation?.checkout,
-    accommodation_confirmation: day.accommodationConfirmation || day.accommodation?.confirmationNumber,
-    accommodation_contact: day.accommodationContact || day.accommodation?.contactPhone,
-    weather_temp: day.weather?.temp,
-    weather_condition: day.weather?.condition,
-    activities: day.activities?.map(activity => ({
-      id: activity.id,
-      trip_day_id: day.id,
-      time: activity.time,
-      activity: activity.activity,
-      type: activity.type,
-      location: activity.location,
-      notes: activity.note,
-      duration: activity.duration,
-      completed: activity.completed,
-      booking_required: activity.booked || false,
-      contact_info: activity.contactInfo
-    })) || []
-  }));
+  useEffect(() => {
+    const savedBanner = loadBannerImage();
+    if (savedBanner) {
+      setBannerImage(savedBanner);
+    }
+  }, []);
 
   // Handle banner image change
   const handleBannerChange = (newBannerUrl: string) => {
@@ -116,11 +54,10 @@ const TripSummary: React.FC = () => {
 
   // Handle view accommodation on map
   const handleViewMap = (day: any) => {
-    if (day.accommodationAddress || day.accommodation_address || (day.accommodation && day.accommodation.address)) {
-      const address = encodeURIComponent(
-        day.accommodationAddress || day.accommodation_address || day.accommodation.address
-      );
-      window.open(`https://www.google.com/maps?q=${address}`, '_blank');
+    const address = day.accommodationAddress || day.accommodation_address || (day.accommodation && day.accommodation.address);
+    if (address) {
+      const encodedAddress = encodeURIComponent(address);
+      window.open(`https://www.google.com/maps?q=${encodedAddress}`, '_blank');
     }
   };
 
@@ -129,10 +66,35 @@ const TripSummary: React.FC = () => {
     navigate(`/planner?day=${dayIndex}`);
   };
 
+  if (loading) {
+    return (
+      <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
+        <div className="flex justify-center items-center h-64">
+          <p className="text-white">Loading trip data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!selectedTrip || tripDays.length === 0) {
+    return (
+      <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <p className="text-white mb-4">No trip data available.</p>
+            <Button onClick={() => navigate("/planner")} className="bg-blue-800 hover:bg-blue-900">
+              Go to Planner
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-light tracking-wide text-white bg-yellow-600">Trip Summary</h1>
+        <h1 className="text-3xl font-light tracking-wide text-white bg-yellow-600">{selectedTrip.name}</h1>
         <div className="flex space-x-2">
           <Button onClick={() => navigate("/planner")} className="flex items-center gap-2 bg-blue-800 hover:bg-blue-900 font-light">
             <Calendar className="h-4 w-4" />
@@ -148,8 +110,12 @@ const TripSummary: React.FC = () => {
       <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <TripDurationCard daysCount={tripDays.length} startDate={europeTrip.startDate} endDate={europeTrip.endDate} />
-        <TripCompletionCard tripDays={tripDays} />
+        <TripDurationCard 
+          daysCount={tripDays.length} 
+          startDate={selectedTrip.start_date} 
+          endDate={selectedTrip.end_date} 
+        />
+        <TripCompletionCard tripDays={legacyTripDays} />
         <ExpenseDisplay totals={totalExpenses} title="Total Expenses" />
         <ExpenseDisplay totals={totalPurchases} title="Customs Declarations" />
       </div>
@@ -166,25 +132,25 @@ const TripSummary: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm p-4">
           <TabsContent value="itinerary">
             <ItineraryContainer 
-              tripDays={databaseTripDays} 
+              tripDays={tripDays} 
               onViewMap={handleViewMap}
             />
           </TabsContent>
           
           <TabsContent value="cityview">
-            <CityViewTab tripDays={tripDays} onViewMap={handleViewMap} />
+            <CityViewTab tripDays={legacyTripDays} onViewMap={handleViewMap} />
           </TabsContent>
           
           <TabsContent value="accommodations">
-            <AccommodationsTab tripDays={tripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+            <AccommodationsTab tripDays={legacyTripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
           </TabsContent>
           
           <TabsContent value="expenses">
-            <ExpensesTab expensesByDay={{}} tripDays={tripDays} />
+            <ExpensesTab expensesByDay={{}} tripDays={legacyTripDays} />
           </TabsContent>
           
           <TabsContent value="purchases">
-            <PurchasesTab purchasesByDay={{}} tripDays={tripDays} />
+            <PurchasesTab purchasesByDay={{}} tripDays={legacyTripDays} />
           </TabsContent>
         </div>
       </Tabs>
