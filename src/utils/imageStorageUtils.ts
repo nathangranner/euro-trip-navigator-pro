@@ -17,7 +17,7 @@ const ensureBucket = async () => {
       return false;
     }
 
-    console.log("Available buckets:", buckets);
+    console.log("Available buckets:", buckets?.map(b => b.name));
     const bucketExists = buckets?.some(bucket => bucket.name === BUCKET_NAME);
     
     if (!bucketExists) {
@@ -36,6 +36,8 @@ const ensureBucket = async () => {
       }
       
       console.log("Bucket created successfully:", createData);
+    } else {
+      console.log(`Bucket ${BUCKET_NAME} already exists`);
     }
     
     console.log(`Bucket ${BUCKET_NAME} is ready`);
@@ -59,11 +61,10 @@ export const uploadImage = async (
       folder: folder 
     });
 
-    // Ensure bucket exists
+    // Ensure bucket exists first
     const bucketReady = await ensureBucket();
     if (!bucketReady) {
-      // If bucket creation failed, try to proceed anyway - it might exist but list failed
-      console.warn("Bucket check failed, attempting upload anyway...");
+      console.warn("Bucket check failed, but attempting upload anyway...");
     }
 
     // Validate file type
@@ -83,6 +84,19 @@ export const uploadImage = async (
 
     console.log(`Uploading file to: ${BUCKET_NAME}/${filePath}`);
 
+    // Check if user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError) {
+      console.error("Auth error:", authError);
+      throw new Error("Authentication failed");
+    }
+    
+    if (!user) {
+      throw new Error("User must be authenticated to upload images");
+    }
+    
+    console.log("User authenticated:", user.id);
+
     // Upload the file with proper options
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
@@ -94,46 +108,6 @@ export const uploadImage = async (
 
     if (error) {
       console.error("Upload error details:", error);
-      
-      // If the bucket doesn't exist error, try to create it and retry
-      if (error.message.includes("Bucket not found") || error.message.includes("bucket does not exist")) {
-        console.log("Bucket not found, creating and retrying...");
-        
-        const bucketCreated = await ensureBucket();
-        if (bucketCreated) {
-          // Retry the upload
-          const retryResult = await supabase.storage
-            .from(BUCKET_NAME)
-            .upload(filePath, file, {
-              cacheControl: "3600",
-              upsert: false,
-              contentType: file.type,
-            });
-            
-          if (retryResult.error) {
-            throw new Error(`Upload failed after bucket creation: ${retryResult.error.message}`);
-          }
-          
-          if (!retryResult.data || !retryResult.data.path) {
-            throw new Error("Upload succeeded but no path returned");
-          }
-          
-          console.log("Retry upload successful:", retryResult.data);
-          
-          // Get the public URL
-          const { data: publicUrlData } = supabase.storage
-            .from(BUCKET_NAME)
-            .getPublicUrl(retryResult.data.path);
-
-          if (!publicUrlData.publicUrl) {
-            throw new Error("Failed to generate public URL");
-          }
-
-          console.log("Public URL generated:", publicUrlData.publicUrl);
-          return publicUrlData.publicUrl;
-        }
-      }
-      
       throw new Error(`Upload failed: ${error.message}`);
     }
 
