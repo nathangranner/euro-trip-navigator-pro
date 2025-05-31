@@ -1,8 +1,7 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 
-const BUCKET_NAME = "trip_images";
+const BUCKET_NAME = "trip-images";
 
 // Ensure bucket exists and is properly configured
 const ensureBucket = async () => {
