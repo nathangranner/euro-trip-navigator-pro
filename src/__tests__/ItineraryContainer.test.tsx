@@ -2,27 +2,27 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ItineraryContainer from '@/components/trip/ItineraryContainer';
-import { DatabaseTripDay } from '@/hooks/useTripData';
+import { TripDay } from '@/types/trip';
 
-const mockTripDays: DatabaseTripDay[] = [
+const mockTripDays: TripDay[] = [
   {
     id: 'day-1',
-    trip_id: 'trip-1',
-    day_number: 1,
+    dayNumber: 1,
     date: '2024-06-15',
     city: 'Paris',
     country: 'France',
     title: 'Arrival in Paris',
+    description: 'First day in Paris',
     activities: []
   },
   {
     id: 'day-2',
-    trip_id: 'trip-1',
-    day_number: 2,
+    dayNumber: 2,
     date: '2024-06-16',
     city: 'Paris',
     country: 'France',
     title: 'Exploring Paris',
+    description: 'Explore the city',
     activities: []
   }
 ];

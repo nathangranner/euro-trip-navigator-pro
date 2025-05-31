@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -132,7 +131,7 @@ const TripSummary: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm p-4">
           <TabsContent value="itinerary">
             <ItineraryContainer 
-              tripDays={tripDays} 
+              tripDays={legacyTripDays} 
               onViewMap={handleViewMap}
             />
           </TabsContent>
