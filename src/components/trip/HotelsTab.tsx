@@ -1,26 +1,17 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TripDay } from "@/types/trip";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Wifi } from "lucide-react";
-import { DatabaseTripDay } from "@/hooks/useTripData";
+import { Map } from "lucide-react";
 
 interface HotelsTabProps {
-  tripDays: DatabaseTripDay[];
+  tripDays: TripDay[];
 }
 
 export const HotelsTab: React.FC<HotelsTabProps> = ({ tripDays }) => {
-  const accommodations = tripDays.filter(day => day.accommodation_name);
-
-  if (accommodations.length === 0) {
-    return (
-      <Card className="p-8 text-center">
-        <p className="text-gray-500">No accommodation details available.</p>
-      </Card>
-    );
-  }
-
-  const handleViewMap = (address: string) => {
+  const handleViewMap = (day: TripDay) => {
+    const address = day.accommodation?.address || day.accommodationAddress;
     if (address) {
       const encodedAddress = encodeURIComponent(address);
       window.open(`https://www.google.com/maps?q=${encodedAddress}`, '_blank');
@@ -28,68 +19,117 @@ export const HotelsTab: React.FC<HotelsTabProps> = ({ tripDays }) => {
   };
 
   return (
-    <div className="space-y-4">
-      {accommodations.map((day) => (
-        <Card key={day.id}>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">{day.accommodation_name}</h3>
-                <p className="text-sm text-gray-600">Day {day.day_number} - {day.city}</p>
+    <div className="space-y-6">
+      {tripDays
+        .filter(day => day.accommodation || day.accommodationName)
+        .map((day, index) => (
+          <Card key={index} className="p-6 overflow-hidden">
+            <div className="flex flex-col md:flex-row">
+              {day.accommodation?.image && (
+                <div className="md:w-1/4 mb-4 md:mb-0 md:mr-6">
+                  <img 
+                    src={day.accommodation.image} 
+                    alt={day.accommodation.name || day.accommodationName} 
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                </div>
+              )}
+              <div className="md:w-3/4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      {day.accommodation?.name || day.accommodationName}
+                    </h3>
+                    <p className="text-gray-500">{day.city} - Day {day.dayNumber}</p>
+                    <p className="text-gray-500 text-sm">{new Date(day.date).toLocaleDateString()}</p>
+                  </div>
+                  <div className="flex space-x-2">
+                    {(day.accommodation?.address || day.accommodationAddress) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewMap(day)}
+                        className="flex items-center gap-2"
+                      >
+                        <Map className="h-4 w-4" />
+                        View Map
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-4 bg-gray-50 rounded-md p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(day.accommodation?.address || day.accommodationAddress) && (
+                      <div>
+                        <p className="text-sm text-gray-500">Address</p>
+                        <p>{day.accommodation?.address || day.accommodationAddress}</p>
+                      </div>
+                    )}
+                    {(day.accommodation?.contactPhone || day.accommodationContact) && (
+                      <div>
+                        <p className="text-sm text-gray-500">Phone</p>
+                        <p>{day.accommodation?.contactPhone || day.accommodationContact}</p>
+                      </div>
+                    )}
+                    {(day.accommodation?.confirmationNumber || day.accommodationConfirmation) && (
+                      <div>
+                        <p className="text-sm text-gray-500">Confirmation</p>
+                        <p className="font-mono">
+                          {day.accommodation?.confirmationNumber || day.accommodationConfirmation}
+                        </p>
+                      </div>
+                    )}
+                    {day.accommodation?.confirmationCode && (
+                      <div>
+                        <p className="text-sm text-gray-500">Confirmation Code</p>
+                        <p className="font-mono">{day.accommodation.confirmationCode}</p>
+                      </div>
+                    )}
+                    {(day.accommodation?.checkin || day.accommodationCheckIn) && (
+                      <div>
+                        <p className="text-sm text-gray-500">Check-in</p>
+                        <p>{day.accommodation?.checkin || day.accommodationCheckIn}</p>
+                      </div>
+                    )}
+                    {(day.accommodation?.checkout || day.accommodationCheckOut) && (
+                      <div>
+                        <p className="text-sm text-gray-500">Check-out</p>
+                        <p>{day.accommodation?.checkout || day.accommodationCheckOut}</p>
+                      </div>
+                    )}
+                    {(day.accommodation?.wifi || day.accommodationWifi) && (
+                      <div>
+                        <p className="text-sm text-gray-500">WiFi</p>
+                        <p>{day.accommodation?.wifi || day.accommodationWifi}</p>
+                      </div>
+                    )}
+                    {day.accommodation?.parking && (
+                      <div>
+                        <p className="text-sm text-gray-500">Parking</p>
+                        <p>{day.accommodation.parking}</p>
+                      </div>
+                    )}
+                    {(day.accommodation?.totalPrice || day.accommodationPrice) && (
+                      <div>
+                        <p className="text-sm text-gray-500">Price</p>
+                        <p className="text-green-600 font-medium">
+                          {day.accommodation?.totalPrice || 
+                           `${day.accommodationPrice} ${day.accommodationCurrency || 'EUR'}`}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-              {day.accommodation_address && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleViewMap(day.accommodation_address!)}
-                  className="flex items-center gap-2"
-                >
-                  <MapPin className="h-4 w-4" />
-                  View Map
-                </Button>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {day.accommodation_address && (
-              <p className="text-sm text-gray-600 flex items-center gap-2 mb-2">
-                <MapPin className="h-4 w-4" />
-                {day.accommodation_address}
-              </p>
-            )}
-            
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              {day.accommodation_checkin && (
-                <div>
-                  <span className="text-sm font-medium">Check-in:</span>
-                  <p className="text-sm text-gray-600">{day.accommodation_checkin}</p>
-                </div>
-              )}
-              {day.accommodation_checkout && (
-                <div>
-                  <span className="text-sm font-medium">Check-out:</span>
-                  <p className="text-sm text-gray-600">{day.accommodation_checkout}</p>
-                </div>
-              )}
-              {day.accommodation_contact && (
-                <div>
-                  <span className="text-sm font-medium flex items-center gap-1">
-                    <Phone className="h-3 w-3" />
-                    Contact:
-                  </span>
-                  <p className="text-sm text-gray-600">{day.accommodation_contact}</p>
-                </div>
-              )}
-              {day.accommodation_confirmation && (
-                <div>
-                  <span className="text-sm font-medium">Confirmation:</span>
-                  <p className="text-sm text-gray-600">{day.accommodation_confirmation}</p>
-                </div>
-              )}
             </div>
-          </CardContent>
+          </Card>
+        ))}
+      {!tripDays.some(day => day.accommodation || day.accommodationName) && (
+        <Card className="p-8 text-center">
+          <p className="text-gray-500">No accommodation information recorded yet.</p>
         </Card>
-      ))}
+      )}
     </div>
   );
 };
