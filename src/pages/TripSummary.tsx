@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -16,10 +17,13 @@ import { ExpensesTab } from "@/components/trip/ExpensesTab";
 import { PurchasesTab } from "@/components/trip/PurchasesTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
+import { TripModals } from "@/components/trip/TripModals";
 import { useTripCalculations } from "@/hooks/useTripCalculations";
 import { useTrips } from "@/hooks/useTrips";
 import { useTripData } from "@/hooks/useTripData";
 import { convertDatabaseTripDayToTripDay } from "@/utils/typeConverters";
+import { useTripState } from "@/hooks/useTripState";
+import { TripDay, Activity } from "@/types/trip";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
@@ -30,13 +34,29 @@ const TripSummary: React.FC = () => {
   const selectedTrip = trips[0]; // Use first trip for summary
   const { tripDays } = useTripData(selectedTrip?.id || null);
   
+  // Use the trip state hook for editing functionality
+  const {
+    tripDays: editableTripDays,
+    editingDay,
+    editingActivity,
+    handleEditDay,
+    handleSaveDay,
+    handleEditActivity,
+    handleSaveActivity,
+    setEditingDay,
+    setEditingActivity
+  } = useTripState();
+  
   // Convert database trip days to legacy format for components that need it
   const legacyTripDays = tripDays.map(convertDatabaseTripDayToTripDay);
+  
+  // Use editable trip days if available, otherwise fall back to converted legacy days
+  const displayTripDays = editableTripDays.length > 0 ? editableTripDays : legacyTripDays;
   
   const {
     totalExpenses,
     totalPurchases
-  } = useTripCalculations(legacyTripDays);
+  } = useTripCalculations(displayTripDays);
 
   useEffect(() => {
     const savedBanner = loadBannerImage();
@@ -52,7 +72,7 @@ const TripSummary: React.FC = () => {
   };
 
   // Handle view accommodation on map
-  const handleViewMap = (day: any) => {
+  const handleViewMap = (day: TripDay) => {
     const address = day.accommodationAddress || day.accommodation_address || (day.accommodation && day.accommodation.address);
     if (address) {
       const encodedAddress = encodeURIComponent(address);
@@ -75,7 +95,7 @@ const TripSummary: React.FC = () => {
     );
   }
 
-  if (!selectedTrip || tripDays.length === 0) {
+  if (!selectedTrip && displayTripDays.length === 0) {
     return (
       <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
         <div className="flex justify-center items-center h-64">
@@ -93,7 +113,9 @@ const TripSummary: React.FC = () => {
   return (
     <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-light tracking-wide text-white bg-yellow-600">{selectedTrip.name}</h1>
+        <h1 className="text-3xl font-light tracking-wide text-white bg-yellow-600">
+          {selectedTrip?.name || "Europe Trip 2025"}
+        </h1>
         <div className="flex space-x-2">
           <Button onClick={() => navigate("/planner")} className="flex items-center gap-2 bg-blue-800 hover:bg-blue-900 font-light">
             <Calendar className="h-4 w-4" />
@@ -110,11 +132,11 @@ const TripSummary: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <TripDurationCard 
-          daysCount={tripDays.length} 
-          startDate={selectedTrip.start_date} 
-          endDate={selectedTrip.end_date} 
+          daysCount={displayTripDays.length} 
+          startDate={selectedTrip?.start_date || "2025-06-15"} 
+          endDate={selectedTrip?.end_date || "2025-07-15"} 
         />
-        <TripCompletionCard tripDays={legacyTripDays} />
+        <TripCompletionCard tripDays={displayTripDays} />
         <ExpenseDisplay totals={totalExpenses} title="Total Expenses" />
         <ExpenseDisplay totals={totalPurchases} title="Customs Declarations" />
       </div>
@@ -131,30 +153,42 @@ const TripSummary: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm p-4">
           <TabsContent value="itinerary">
             <ItineraryContainer 
-              tripDays={legacyTripDays} 
+              tripDays={displayTripDays} 
+              onEditDay={handleEditDay}
+              onEditActivity={handleEditActivity}
               onViewMap={handleViewMap}
             />
           </TabsContent>
           
           <TabsContent value="cityview">
-            <CityViewTab tripDays={legacyTripDays} onViewMap={handleViewMap} />
+            <CityViewTab tripDays={displayTripDays} onViewMap={handleViewMap} />
           </TabsContent>
           
           <TabsContent value="accommodations">
-            <AccommodationsTab tripDays={legacyTripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+            <AccommodationsTab tripDays={displayTripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
           </TabsContent>
           
           <TabsContent value="expenses">
-            <ExpensesTab expensesByDay={{}} tripDays={legacyTripDays} />
+            <ExpensesTab expensesByDay={{}} tripDays={displayTripDays} />
           </TabsContent>
           
           <TabsContent value="purchases">
-            <PurchasesTab purchasesByDay={{}} tripDays={legacyTripDays} />
+            <PurchasesTab purchasesByDay={{}} tripDays={displayTripDays} />
           </TabsContent>
         </div>
       </Tabs>
       
       <TravelBuddySection />
+
+      {/* Edit Modals */}
+      <TripModals
+        editingDay={editingDay}
+        editingActivity={editingActivity}
+        onSaveDay={handleSaveDay}
+        onSaveActivity={handleSaveActivity}
+        onCloseDay={() => setEditingDay(null)}
+        onCloseActivity={() => setEditingActivity(null)}
+      />
     </div>
   );
 };
