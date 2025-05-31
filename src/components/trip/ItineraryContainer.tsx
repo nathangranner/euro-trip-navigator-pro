@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import ItineraryDayList from "./ItineraryDayList";
 import ItineraryTabView from "./ItineraryTabView";
 import { Button } from "@/components/ui/button";
-import { DatabaseTripDay } from "@/hooks/useTripData";
+import { TripDay, Activity } from "@/types/trip";
 
 interface ItineraryContainerProps {
-  tripDays: DatabaseTripDay[];
-  onEditDay?: (day: DatabaseTripDay) => void;
-  onEditActivity?: (activity: any, dayId: string) => void;
-  onViewMap?: (day: DatabaseTripDay) => void;
+  tripDays: TripDay[];
+  onEditDay?: (day: TripDay) => void;
+  onEditActivity?: (activity: Activity, dayId: string) => void;
+  onViewMap?: (day: TripDay) => void;
 }
 
 export default function ItineraryContainer({
