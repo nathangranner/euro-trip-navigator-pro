@@ -73,7 +73,7 @@ const TripSummary: React.FC = () => {
 
   // Handle view accommodation on map
   const handleViewMap = (day: TripDay) => {
-    const address = day.accommodationAddress || day.accommodation_address || (day.accommodation && day.accommodation.address);
+    const address = day.accommodationAddress || day.accommodation?.address;
     if (address) {
       const encodedAddress = encodeURIComponent(address);
       window.open(`https://www.google.com/maps?q=${encodedAddress}`, '_blank');
