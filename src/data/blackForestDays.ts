@@ -41,8 +41,18 @@ export const blackForestDays: TripDay[] = [
         mustTry: true
       },
       {
+        id: "freiberg-checkin",
+        time: "3:30 PM",
+        activity: "Check-in to Apartment Altes Hinterhäusel",
+        type: "accommodation",
+        icon: "🏨",
+        completed: false,
+        location: "Freiberg",
+        note: "Check-in window: 3:30 PM - 7:30 PM. Contact +4937311630596"
+      },
+      {
         id: "triberg-arrival",
-        time: "4:00 PM",
+        time: "5:00 PM",
         activity: "Begin Black Forest exploration - Triberg area",
         type: "sightseeing",
         icon: "🌲",
@@ -62,13 +72,24 @@ export const blackForestDays: TripDay[] = [
       }
     ],
     accommodation: {
-      name: "NEEDS BOOKING",
-      address: "Black Forest area"
+      name: "Apartment Altes Hinterhäusel",
+      address: "Wasserturmstraße 20, 09599 Freiberg, Germany",
+      contactPhone: "+4937311630596",
+      checkin: "3:30 PM - 7:30 PM",
+      checkout: "7:30 AM - 10:30 AM",
+      confirmationNumber: "5823497235",
+      confirmationCode: "8415"
     },
+    accommodationName: "Apartment Altes Hinterhäusel",
+    accommodationAddress: "Wasserturmstraße 20, 09599 Freiberg, Germany",
+    accommodationContact: "+4937311630596",
+    accommodationCheckIn: "3:30 PM - 7:30 PM",
+    accommodationCheckOut: "7:30 AM - 10:30 AM",
+    accommodationConfirmation: "5823497235",
     warnings: [
       {
         type: "warning",
-        message: "Book accommodation in advance. Mountain driving conditions"
+        message: "Mountain driving conditions. Someone will meet you at the property for key pickup."
       }
     ]
   },
@@ -142,9 +163,20 @@ export const blackForestDays: TripDay[] = [
       }
     ],
     accommodation: {
-      name: "NEEDS BOOKING",
-      address: "Black Forest area"
+      name: "Apartment Altes Hinterhäusel",
+      address: "Wasserturmstraße 20, 09599 Freiberg, Germany",
+      contactPhone: "+4937311630596",
+      checkin: "3:30 PM - 7:30 PM",
+      checkout: "7:30 AM - 10:30 AM",
+      confirmationNumber: "5823497235",
+      confirmationCode: "8415"
     },
+    accommodationName: "Apartment Altes Hinterhäusel",
+    accommodationAddress: "Wasserturmstraße 20, 09599 Freiberg, Germany",
+    accommodationContact: "+4937311630596",
+    accommodationCheckIn: "3:30 PM - 7:30 PM",
+    accommodationCheckOut: "7:30 AM - 10:30 AM",
+    accommodationConfirmation: "5823497235",
     warnings: [
       {
         type: "warning",
