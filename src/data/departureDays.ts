@@ -1,4 +1,3 @@
-
 import { TripDay } from "@/types/trip";
 
 export const departureDays: TripDay[] = [
@@ -56,7 +55,7 @@ export const departureDays: TripDay[] = [
         type: "travel",
         icon: "✈️",
         completed: false,
-        flightInfo: "UA8900 to Frankfurt - Duration: 11hr 15min",
+        flightInfo: "UA8900 to Frankfurt - Duration: 11hr 15min, Confirmation: AD8JHZ",
         location: "Los Angeles International Airport",
         note: "Confirmation: AD8JHZ"
       }
@@ -97,7 +96,7 @@ export const departureDays: TripDay[] = [
         type: "travel",
         icon: "✈️",
         completed: false,
-        flightInfo: "UA9090 (operated by Lufthansa)"
+        flightInfo: "UA9090 (operated by Lufthansa), Confirmation: AD8JHZ"
       },
       {
         id: "arrive-milan",
@@ -116,7 +115,7 @@ export const departureDays: TripDay[] = [
         icon: "🚗",
         completed: false,
         location: "Budget at MXP",
-        note: "Confirmation: 23010030US1, RapidRez ID: V6H02R"
+        note: "Europe Rental Confirmation: 23010030US1, RapidRez ID: V6H02R, Total 19 days (June 6-25), Budget Support: +1 866-671-7282"
       },
       {
         id: "drive-accommodation",
@@ -147,8 +146,8 @@ export const departureDays: TripDay[] = [
     },
     warnings: [
       {
-        type: "warning",
-        message: "Milan ZTL active Mon-Fri 7:30-19:30, Sat 8:00-18:00"
+        type: "critical",
+        message: "Milan ZTL (Restricted Traffic Zone) active Mon-Fri 7:30-19:30, Sat 8:00-18:00. Historic center restricted."
       }
     ]
   },

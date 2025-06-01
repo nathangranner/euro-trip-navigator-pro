@@ -1,4 +1,3 @@
-
 import { TripDay } from "@/types/trip";
 
 export const stuttgartDays: TripDay[] = [
@@ -251,11 +250,30 @@ export const stuttgartDays: TripDay[] = [
     dayNumber: 16,
     date: "2025-06-20",
     city: "Stuttgart",
-    country: "Germany",
+    country: "Germany", 
     description: "Opera audition day at Staatsoper Stuttgart",
-    title: "Stuttgart (AUDITION DAY)",
-    specialEvent: true,
+    title: "Stuttgart Opera Audition Day",
     activities: [
+      {
+        id: "audition-prep",
+        time: "9:00 AM",
+        activity: "Final audition preparation and warm-up",
+        type: "culture",
+        icon: "🎭",
+        completed: false,
+        location: "Hotel or nearby practice room"
+      },
+      {
+        id: "staatsoper-arrival",
+        time: "Morning",
+        activity: "Stuttgart Opera Audition at Staatsoper Stuttgart",
+        type: "culture", 
+        icon: "🎭",
+        completed: false,
+        location: "Staatsoper Stuttgart",
+        mustTry: true,
+        note: "Key contacts: Viktor Schoner (Intendant), Cornelius Meister (GMD), Boris Ignatov (Casting Director)"
+      },
       {
         id: "final-preparation",
         time: "Morning",

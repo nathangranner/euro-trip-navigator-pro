@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +23,7 @@ import { useTripData } from "@/hooks/useTripData";
 import { convertDatabaseTripDayToTripDay } from "@/utils/typeConverters";
 import { useTripState } from "@/hooks/useTripState";
 import { TripDay, Activity } from "@/types/trip";
+import { TravelReferenceSection } from "@/components/trip/TravelReferenceSection";
 
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
@@ -148,6 +148,7 @@ const TripSummary: React.FC = () => {
           <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Accommodations</TabsTrigger>
           <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Expenses</TabsTrigger>
           <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Purchases</TabsTrigger>
+          <TabsTrigger value="reference" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Reference</TabsTrigger>
         </TabsList>
         
         <div className="bg-white rounded-lg shadow-sm p-4">
@@ -174,6 +175,10 @@ const TripSummary: React.FC = () => {
           
           <TabsContent value="purchases">
             <PurchasesTab purchasesByDay={{}} tripDays={displayTripDays} />
+          </TabsContent>
+          
+          <TabsContent value="reference">
+            <TravelReferenceSection />
           </TabsContent>
         </div>
       </Tabs>
