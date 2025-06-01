@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs } from "@/components/ui/tabs";
 import { useTripState } from "@/hooks/useTripState";
@@ -8,10 +7,8 @@ import { TripTabsContent } from "./trip/TripTabsContent";
 import { TripModals } from "./trip/TripModals";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
 import { europeTrip } from "@/data/europeTrip";
-
 export const EuropeTripPlanner: React.FC = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-
   const {
     tripDays,
     editingDay,
@@ -23,27 +20,23 @@ export const EuropeTripPlanner: React.FC = () => {
     setEditingDay,
     setEditingActivity
   } = useTripState();
-
   useEffect(() => {
     const savedBanner = loadBannerImage();
     if (savedBanner) {
       setBannerImage(savedBanner);
     }
   }, []);
-
   const handleBannerChange = (newBannerUrl: string) => {
     setBannerImage(newBannerUrl);
     saveBannerImage(newBannerUrl);
   };
-
-  return (
-    <div className="container mx-auto py-8 space-y-6 bg-slate-800 min-h-screen">
+  return <div className="container mx-auto py-8 space-y-6 bg-slate-800 min-h-screen">
       {/* Trip Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-white">{europeTrip.name}</h1>
-          <p className="text-gray-300 mt-1">{europeTrip.description}</p>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="text-3xl font-bold text-amber-400">{europeTrip.name}</h1>
+          <p className="mt-1 text-center text-amber-400">{europeTrip.description}</p>
+          <p className="text-sm text-gray-400 mt-1 my-0 text-center">
             {new Date(europeTrip.startDate).toLocaleDateString()} - {new Date(europeTrip.endDate).toLocaleDateString()}
           </p>
         </div>
@@ -55,22 +48,10 @@ export const EuropeTripPlanner: React.FC = () => {
       <Tabs defaultValue="itinerary" className="w-full">
         <TripTabs />
 
-        <TripTabsContent
-          tripDays={tripDays}
-          onEditDay={handleEditDay}
-          onEditActivity={handleEditActivity}
-        />
+        <TripTabsContent tripDays={tripDays} onEditDay={handleEditDay} onEditActivity={handleEditActivity} />
       </Tabs>
 
       {/* Modals */}
-      <TripModals
-        editingDay={editingDay}
-        editingActivity={editingActivity}
-        onSaveDay={handleSaveDay}
-        onSaveActivity={handleSaveActivity}
-        onCloseDay={() => setEditingDay(null)}
-        onCloseActivity={() => setEditingActivity(null)}
-      />
-    </div>
-  );
+      <TripModals editingDay={editingDay} editingActivity={editingActivity} onSaveDay={handleSaveDay} onSaveActivity={handleSaveActivity} onCloseDay={() => setEditingDay(null)} onCloseActivity={() => setEditingActivity(null)} />
+    </div>;
 };
