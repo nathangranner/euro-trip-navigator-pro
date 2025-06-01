@@ -81,7 +81,7 @@ export const DayCard: React.FC<DayCardProps> = ({
                       {activity.activity}
                       {activity.location && <span className="text-gray-500"> @ {activity.location}</span>}
                     </div>
-                    {onEditActivity && <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onEditActivity(activity, day.id)}>
+                    {onEditActivity && <Button variant="ghost" size="sm" onClick={() => onEditActivity(activity, day.id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-orange-50 bg-amber-600 hover:bg-amber-500 mx-0 px-0 py-0 my-[4px] font-normal">
                         Edit
                       </Button>}
                   </li>)}
