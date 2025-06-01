@@ -1,19 +1,14 @@
 
-import { supabase } from "@/integrations/supabase/client";
-
 export const verifyAuthentication = async (): Promise<string> => {
-  // Check if user is authenticated
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  // Check localStorage for auth state
+  const authState = localStorage.getItem("eurotrip25_auth");
   
-  if (authError) {
-    console.error("Auth error:", authError);
-    throw new Error("Authentication failed");
-  }
-  
-  if (!user) {
+  if (authState !== "authenticated") {
     throw new Error("User must be authenticated to upload images");
   }
   
-  console.log("User authenticated:", user.id);
-  return user.id;
+  // Return a mock user ID for the authenticated user
+  const userId = "user-1";
+  console.log("User authenticated:", userId);
+  return userId;
 };
