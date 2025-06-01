@@ -9,6 +9,6 @@ export const verifyAuthentication = async (): Promise<string> => {
   
   // Return a mock user ID for the authenticated user
   const userId = "user-1";
-  console.log("User authenticated:", userId);
+  console.log("User authenticated with localStorage:", userId);
   return userId;
 };
