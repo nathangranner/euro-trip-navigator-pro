@@ -36,9 +36,25 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
 
   const handleSelectConcierge = (concierge: TravelConcierge) => {
     setSelectedConcierge(concierge);
+    
+    // For the Itinerary Assistant, include trip data in the system prompt
+    let systemPrompt = concierge.systemPrompt;
+    if (concierge.id === "itinerary-assistant") {
+      const tripDataSummary = tripDays.map(day => 
+        `Day ${day.dayNumber} (${day.date}): ${day.city}, ${day.country} - ${day.description}`
+      ).join('\n');
+      
+      systemPrompt = `${concierge.systemPrompt}
+
+CURRENT TRIP DATA:
+${tripDataSummary}
+
+You have access to this detailed itinerary and can answer specific questions about dates, locations, and activities.`;
+    }
+    
     setMessages([{
       role: "system",
-      content: concierge.systemPrompt
+      content: systemPrompt
     }]);
     toast.success(`${concierge.name} is now your concierge!`);
   };
@@ -73,15 +89,28 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
     setLoading(true);
 
     try {
+      // For the Itinerary Assistant, enhance the message with current trip context
+      let enhancedMessages = [...messages, userMessage];
+      if (selectedConcierge.id === "itinerary-assistant") {
+        // Add trip context to the user message for better responses
+        const contextualMessage = {
+          ...userMessage,
+          content: `${userMessage.content}
+
+[Trip Context: This is about Nathan & Jamie's Europe Trip 2025, June 5-26, 2025. Please reference the specific itinerary provided in your system prompt to answer accurately.]`
+        };
+        enhancedMessages = [...messages, contextualMessage];
+      }
+
       // Call the Supabase Edge Function for travel concierge chat
       const { data, error } = await supabase.functions.invoke('travel-concierge-chat', {
         body: {
-          messages: [...messages, userMessage].filter(msg => 
+          messages: enhancedMessages.filter(msg => 
             msg.role !== "system" || 
-            (msg.role === "system" && [...messages, userMessage].indexOf(msg) === 0)
+            (msg.role === "system" && enhancedMessages.indexOf(msg) === 0)
           ),
           model: selectedConcierge.model,
-          systemPrompt: selectedConcierge.systemPrompt
+          systemPrompt: messages[0]?.content || selectedConcierge.systemPrompt
         }
       });
 
@@ -208,7 +237,7 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
           </Button>
         </div>
         
-        {selectedConcierge && (
+        {selectedConcierge && selectedConcierge.id !== "itinerary-assistant" && (
           <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2 text-white">Get Location Recommendations</h3>
             <p className="text-sm text-gray-300 mb-4">
@@ -243,6 +272,24 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
                   </div>
                 </Card>
               ))}
+            </div>
+          </div>
+        )}
+        
+        {selectedConcierge && selectedConcierge.id === "itinerary-assistant" && (
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2 text-white">Ask About Your Trip</h3>
+            <p className="text-sm text-gray-300 mb-4">
+              The Itinerary Assistant knows your complete Europe 2025 schedule. Ask questions like:
+            </p>
+            <div className="bg-slate-600 p-4 rounded-lg mb-4">
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• "Where am I on June 8th?"</li>
+                <li>• "What's my accommodation in Florence?"</li>
+                <li>• "When do I travel from Italy to Germany?"</li>
+                <li>• "What activities are planned for Lake Como?"</li>
+                <li>• "How many days am I spending in each country?"</li>
+              </ul>
             </div>
           </div>
         )}
