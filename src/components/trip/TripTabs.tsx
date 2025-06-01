@@ -1,10 +1,8 @@
-
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 export const TripTabs: React.FC = () => {
-  return <TabsList className="grid w-full grid-cols-6 mb-6 mx-[3px] my-px py-[3px] px-[23px] rounded-2xl bg-orange-400">
-      <TabsTrigger value="itinerary" className="font-futura tracking-wide uppercase text-base text-slate-100 bg-orange-600 hover:bg-orange-500">Itinerary</TabsTrigger>
+  return <TabsList className="grid w-full grid-cols-6 mb-6 mx-[3px] my-px py-[3px] px-[23px] rounded-2xl bg-orange-600">
+      <TabsTrigger value="itinerary" className="font-futura tracking-wide uppercase text-base text-slate-100 bg-orange-700 hover:bg-orange-600">Itinerary</TabsTrigger>
       <TabsTrigger value="hotels" className="font-futura text-base tracking-wide uppercase text-slate-100 bg-orange-600 hover:bg-orange-500">Hotels</TabsTrigger>
       <TabsTrigger value="expenses" className="font-futura text-base tracking-wide uppercase text-slate-100 bg-orange-600 hover:bg-orange-500">Expenses</TabsTrigger>
       <TabsTrigger value="purchases" className="font-futura text-base tracking-wide uppercase text-slate-100 bg-orange-600 hover:bg-orange-500">Purchases</TabsTrigger>
