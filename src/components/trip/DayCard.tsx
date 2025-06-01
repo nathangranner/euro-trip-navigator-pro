@@ -52,11 +52,11 @@ export const DayCard: React.FC<DayCardProps> = ({
               <h3 className="text-lg font-bold text-white">Day {day.dayNumber}: {day.city}</h3>
               <p className="text-sm text-gray-300">{day.title}</p>
             </div>
-            {onViewMap && day.accommodation && day.accommodation.address && <Button variant="outline" size="sm" onClick={() => onViewMap(day)} className="flex items-center gap-2 border-slate-600 text-white hover:bg-slate-700">
+            {onViewMap && day.accommodation && day.accommodation.address && <Button variant="outline" size="sm" onClick={() => onViewMap(day)} className="flex items-center gap-2 border-slate-600 bg-amber-700 hover:bg-amber-600 text-slate-100">
                 <Map className="h-4 w-4" />
                 View Map
               </Button>}
-            {onEditDay && <Button variant="outline" size="sm" onClick={() => onEditDay(day)} className="ml-2 border-slate-600 text-white hover:bg-slate-700">
+            {onEditDay && <Button variant="outline" size="sm" onClick={() => onEditDay(day)} className="ml-2 border-slate-600 bg-amber-700 hover:bg-amber-600 text-slate-100">
                 Edit Day
               </Button>}
           </div>
