@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -8,17 +7,13 @@ import { TranslationTool } from "@/components/TranslationTool";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 import NavHome from "@/components/NavHome";
-
 const TravelConciergePage: React.FC = () => {
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
-
   const handleOpenChat = () => {
     setIsChatOpen(true);
   };
-
-  return (
-    <div className="min-h-screen bg-slate-800">
+  return <div className="min-h-screen bg-slate-800">
       {/* Home navigation button */}
       <NavHome />
       
@@ -74,7 +69,7 @@ const TravelConciergePage: React.FC = () => {
           
           <Tabs defaultValue="assistant" className="mb-8">
             <TabsList className="grid w-full grid-cols-2 bg-amber-600 mx-[3px] my-px py-[3px] px-[23px] rounded-2xl">
-              <TabsTrigger value="assistant" className="font-futura text-lg tracking-wide uppercase text-orange-50 bg-amber-700 hover:bg-amber-600">Travel Assistant</TabsTrigger>
+              <TabsTrigger value="assistant" className="font-futura text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-slate-300">Travel Assistant</TabsTrigger>
               <TabsTrigger value="translator" className="font-futura text-lg tracking-wide uppercase text-slate-100 bg-amber-700 hover:bg-amber-600">Translator</TabsTrigger>
             </TabsList>
             <TabsContent value="assistant">
@@ -90,8 +85,6 @@ const TravelConciergePage: React.FC = () => {
           </Tabs>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TravelConciergePage;
