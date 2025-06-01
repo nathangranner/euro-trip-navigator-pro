@@ -37,13 +37,13 @@ export const EuropeTripPlanner: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="container mx-auto py-8 space-y-6 bg-slate-800 min-h-screen">
       {/* Trip Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">{europeTrip.name}</h1>
-          <p className="text-gray-600 mt-1">{europeTrip.description}</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-white">{europeTrip.name}</h1>
+          <p className="text-gray-300 mt-1">{europeTrip.description}</p>
+          <p className="text-sm text-gray-400 mt-1">
             {new Date(europeTrip.startDate).toLocaleDateString()} - {new Date(europeTrip.endDate).toLocaleDateString()}
           </p>
         </div>
