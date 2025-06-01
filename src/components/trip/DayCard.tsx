@@ -76,7 +76,7 @@ export const DayCard: React.FC<DayCardProps> = ({
               <h4 className="font-medium mb-2 text-white">Activities</h4>
               <ul className="space-y-2">
                 {day.activities.map((activity, i) => <li key={i} className="text-sm flex justify-between items-center group bg-blue-900 p-3 rounded-lg border border-blue-700">
-                    <div className="bg-gray-400">
+                    <div className="bg-blue-800">
                       {activity.time && <span className="font-medium text-amber-400">{activity.time}: </span>}
                       <span className="text-white">{activity.activity}</span>
                       {activity.location && <span className="text-slate-200"> @ {activity.location}</span>}
