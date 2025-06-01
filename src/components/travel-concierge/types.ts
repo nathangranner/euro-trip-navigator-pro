@@ -9,6 +9,7 @@ export interface TravelConciergeMessage {
 export interface TravelConcierge {
   id: string;
   name: string;
+  specialty: string;
   avatar: string;
   description: string;
   model: string;
