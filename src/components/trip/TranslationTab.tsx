@@ -2,16 +2,17 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
+import { TranslationTool } from "@/components/TranslationTool";
 
 export const TranslationTab: React.FC = () => {
   return (
     <TabsContent value="translation">
-      <Card>
+      <Card className="bg-slate-700 border-slate-600">
         <CardHeader>
-          <CardTitle>Translation Tool</CardTitle>
+          <CardTitle className="text-white">Translation Tool</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">Translation features coming soon...</p>
+        <CardContent className="p-0">
+          <TranslationTool />
         </CardContent>
       </Card>
     </TabsContent>

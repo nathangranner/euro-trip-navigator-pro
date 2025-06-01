@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -183,8 +182,8 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Choose Your Concierge</h2>
-      <p className="text-gray-600 mb-6">Select an AI concierge to help with your European adventure</p>
+      <h2 className="text-2xl font-semibold mb-4 text-white">Choose Your Concierge</h2>
+      <p className="text-gray-300 mb-6">Select an AI concierge to help with your European adventure</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {TRAVEL_CONCIERGES.map(concierge => (
@@ -202,7 +201,7 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
           <Button 
             onClick={handleStartChat} 
             disabled={!selectedConcierge} 
-            className="px-6 flex items-center gap-2 text-orange-50"
+            className="px-6 flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white"
           >
             <MessageCircle className="h-4 w-4" />
             Chat with {selectedConcierge ? selectedConcierge.name : "your concierge"}
@@ -211,22 +210,22 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
         
         {selectedConcierge && (
           <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Get Location Recommendations</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <h3 className="text-lg font-semibold mb-2 text-white">Get Location Recommendations</h3>
+            <p className="text-sm text-gray-300 mb-4">
               Let {selectedConcierge.name} suggest interesting places and itinerary adaptations for each day of your trip
             </p>
             
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-400 mb-4">
               Your journey will take you through regions rich in European history. Italy offers Renaissance masterpieces, ancient Roman ruins, and medieval cities. Switzerland features Alpine traditions and neutral ground during major conflicts. Germany's landscape tells stories from the Holy Roman Empire through the modern era. Your concierge can provide historical context to enhance your travel experience.
             </p>
             
             <div className="space-y-4 mt-4">
               {tripDays.map(day => (
-                <Card key={day.dayNumber} className="p-4">
+                <Card key={day.dayNumber} className="p-4 bg-slate-600 border-slate-500">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h4 className="font-medium">Day {day.dayNumber}: {day.city}</h4>
-                      <p className="text-sm text-gray-500">
+                      <h4 className="font-medium text-white">Day {day.dayNumber}: {day.city}</h4>
+                      <p className="text-sm text-gray-300">
                         {new Date(day.date).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -237,7 +236,7 @@ export const TravelConciergeSelector: React.FC<TravelConciergeSelectorProps> = (
                     <Button 
                       variant="outline" 
                       onClick={() => handleOpenRecommendations(day)} 
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 border-amber-600 bg-amber-700 hover:bg-amber-600 text-white"
                     >
                       <Compass className="h-4 w-4" /> Get Recommendations
                     </Button>

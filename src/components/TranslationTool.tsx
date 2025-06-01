@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { translateText, getSupportedLanguages, TranslationResult } from "@/services/TranslationService";
@@ -99,9 +98,9 @@ export const TranslationTool: React.FC = () => {
   };
   
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Travel Translator</h2>
-      <p className="text-gray-600 mb-6">Translate phrases during your European adventure</p>
+    <Card className="p-6 bg-slate-700 border-slate-600">
+      <h2 className="text-2xl font-semibold mb-4 text-white">Travel Translator</h2>
+      <p className="text-gray-300 mb-6">Translate phrases during your European adventure</p>
       
       <TranslationForm
         inputText={inputText}
