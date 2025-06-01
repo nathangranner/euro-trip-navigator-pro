@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -103,11 +102,11 @@ export const DayCard: React.FC<DayCardProps> = ({
               <h4 className="font-medium mb-2 text-white">Activities</h4>
               <ul className="space-y-2">
                 {day.activities.map((activity, i) => (
-                  <li key={i} className="text-sm flex justify-between items-center group bg-slate-800 p-3 rounded-lg border border-slate-700">
+                  <li key={i} className="text-sm flex justify-between items-center group bg-blue-900 p-3 rounded-lg border border-blue-700">
                     <div>
                       {activity.time && <span className="font-medium text-amber-400">{activity.time}: </span>}
                       <span className="text-white">{activity.activity}</span>
-                      {activity.location && <span className="text-gray-300"> @ {activity.location}</span>}
+                      {activity.location && <span className="text-slate-200"> @ {activity.location}</span>}
                     </div>
                     {onEditActivity && (
                       <Button 
@@ -124,7 +123,7 @@ export const DayCard: React.FC<DayCardProps> = ({
               </ul>
             </div>
           ) : (
-            <p className="text-sm text-gray-400 mb-4">No activities planned for this day.</p>
+            <p className="text-sm text-slate-300 mb-4">No activities planned for this day.</p>
           )}
           
           <Separator className="my-3 bg-slate-700" />
