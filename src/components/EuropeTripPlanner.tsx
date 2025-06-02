@@ -20,6 +20,8 @@ export const EuropeTripPlanner: React.FC = () => {
     handleSaveDay,
     handleEditActivity,
     handleSaveActivity,
+    handleDeleteActivity,
+    handleCreateActivity,
     setEditingDay,
     setEditingActivity
   } = useTripState();
@@ -55,7 +57,13 @@ export const EuropeTripPlanner: React.FC = () => {
       <Tabs defaultValue="itinerary" className="w-full">
         <TripTabs />
 
-        <TripTabsContent tripDays={tripDays} onEditDay={handleEditDay} onEditActivity={handleEditActivity} />
+        <TripTabsContent 
+          tripDays={tripDays} 
+          onEditDay={handleEditDay} 
+          onEditActivity={handleEditActivity}
+          onDeleteActivity={handleDeleteActivity}
+          onCreateActivity={handleCreateActivity}
+        />
       </Tabs>
 
       {/* Modals */}

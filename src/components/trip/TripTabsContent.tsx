@@ -15,8 +15,8 @@ interface TripTabsContentProps {
   tripDays: TripDay[];
   onEditDay: (day: TripDay) => void;
   onEditActivity: (activity: any, dayId: string) => void;
-  onDeleteActivity?: (activityId: string, dayId: string) => void;
-  onCreateActivity?: (newActivity: Omit<Activity, 'id'>, dayId: string) => void;
+  onDeleteActivity: (activityId: string, dayId: string) => void;
+  onCreateActivity: (newActivity: Omit<Activity, 'id'>, dayId: string) => void;
 }
 
 export const TripTabsContent: React.FC<TripTabsContentProps> = ({
@@ -33,6 +33,7 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
           tripDays={tripDays}
           onEditDay={onEditDay}
           onEditActivity={onEditActivity}
+          onDeleteActivity={onDeleteActivity}
         />
       </TabsContent>
 

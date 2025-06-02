@@ -2,6 +2,7 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import ItineraryDayContent from "./ItineraryDayContent";
+import DayHeader from "./DayHeader";
 import { TripDay, Activity } from "@/types/trip";
 
 interface DayPanelsProps {
@@ -23,6 +24,11 @@ export default function DayPanels({
     <>
       {tripDays.map((day, idx) => (
         <TabsContent key={`content-${day.id}-${day.dayNumber}-${idx}`} value={day.id}>
+          <DayHeader 
+            day={day} 
+            onEditDay={onEditDay}
+            onViewMap={onViewMap}
+          />
           <ItineraryDayContent 
             day={day} 
             onEditActivity={onEditActivity}
