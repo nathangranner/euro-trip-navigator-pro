@@ -22,25 +22,27 @@ export default function ItineraryTabView({
   
   if (!tripDays || tripDays.length === 0) {
     return (
-      <div className="p-8 text-center">
-        <p className="text-gray-500">No itinerary data available. Your Europe Trip 2025 should load automatically!</p>
+      <div className="p-4 sm:p-8 text-center">
+        <p className="text-gray-500 text-sm sm:text-base">No itinerary data available. Your Europe Trip 2025 should load automatically!</p>
       </div>
     );
   }
 
   return (
     <Tabs value={current} onValueChange={setCurrent}>
-      <TabsList className="mb-4">
-        {tripDays.map((day, idx) => (
-          <TabsTrigger
-            key={`tab-${day.id}-${day.dayNumber}-${idx}`}
-            value={day.id}
-            className="text-sm"
-          >
-            Day {day.dayNumber}: {day.city}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+      <div className="mb-4 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="w-full bg-transparent p-0 h-auto grid-cols-none flex overflow-x-auto scrollbar-hide">
+          {tripDays.map((day, idx) => (
+            <TabsTrigger
+              key={`tab-${day.id}-${day.dayNumber}-${idx}`}
+              value={day.id}
+              className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+            >
+              Day {day.dayNumber}: {day.city}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
       
       {tripDays.map((day, idx) => (
         <TabsContent key={`content-${day.id}-${day.dayNumber}-${idx}`} value={day.id}>

@@ -22,11 +22,12 @@ export default function ItineraryContainer({
   
   return (
     <div>
-      <div className="flex space-x-2 mb-4">
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
         <Button 
           onClick={() => setView("tabs")} 
           variant={view === "tabs" ? "default" : "outline"}
           size="sm"
+          className="w-full sm:w-auto text-xs sm:text-sm"
         >
           Tabs View
         </Button>
@@ -34,6 +35,7 @@ export default function ItineraryContainer({
           onClick={() => setView("list")} 
           variant={view === "list" ? "default" : "outline"}
           size="sm"
+          className="w-full sm:w-auto text-xs sm:text-sm"
         >
           List View
         </Button>
