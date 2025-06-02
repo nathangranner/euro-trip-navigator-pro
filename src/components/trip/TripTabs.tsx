@@ -18,7 +18,7 @@ export const TripTabs: React.FC = () => {
         <TabsTrigger value="cityview" className="font-futura text-sm sm:text-base tracking-wide uppercase text-slate-100 whitespace-nowrap px-3 sm:px-4 py-2 flex-shrink-0 min-w-fit bg-amber-700 hover:bg-amber-600">
           City View
         </TabsTrigger>
-        <TabsTrigger value="translation" className="font-futura text-sm sm:text-base tracking-wide uppercase text-slate-100 whitespace-nowrap px-3 sm:px-4 py-2 flex-shrink-0 min-w-fit bg-amber-800 hover:bg-amber-700">
+        <TabsTrigger value="translation" className="font-futura text-sm sm:text-base tracking-wide uppercase text-slate-100 whitespace-nowrap px-3 sm:px-4 py-2 flex-shrink-0 min-w-fit bg-amber-700 hover:bg-amber-600">
           Translation
         </TabsTrigger>
       </TabsList>
