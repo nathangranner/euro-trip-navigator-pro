@@ -1,16 +1,28 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, Clock, MapPin, Phone } from "lucide-react";
+import { Edit, Clock, MapPin, Phone, Trash2 } from "lucide-react";
 import { DatabaseActivity } from "@/hooks/useTripData";
 
 interface ActivitiesSectionProps {
   activities?: DatabaseActivity[];
   tripDayId: string;
   onEditActivity?: (activity: any, dayId: string) => void;
+  onDeleteActivity?: (activityId: string, dayId: string) => void;
 }
 
-export default function ActivitiesSection({ activities, tripDayId, onEditActivity }: ActivitiesSectionProps) {
+export default function ActivitiesSection({ 
+  activities, 
+  tripDayId, 
+  onEditActivity,
+  onDeleteActivity 
+}: ActivitiesSectionProps) {
+  const handleDeleteClick = (activityId: string) => {
+    if (onDeleteActivity && confirm('Are you sure you want to delete this activity?')) {
+      onDeleteActivity(activityId, tripDayId);
+    }
+  };
+
   if (!activities || activities.length === 0) {
     return (
       <div className="mb-4">
@@ -64,16 +76,28 @@ export default function ActivitiesSection({ activities, tripDayId, onEditActivit
                 </p>
               )}
             </div>
-            {onEditActivity && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => onEditActivity(activity, tripDayId)}
-              >
-                <Edit className="h-3 w-3" />
-              </Button>
-            )}
+            <div className="flex gap-1 ml-2">
+              {onEditActivity && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => onEditActivity(activity, tripDayId)}
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+              )}
+              {onDeleteActivity && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeleteClick(activity.id)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
           </div>
         ))}
       </div>
