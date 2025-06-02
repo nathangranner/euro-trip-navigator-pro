@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Edit, Camera, Utensils } from "lucide-react";
+import { Calendar, MapPin, Clock, Edit, Camera, Utensils, CalendarDays } from "lucide-react";
 import { TripDay, Activity } from "@/types/trip";
 import { formatDisplayDate } from "@/utils/dateUtils";
 
@@ -17,8 +17,9 @@ export const DiningTab: React.FC<DiningTabProps> = ({
   onEditActivity
 }) => {
   const [diningImages, setDiningImages] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState<'original' | 'scheduled'>('scheduled');
 
-  // Get all dining activities from all days
+  // Get all dining activities from all days with enhanced info
   const diningActivities = tripDays.flatMap(day => 
     (day.activities || [])
       .filter(activity => 
@@ -36,9 +37,21 @@ export const DiningTab: React.FC<DiningTabProps> = ({
           date: day.date,
           city: day.city,
           dayId: day.id
-        }
+        },
+        actualDate: activity.scheduledDate || day.date,
+        isRescheduled: !!activity.scheduledDate && activity.scheduledDate !== day.date
       }))
   );
+
+  // Sort dining activities based on selected sorting method
+  const sortedDiningActivities = [...diningActivities].sort((a, b) => {
+    if (sortBy === 'scheduled') {
+      return new Date(a.actualDate).getTime() - new Date(b.actualDate).getTime();
+    } else {
+      // Sort by original day order
+      return a.dayInfo.dayNumber - b.dayInfo.dayNumber;
+    }
+  });
 
   const handleImageUpload = (activityId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -71,21 +84,50 @@ export const DiningTab: React.FC<DiningTabProps> = ({
     }
   };
 
+  const getDateDisplayInfo = (activity: any) => {
+    if (activity.isRescheduled) {
+      return {
+        displayDate: formatDisplayDate(activity.actualDate),
+        originalDate: formatDisplayDate(activity.dayInfo.date),
+        isCustom: true
+      };
+    }
+    return {
+      displayDate: `Day ${activity.dayInfo.dayNumber} - ${formatDisplayDate(activity.dayInfo.date)}`,
+      originalDate: null,
+      isCustom: false
+    };
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-2xl font-bold text-slate-800 flex items-center">
           <Utensils className="h-6 w-6 mr-2" />
           Dining Experiences
         </h2>
-        <Badge variant="secondary" className="text-sm">
-          {diningActivities.length} dining experiences
-        </Badge>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Sort by:</label>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value as 'original' | 'scheduled')}
+              className="text-sm border rounded px-2 py-1"
+            >
+              <option value="scheduled">Scheduled Date</option>
+              <option value="original">Original Day</option>
+            </select>
+          </div>
+          <Badge variant="secondary" className="text-sm">
+            {diningActivities.length} dining experiences
+          </Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {diningActivities.map((activity, index) => {
+        {sortedDiningActivities.map((activity, index) => {
           const diningType = getDiningType(activity);
+          const dateInfo = getDateDisplayInfo(activity);
           return (
             <Card key={`${activity.dayInfo.dayId}-${activity.id}-${index}`} className="overflow-hidden hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
@@ -102,8 +144,14 @@ export const DiningTab: React.FC<DiningTabProps> = ({
                     <div className="space-y-1">
                       <div className="flex items-center text-sm text-slate-600">
                         <Calendar className="h-4 w-4 mr-2" />
-                        Day {activity.dayInfo.dayNumber} - {formatDisplayDate(activity.dayInfo.date)}
+                        {dateInfo.displayDate}
                       </div>
+                      {dateInfo.isCustom && (
+                        <div className="flex items-center text-xs text-amber-600">
+                          <CalendarDays className="h-3 w-3 mr-1" />
+                          Rescheduled from Day {activity.dayInfo.dayNumber}
+                        </div>
+                      )}
                       <div className="flex items-center text-sm text-slate-600">
                         <MapPin className="h-4 w-4 mr-2" />
                         {activity.location || activity.dayInfo.city}
@@ -189,6 +237,11 @@ export const DiningTab: React.FC<DiningTabProps> = ({
                     {activity.mustTry && (
                       <Badge variant="destructive" className="text-xs">
                         Must Try!
+                      </Badge>
+                    )}
+                    {activity.isRescheduled && (
+                      <Badge variant="outline" className="text-xs border-amber-500 text-amber-700">
+                        Rescheduled
                       </Badge>
                     )}
                   </div>

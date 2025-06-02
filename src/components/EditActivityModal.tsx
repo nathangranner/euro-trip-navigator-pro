@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity } from "@/data/tripData";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Activity } from "@/types/trip";
+import { parseLocalDate } from "@/utils/dateUtils";
 
 interface EditActivityModalProps {
   isOpen: boolean;
@@ -13,10 +20,23 @@ interface EditActivityModalProps {
   activity: Activity;
   dayId: string;
   onSave: (updatedActivity: Activity) => void;
+  tripStartDate?: string;
+  tripEndDate?: string;
 }
 
-export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, onClose, activity, dayId, onSave }) => {
+export const EditActivityModal: React.FC<EditActivityModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  activity, 
+  dayId, 
+  onSave,
+  tripStartDate = "2025-06-05",
+  tripEndDate = "2025-06-26"
+}) => {
   const [formData, setFormData] = useState<Activity>({...activity});
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    formData.scheduledDate ? parseLocalDate(formData.scheduledDate) : undefined
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -32,6 +52,16 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, on
     setFormData(prev => ({ ...prev, [name]: checked }));
   };
 
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date) {
+      const dateString = format(date, "yyyy-MM-dd");
+      setFormData(prev => ({ ...prev, scheduledDate: dateString }));
+    } else {
+      setFormData(prev => ({ ...prev, scheduledDate: undefined }));
+    }
+  };
+
   const handleSubmit = () => {
     onSave(formData);
     onClose();
@@ -39,6 +69,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, on
 
   const activityTypes = [
     { value: "activity", label: "General Activity" },
+    { value: "dining", label: "Dining" },
     { value: "meal", label: "Meal" },
     { value: "logistics", label: "Logistics" },
     { value: "travel", label: "Travel" },
@@ -53,6 +84,9 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, on
     { value: "preparation", label: "Preparation" },
     { value: "arrival", label: "Arrival" },
   ];
+
+  const tripStart = parseLocalDate(tripStartDate);
+  const tripEnd = parseLocalDate(tripEndDate);
 
   return (
     <Modal
@@ -109,6 +143,37 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({ isOpen, on
             value={formData.activity}
             onChange={handleChange}
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Scheduled Date (Optional)</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "PPP") : <span>Select custom date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                disabled={(date) => date < tripStart || date > tripEnd}
+                initialFocus
+                className="pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+          <p className="text-xs text-gray-500">
+            Leave empty to use the original day. Custom date must be within trip duration.
+          </p>
         </div>
 
         <div className="space-y-2">

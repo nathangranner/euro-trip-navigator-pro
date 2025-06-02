@@ -1,4 +1,3 @@
-
 export interface PointOfInterest {
   name: string;
   description: string;
@@ -41,6 +40,7 @@ export interface Activity {
   playlist?: string;
   flightInfo?: string;
   importance?: string;
+  scheduledDate?: string; // New field for custom scheduling
 }
 
 export interface Accommodation {
