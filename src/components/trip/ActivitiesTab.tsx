@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,8 @@ import { TripDay, Activity } from "@/types/trip";
 import { formatDisplayDate, parseLocalDate } from "@/utils/dateUtils";
 import { format } from "date-fns";
 import { CreateActivityModal } from "@/components/CreateActivityModal";
+import { useImageUpload } from "@/hooks/useImageUpload";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ActivitiesTabProps {
   tripDays: TripDay[];
@@ -24,6 +27,7 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
   const [activityImages, setActivityImages] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<'original' | 'scheduled'>('scheduled');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { uploadImage, saveImageToDatabase, uploading } = useImageUpload();
 
   // Get all activities from all days with enhanced info
   const allActivities = tripDays.flatMap(day => 
@@ -36,30 +40,71 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
         dayId: day.id
       },
       actualDate: activity.scheduledDate || day.date,
-      isRescheduled: activity.wasRescheduled === true, // Use the wasRescheduled flag
+      isRescheduled: activity.wasRescheduled === true,
       isCustomScheduled: !!activity.scheduledDate && activity.scheduledDate !== day.date && !activity.wasRescheduled
     }))
   );
+
+  // Load existing images for activities
+  useEffect(() => {
+    const loadActivityImages = async () => {
+      if (allActivities.length === 0) return;
+
+      try {
+        const activityIds = allActivities.map(activity => activity.id);
+        const { data: images, error } = await supabase
+          .from('trip_images')
+          .select('*')
+          .in('activity_id', activityIds)
+          .eq('image_type', 'photo');
+
+        if (error) {
+          console.error('Error loading activity images:', error);
+          return;
+        }
+
+        const imageMap: Record<string, string> = {};
+        images?.forEach(img => {
+          if (img.activity_id) {
+            imageMap[img.activity_id] = img.image_url;
+          }
+        });
+        setActivityImages(imageMap);
+      } catch (error) {
+        console.error('Error loading activity images:', error);
+      }
+    };
+
+    loadActivityImages();
+  }, [allActivities.length]);
 
   // Sort activities based on selected sorting method
   const sortedActivities = [...allActivities].sort((a, b) => {
     if (sortBy === 'scheduled') {
       return new Date(a.actualDate).getTime() - new Date(b.actualDate).getTime();
     } else {
-      // Sort by original day order
       return a.dayInfo.dayNumber - b.dayInfo.dayNumber;
     }
   });
 
-  const handleImageUpload = (activityId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (activityId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setActivityImages(prev => ({
-        ...prev,
-        [activityId]: imageUrl
-      }));
-      // In a real app, you'd upload to your storage service here
+    if (!file) return;
+
+    try {
+      const imageUrl = await uploadImage(file, 'activities');
+      if (imageUrl) {
+        // Save to database
+        await saveImageToDatabase(imageUrl, 'photo', undefined, undefined, activityId);
+        
+        // Update local state to show the image immediately
+        setActivityImages(prev => ({
+          ...prev,
+          [activityId]: imageUrl
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading activity image:', error);
     }
   };
 
@@ -206,18 +251,22 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                           accept="image/*"
                           onChange={(e) => handleImageUpload(activity.id, e)}
                           className="hidden"
+                          disabled={uploading}
                         />
                       </label>
                     </div>
                   ) : (
-                    <label className="w-full h-32 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-slate-400 transition-colors bg-slate-50">
+                    <label className={`w-full h-32 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-slate-400 transition-colors bg-slate-50 ${uploading ? 'opacity-50' : ''}`}>
                       <Camera className="h-6 w-6 text-slate-400 mb-2" />
-                      <span className="text-sm text-slate-500">Add photo</span>
+                      <span className="text-sm text-slate-500">
+                        {uploading ? 'Uploading...' : 'Add photo'}
+                      </span>
                       <input
                         type="file"
                         accept="image/*"
                         onChange={(e) => handleImageUpload(activity.id, e)}
                         className="hidden"
+                        disabled={uploading}
                       />
                     </label>
                   )}
