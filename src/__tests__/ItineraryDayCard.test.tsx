@@ -2,9 +2,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ItineraryDayCard from '@/components/trip/ItineraryDayCard';
-import { DatabaseTripDay } from '@/hooks/useTripData';
+import { TripDay } from '@/types/trip';
+import { convertDatabaseTripDayToTripDay } from '@/utils/typeConverters';
 
-const mockTripDay: DatabaseTripDay = {
+const mockDatabaseTripDay = {
   id: 'day-1',
   trip_id: 'trip-1',
   day_number: 1,
@@ -21,6 +22,8 @@ const mockTripDay: DatabaseTripDay = {
   accommodation_confirmation: 'ABC123',
   weather_temp: '22°C',
   weather_condition: 'Sunny',
+  created_at: '2024-06-01T00:00:00Z',
+  updated_at: '2024-06-01T00:00:00Z',
   activities: [
     {
       id: 'activity-1',
@@ -33,10 +36,15 @@ const mockTripDay: DatabaseTripDay = {
       duration: '2 hours',
       completed: false,
       booking_required: true,
-      contact_info: '+33 1 44 11 23 23'
+      contact_info: '+33 1 44 11 23 23',
+      created_at: '2024-06-01T00:00:00Z',
+      updated_at: '2024-06-01T00:00:00Z'
     }
   ]
 };
+
+// Convert to TripDay format
+const mockTripDay: TripDay = convertDatabaseTripDayToTripDay(mockDatabaseTripDay);
 
 describe('ItineraryDayCard', () => {
   const mockOnEditDay = jest.fn();
@@ -50,7 +58,7 @@ describe('ItineraryDayCard', () => {
   it('renders day header with correct information', () => {
     render(
       <ItineraryDayCard
-        tripDay={mockTripDay}
+        day={mockTripDay}
         onEditDay={mockOnEditDay}
         onEditActivity={mockOnEditActivity}
         onViewMap={mockOnViewMap}
@@ -65,7 +73,7 @@ describe('ItineraryDayCard', () => {
   it('calls onEditDay when edit day button is clicked', () => {
     render(
       <ItineraryDayCard
-        tripDay={mockTripDay}
+        day={mockTripDay}
         onEditDay={mockOnEditDay}
         onEditActivity={mockOnEditActivity}
         onViewMap={mockOnViewMap}
@@ -81,7 +89,7 @@ describe('ItineraryDayCard', () => {
   it('calls onViewMap when view map button is clicked', () => {
     render(
       <ItineraryDayCard
-        tripDay={mockTripDay}
+        day={mockTripDay}
         onEditDay={mockOnEditDay}
         onEditActivity={mockOnEditActivity}
         onViewMap={mockOnViewMap}
@@ -97,7 +105,7 @@ describe('ItineraryDayCard', () => {
   it('renders weather information', () => {
     render(
       <ItineraryDayCard
-        tripDay={mockTripDay}
+        day={mockTripDay}
         onEditDay={mockOnEditDay}
         onEditActivity={mockOnEditActivity}
         onViewMap={mockOnViewMap}
@@ -110,7 +118,7 @@ describe('ItineraryDayCard', () => {
   it('renders activities', () => {
     render(
       <ItineraryDayCard
-        tripDay={mockTripDay}
+        day={mockTripDay}
         onEditDay={mockOnEditDay}
         onEditActivity={mockOnEditActivity}
         onViewMap={mockOnViewMap}
@@ -125,7 +133,7 @@ describe('ItineraryDayCard', () => {
   it('renders accommodation information', () => {
     render(
       <ItineraryDayCard
-        tripDay={mockTripDay}
+        day={mockTripDay}
         onEditDay={mockOnEditDay}
         onEditActivity={mockOnEditActivity}
         onViewMap={mockOnViewMap}

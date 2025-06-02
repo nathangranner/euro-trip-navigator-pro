@@ -52,8 +52,8 @@ export default function ItineraryDayContent({
       />
       
       <WeatherSection
-        temperature={day.weather?.temp}
-        condition={day.weather?.condition}
+        weatherTemp={day.weather?.temp}
+        weatherCondition={day.weather?.condition}
       />
     </div>
   );
