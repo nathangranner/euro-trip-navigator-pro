@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -151,14 +150,46 @@ const TripSummary: React.FC = () => {
         </div>
 
         <Tabs defaultValue="itinerary" className="mb-6 sm:mb-8" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4 bg-gradient-to-r from-blue-800 to-blue-900 p-1 w-full overflow-x-auto flex-nowrap">
-            <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Day by Day</TabsTrigger>
-            <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">City View</TabsTrigger>
-            <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Hotels</TabsTrigger>
-            <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Expenses</TabsTrigger>
-            <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Purchases</TabsTrigger>
-            <TabsTrigger value="reference" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Reference</TabsTrigger>
-          </TabsList>
+          <div className="mb-4 bg-gradient-to-r from-blue-800 to-blue-900 p-1 rounded-lg">
+            <TabsList className="w-full bg-transparent p-0 h-auto grid-cols-none flex overflow-x-auto scrollbar-hide">
+              <TabsTrigger 
+                value="itinerary" 
+                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+              >
+                Day by Day
+              </TabsTrigger>
+              <TabsTrigger 
+                value="cityview" 
+                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+              >
+                City View
+              </TabsTrigger>
+              <TabsTrigger 
+                value="accommodations" 
+                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+              >
+                Hotels
+              </TabsTrigger>
+              <TabsTrigger 
+                value="expenses" 
+                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+              >
+                Expenses
+              </TabsTrigger>
+              <TabsTrigger 
+                value="purchases" 
+                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+              >
+                Purchases
+              </TabsTrigger>
+              <TabsTrigger 
+                value="reference" 
+                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
+              >
+                Reference
+              </TabsTrigger>
+            </TabsList>
+          </div>
           
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
             <TabsContent value="itinerary">

@@ -5,3 +5,21 @@
 @import './styles/envelope.css';
 @import './styles/duomo.css';
 @import './styles/filigree.css';
+
+/* Custom scrollbar hiding for mobile tab navigation */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scrolling for mobile tabs */
+@media (max-width: 768px) {
+  .scrollbar-hide {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
