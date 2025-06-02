@@ -38,8 +38,8 @@ export default function ItineraryDayContent({
       <AccommodationSection
         accommodationName={day.accommodationName}
         accommodationAddress={day.accommodationAddress}
-        accommodationCheckIn={day.accommodationCheckIn}
-        accommodationCheckOut={day.accommodationCheckOut}
+        accommodationCheckin={day.accommodationCheckIn}
+        accommodationCheckout={day.accommodationCheckOut}
         accommodationContact={day.accommodationContact}
         accommodationConfirmation={day.accommodationConfirmation}
       />
