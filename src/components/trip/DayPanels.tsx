@@ -2,25 +2,31 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import ItineraryDayContent from "./ItineraryDayContent";
-import { DatabaseTripDay } from "@/hooks/useTripData";
+import { TripDay, Activity } from "@/types/trip";
 
 interface DayPanelsProps {
-  tripDays: DatabaseTripDay[];
-  onEditDay?: (day: DatabaseTripDay) => void;
-  onEditActivity?: (activity: any, dayId: string) => void;
-  onViewMap?: (day: DatabaseTripDay) => void;
+  tripDays: TripDay[];
+  onEditDay?: (day: TripDay) => void;
+  onEditActivity?: (activity: Activity, dayId: string) => void;
+  onDeleteActivity?: (activityId: string, dayId: string) => void;
+  onViewMap?: (day: TripDay) => void;
 }
 
-export default function DayPanels({ tripDays, onEditDay, onEditActivity, onViewMap }: DayPanelsProps) {
+export default function DayPanels({ 
+  tripDays, 
+  onEditDay, 
+  onEditActivity, 
+  onDeleteActivity,
+  onViewMap 
+}: DayPanelsProps) {
   return (
     <>
       {tripDays.map((day, idx) => (
-        <TabsContent key={`content-${day.id}-${day.day_number}-${idx}`} value={day.id}>
+        <TabsContent key={`content-${day.id}-${day.dayNumber}-${idx}`} value={day.id}>
           <ItineraryDayContent 
-            tripDay={day} 
-            onEditDay={onEditDay}
+            day={day} 
             onEditActivity={onEditActivity}
-            onViewMap={onViewMap}
+            onDeleteActivity={onDeleteActivity}
           />
         </TabsContent>
       ))}
