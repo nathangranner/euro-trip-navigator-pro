@@ -9,6 +9,7 @@ interface ItineraryContainerProps {
   tripDays: TripDay[];
   onEditDay?: (day: TripDay) => void;
   onEditActivity?: (activity: Activity, dayId: string) => void;
+  onDeleteActivity?: (activityId: string, dayId: string) => void;
   onViewMap?: (day: TripDay) => void;
 }
 
@@ -16,6 +17,7 @@ export default function ItineraryContainer({
   tripDays,
   onEditDay,
   onEditActivity,
+  onDeleteActivity,
   onViewMap,
 }: ItineraryContainerProps) {
   const [view, setView] = useState<"list" | "tabs">("list");
@@ -45,6 +47,7 @@ export default function ItineraryContainer({
           tripDays={tripDays}
           onEditDay={onEditDay}
           onEditActivity={onEditActivity}
+          onDeleteActivity={onDeleteActivity}
           onViewMap={onViewMap}
         />
       ) : (
@@ -52,6 +55,7 @@ export default function ItineraryContainer({
           tripDays={tripDays}
           onEditDay={onEditDay}
           onEditActivity={onEditActivity}
+          onDeleteActivity={onDeleteActivity}
           onViewMap={onViewMap}
         />
       )}

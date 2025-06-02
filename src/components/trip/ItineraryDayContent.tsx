@@ -1,62 +1,45 @@
 
 import React from "react";
-import { Separator } from "@/components/ui/separator";
-import { DatabaseTripDay } from "@/hooks/useTripData";
-import DayHeader from "./DayHeader";
-import WeatherSection from "./WeatherSection";
-import ActivitiesSection from "./ActivitiesSection";
+import { TripDay, Activity } from "@/types/trip";
 import AccommodationSection from "./AccommodationSection";
+import ActivitiesSection from "./ActivitiesSection";
+import WeatherSection from "./WeatherSection";
 
 interface ItineraryDayContentProps {
-  tripDay: DatabaseTripDay;
-  onEditDay?: (day: DatabaseTripDay) => void;
-  onEditActivity?: (activity: any, dayId: string) => void;
-  onViewMap?: (day: DatabaseTripDay) => void;
+  day: TripDay;
+  onEditActivity?: (activity: Activity, dayId: string) => void;
+  onDeleteActivity?: (activityId: string, dayId: string) => void;
 }
 
 export default function ItineraryDayContent({ 
-  tripDay,
-  onEditDay,
+  day, 
   onEditActivity,
-  onViewMap 
+  onDeleteActivity 
 }: ItineraryDayContentProps) {
   return (
-    <div className="bg-white rounded-lg border p-4">
-      <DayHeader 
-        tripDay={tripDay} 
-        onEditDay={onEditDay} 
-        onViewMap={onViewMap} 
+    <div className="space-y-4">
+      <AccommodationSection
+        accommodation={day.accommodation}
+        accommodationName={day.accommodationName}
+        accommodationAddress={day.accommodationAddress}
+        accommodationCheckIn={day.accommodationCheckIn}
+        accommodationCheckOut={day.accommodationCheckOut}
+        accommodationContact={day.accommodationContact}
+        accommodationConfirmation={day.accommodationConfirmation}
       />
       
-      <WeatherSection 
-        weatherTemp={tripDay.weather_temp} 
-        weatherCondition={tripDay.weather_condition} 
+      <ActivitiesSection
+        activities={day.activities}
+        tripDayId={day.id}
+        onEditActivity={onEditActivity}
+        onDeleteActivity={onDeleteActivity}
       />
-
-      <div className="p-4">
-        {tripDay.description && (
-          <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
-            <p className="text-sm italic text-blue-800">{tripDay.description}</p>
-          </div>
-        )}
-        
-        <ActivitiesSection 
-          activities={tripDay.activities} 
-          tripDayId={tripDay.id}
-          onEditActivity={onEditActivity} 
-        />
-        
-        <Separator className="my-4" />
-        
-        <AccommodationSection 
-          accommodationName={tripDay.accommodation_name}
-          accommodationAddress={tripDay.accommodation_address}
-          accommodationCheckin={tripDay.accommodation_checkin}
-          accommodationCheckout={tripDay.accommodation_checkout}
-          accommodationContact={tripDay.accommodation_contact}
-          accommodationConfirmation={tripDay.accommodation_confirmation}
-        />
-      </div>
+      
+      <WeatherSection
+        weather={day.weather}
+        temperature={day.weatherTemp}
+        condition={day.weatherCondition}
+      />
     </div>
   );
 }
