@@ -19,7 +19,7 @@ export default function ItineraryDayCard({
 }: ItineraryDayCardProps) {
   return <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <DayHeader day={day} onEditDay={onEditDay} onViewMap={onViewMap} />
-      <CardContent className="p-3 sm:p-6 bg-sky-900">
+      <CardContent className="p-3 sm:p-6 bg-gray-900">
         <ItineraryDayContent day={day} onEditActivity={onEditActivity} onDeleteActivity={onDeleteActivity} />
       </CardContent>
     </Card>;

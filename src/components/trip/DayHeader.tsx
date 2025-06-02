@@ -16,7 +16,7 @@ export default function DayHeader({
   if (!day) {
     return null;
   }
-  return <div className="p-4 bg-[#1c4e6d]/[0.86]">
+  return <div className="p-4 bg-sky-950">
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-bold text-amber-500">

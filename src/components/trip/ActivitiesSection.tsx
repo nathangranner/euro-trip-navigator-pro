@@ -34,7 +34,7 @@ export default function ActivitiesSection({
         Activities ({activities.length})
       </h4>
       <div className="space-y-3">
-        {activities.map((activity, activityIdx) => <div key={`activity-${activity.id}-${activityIdx}`} className="flex justify-between items-start group border rounded-lg p-3 hover:bg-gray-50">
+        {activities.map((activity, activityIdx) => <div key={`activity-${activity.id}-${activityIdx}`} className="flex justify-between items-start group border p-3 px-[6px] rounded-none bg-gray-900">
             <div className="flex-1">
               <div className="flex items-center gap-2 bg-[#084e6e]/65">
                 <span className="font-medium text-sm text-orange-400">{activity.time}</span>
