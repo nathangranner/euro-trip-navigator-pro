@@ -19,7 +19,7 @@ export default function DayHeader({
   return <div className="p-4 bg-[#1c4e6d]/[0.86]">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-bold">
+          <h3 className="text-lg font-bold text-amber-500">
             Day {day.dayNumber}: {day.city}
           </h3>
           <p className="text-sm text-gray-300">{day.title}</p>

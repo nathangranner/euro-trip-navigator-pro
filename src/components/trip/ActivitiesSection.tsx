@@ -29,7 +29,7 @@ export default function ActivitiesSection({
       </div>;
   }
   return <div className="mb-4">
-      <h4 className="font-medium mb-3 flex items-center gap-2">
+      <h4 className="font-medium mb-3 flex items-center gap-2 text-green-600">
         <Clock className="h-4 w-4" />
         Activities ({activities.length})
       </h4>
@@ -37,8 +37,8 @@ export default function ActivitiesSection({
         {activities.map((activity, activityIdx) => <div key={`activity-${activity.id}-${activityIdx}`} className="flex justify-between items-start group border rounded-lg p-3 hover:bg-gray-50">
             <div className="flex-1">
               <div className="flex items-center gap-2 bg-[#084e6e]/65">
-                <span className="font-medium text-sm">{activity.time}</span>
-                <span className="text-sm font-medium">{activity.activity}</span>
+                <span className="font-medium text-sm text-orange-400">{activity.time}</span>
+                <span className="text-sm font-medium text-orange-400">{activity.activity}</span>
                 {activity.completed && <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                     Completed
                   </span>}
@@ -47,7 +47,7 @@ export default function ActivitiesSection({
                   <MapPin className="h-3 w-3" />
                   {activity.location}
                 </p>}
-              {activity.notes && <p className="text-sm mt-1 text-orange-400">{activity.notes}</p>}
+              {activity.notes && <p className="text-sm mt-1 text-green-600">{activity.notes}</p>}
               {activity.duration && <p className="text-xs text-gray-500 mt-1">Duration: {activity.duration}</p>}
               {activity.booking_required && <p className="text-xs text-orange-600 mt-1">⚠️ Booking required</p>}
               {activity.contact_info && <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
