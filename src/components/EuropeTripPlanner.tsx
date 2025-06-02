@@ -7,6 +7,7 @@ import { TripTabs } from "./trip/TripTabs";
 import { TripTabsContent } from "./trip/TripTabsContent";
 import { TripModals } from "./trip/TripModals";
 import { loadBannerImage, saveBannerImage } from "@/utils/bannerUtils";
+import { parseLocalDate } from "@/utils/dateUtils";
 import { europeTrip } from "@/data/europeTrip";
 
 export const EuropeTripPlanner: React.FC = () => {
@@ -43,7 +44,7 @@ export const EuropeTripPlanner: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-bold text-amber-400 text-center sm:text-left">{europeTrip.name}</h1>
           <p className="mt-1 text-center sm:text-left text-amber-400 text-sm sm:text-base">{europeTrip.description}</p>
           <p className="text-xs sm:text-sm text-gray-400 mt-1 text-center sm:text-left">
-            {new Date(europeTrip.startDate).toLocaleDateString()} - {new Date(europeTrip.endDate).toLocaleDateString()}
+            {parseLocalDate(europeTrip.startDate).toLocaleDateString()} - {parseLocalDate(europeTrip.endDate).toLocaleDateString()}
           </p>
         </div>
       </div>
