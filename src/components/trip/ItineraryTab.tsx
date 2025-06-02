@@ -23,10 +23,10 @@ export const ItineraryTab: React.FC<ItineraryTabProps> = ({
   };
   return <div>
       <div className="flex space-x-2 mb-4">
-        <Button onClick={() => setView("tabs")} variant={view === "tabs" ? "default" : "outline"} size="sm" className="bg-cyan-700 hover:bg-cyan-600">
+        <Button onClick={() => setView("tabs")} variant={view === "tabs" ? "default" : "outline"} size="sm" className="bg-cyan-700 hover:bg-cyan-600 text-gray-50">
           Tabs View
         </Button>
-        <Button onClick={() => setView("list")} variant={view === "list" ? "default" : "outline"} size="sm">
+        <Button onClick={() => setView("list")} variant={view === "list" ? "default" : "outline"} size="sm" className="bg-cyan-900 hover:bg-cyan-800 text-gray-50">
           List View
         </Button>
       </div>
