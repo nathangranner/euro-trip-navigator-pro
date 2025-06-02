@@ -43,6 +43,7 @@ const TripSummary: React.FC = () => {
     handleSaveDay,
     handleEditActivity,
     handleSaveActivity,
+    handleCreateActivity,
     setEditingDay,
     setEditingActivity
   } = useTripState();
@@ -201,8 +202,20 @@ const TripSummary: React.FC = () => {
               />
             </TabsContent>
             
-            <TabsContent value="cityview">
-              <CityViewTab tripDays={displayTripDays} onViewMap={handleViewMap} />
+            <TabsContent value="activities">
+              <ActivitiesTab 
+                tripDays={displayTripDays}
+                onEditActivity={handleEditActivity}
+                onCreateActivity={handleCreateActivity}
+              />
+            </TabsContent>
+            
+            <TabsContent value="dining">
+              <DiningTab 
+                tripDays={displayTripDays}
+                onEditActivity={handleEditActivity}
+                onCreateActivity={handleCreateActivity}
+              />
             </TabsContent>
             
             <TabsContent value="accommodations">

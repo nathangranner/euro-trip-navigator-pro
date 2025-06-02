@@ -1,24 +1,27 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Edit, Camera, CalendarDays } from "lucide-react";
+import { Calendar, MapPin, Clock, Edit, Camera, CalendarDays, Plus } from "lucide-react";
 import { TripDay, Activity } from "@/types/trip";
 import { formatDisplayDate, parseLocalDate } from "@/utils/dateUtils";
 import { format } from "date-fns";
+import { CreateActivityModal } from "@/components/CreateActivityModal";
 
 interface ActivitiesTabProps {
   tripDays: TripDay[];
   onEditActivity?: (activity: Activity, dayId: string) => void;
+  onCreateActivity?: (newActivity: Omit<Activity, 'id'>, dayId: string) => void;
 }
 
 export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
   tripDays,
-  onEditActivity
+  onEditActivity,
+  onCreateActivity
 }) => {
   const [activityImages, setActivityImages] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<'original' | 'scheduled'>('scheduled');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Get all activities from all days with enhanced info
   const allActivities = tripDays.flatMap(day => 
@@ -57,6 +60,12 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
     }
   };
 
+  const handleCreateActivity = (newActivity: Omit<Activity, 'id'>, dayId: string) => {
+    if (onCreateActivity) {
+      onCreateActivity(newActivity, dayId);
+    }
+  };
+
   const getDateDisplayInfo = (activity: any) => {
     if (activity.isRescheduled) {
       return {
@@ -77,6 +86,13 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-2xl font-bold text-slate-800">Activities & Attractions</h2>
         <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Activity
+          </Button>
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Sort by:</label>
             <select 
@@ -212,9 +228,20 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
       {allActivities.length === 0 && (
         <div className="text-center py-12">
           <div className="text-slate-400 text-lg mb-2">No activities planned yet</div>
-          <p className="text-slate-500">Activities will appear here as you add them to your itinerary</p>
+          <p className="text-slate-500 mb-4">Activities will appear here as you add them to your itinerary</p>
+          <Button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 mx-auto">
+            <Plus className="h-4 w-4" />
+            Add Your First Activity
+          </Button>
         </div>
       )}
+
+      <CreateActivityModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleCreateActivity}
+        defaultType="activity"
+      />
     </div>
   );
 };

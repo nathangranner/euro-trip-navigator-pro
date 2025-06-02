@@ -1,23 +1,26 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Edit, Camera, Utensils, CalendarDays } from "lucide-react";
+import { Calendar, MapPin, Clock, Edit, Camera, Utensils, CalendarDays, Plus } from "lucide-react";
 import { TripDay, Activity } from "@/types/trip";
 import { formatDisplayDate } from "@/utils/dateUtils";
+import { CreateActivityModal } from "@/components/CreateActivityModal";
 
 interface DiningTabProps {
   tripDays: TripDay[];
   onEditActivity?: (activity: Activity, dayId: string) => void;
+  onCreateActivity?: (newActivity: Omit<Activity, 'id'>, dayId: string) => void;
 }
 
 export const DiningTab: React.FC<DiningTabProps> = ({
   tripDays,
-  onEditActivity
+  onEditActivity,
+  onCreateActivity
 }) => {
   const [diningImages, setDiningImages] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<'original' | 'scheduled'>('scheduled');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Get all dining activities from all days with enhanced info
   const diningActivities = tripDays.flatMap(day => 
@@ -65,6 +68,12 @@ export const DiningTab: React.FC<DiningTabProps> = ({
     }
   };
 
+  const handleCreateDining = (newActivity: Omit<Activity, 'id'>, dayId: string) => {
+    if (onCreateActivity) {
+      onCreateActivity(newActivity, dayId);
+    }
+  };
+
   const getDiningType = (activity: Activity): string => {
     const activityLower = activity.activity.toLowerCase();
     if (activityLower.includes('breakfast')) return 'Breakfast';
@@ -107,6 +116,13 @@ export const DiningTab: React.FC<DiningTabProps> = ({
           Dining Experiences
         </h2>
         <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Dining
+          </Button>
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Sort by:</label>
             <select 
@@ -255,9 +271,20 @@ export const DiningTab: React.FC<DiningTabProps> = ({
       {diningActivities.length === 0 && (
         <div className="text-center py-12">
           <div className="text-slate-400 text-lg mb-2">No dining experiences planned yet</div>
-          <p className="text-slate-500">Dining experiences will appear here as you add them to your itinerary</p>
+          <p className="text-slate-500 mb-4">Dining experiences will appear here as you add them to your itinerary</p>
+          <Button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 mx-auto">
+            <Plus className="h-4 w-4" />
+            Add Your First Dining Experience
+          </Button>
         </div>
       )}
+
+      <CreateActivityModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleCreateDining}
+        defaultType="dining"
+      />
     </div>
   );
 };

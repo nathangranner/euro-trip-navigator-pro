@@ -1,6 +1,5 @@
-
 import React from "react";
-import { TripDay } from "@/types/trip";
+import { TripDay, Activity } from "@/types/trip";
 import { ItineraryTab } from "./ItineraryTab";
 import { ActivitiesTab } from "./ActivitiesTab";
 import { DiningTab } from "./DiningTab";
@@ -15,12 +14,14 @@ interface TripTabsContentProps {
   tripDays: TripDay[];
   onEditDay: (day: TripDay) => void;
   onEditActivity: (activity: any, dayId: string) => void;
+  onCreateActivity?: (newActivity: Omit<Activity, 'id'>, dayId: string) => void;
 }
 
 export const TripTabsContent: React.FC<TripTabsContentProps> = ({
   tripDays,
   onEditDay,
   onEditActivity,
+  onCreateActivity,
 }) => {
   return (
     <>
@@ -36,6 +37,7 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
         <ActivitiesTab 
           tripDays={tripDays}
           onEditActivity={onEditActivity}
+          onCreateActivity={onCreateActivity}
         />
       </TabsContent>
 
@@ -43,6 +45,7 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
         <DiningTab 
           tripDays={tripDays}
           onEditActivity={onEditActivity}
+          onCreateActivity={onCreateActivity}
         />
       </TabsContent>
 
