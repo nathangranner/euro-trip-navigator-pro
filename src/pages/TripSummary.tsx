@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +47,7 @@ const TripSummary: React.FC = () => {
     handleSaveDay,
     handleEditActivity,
     handleSaveActivity,
+    handleDeleteActivity,
     handleCreateActivity,
     setEditingDay,
     setEditingActivity
@@ -209,6 +211,7 @@ const TripSummary: React.FC = () => {
               <ActivitiesTab 
                 tripDays={displayTripDays}
                 onEditActivity={handleEditActivity}
+                onDeleteActivity={handleDeleteActivity}
                 onCreateActivity={handleCreateActivity}
               />
             </TabsContent>
@@ -217,6 +220,7 @@ const TripSummary: React.FC = () => {
               <DiningTab 
                 tripDays={displayTripDays}
                 onEditActivity={handleEditActivity}
+                onDeleteActivity={handleDeleteActivity}
                 onCreateActivity={handleCreateActivity}
               />
             </TabsContent>

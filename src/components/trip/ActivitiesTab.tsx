@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Edit, Camera, CalendarDays, Plus } from "lucide-react";
+import { Calendar, MapPin, Clock, Edit, Camera, CalendarDays, Plus, Trash2 } from "lucide-react";
 import { TripDay, Activity } from "@/types/trip";
 import { formatDisplayDate, parseLocalDate } from "@/utils/dateUtils";
 import { format } from "date-fns";
@@ -11,12 +12,14 @@ import { CreateActivityModal } from "@/components/CreateActivityModal";
 interface ActivitiesTabProps {
   tripDays: TripDay[];
   onEditActivity?: (activity: Activity, dayId: string) => void;
+  onDeleteActivity?: (activityId: string, dayId: string) => void;
   onCreateActivity?: (newActivity: Omit<Activity, 'id'>, dayId: string) => void;
 }
 
 export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
   tripDays,
   onEditActivity,
+  onDeleteActivity,
   onCreateActivity
 }) => {
   const [activityImages, setActivityImages] = useState<Record<string, string>>({});
@@ -63,6 +66,12 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
   const handleCreateActivity = (newActivity: Omit<Activity, 'id'>, dayId: string) => {
     if (onCreateActivity) {
       onCreateActivity(newActivity, dayId);
+    }
+  };
+
+  const handleDeleteClick = (activityId: string, dayId: string) => {
+    if (onDeleteActivity && confirm('Are you sure you want to delete this activity?')) {
+      onDeleteActivity(activityId, dayId);
     }
   };
 
@@ -144,16 +153,27 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                       )}
                     </div>
                   </div>
-                  {onEditActivity && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onEditActivity(activity, activity.dayInfo.dayId)}
-                      className="ml-2"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <div className="flex gap-1 ml-2">
+                    {onEditActivity && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onEditActivity(activity, activity.dayInfo.dayId)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {onDeleteActivity && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteClick(activity.id, activity.dayInfo.dayId)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
 

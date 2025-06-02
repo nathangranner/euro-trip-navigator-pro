@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { TripDay, Activity } from '@/types/trip';
 import { europeTrip } from '@/data/europeTrip';
@@ -61,6 +62,23 @@ export const useTripState = () => {
     console.log("Activity saved:", updatedActivity);
   }, [tripDays, updateTripDays]);
 
+  const handleDeleteActivity = useCallback((activityId: string, dayId: string) => {
+    const targetDay = tripDays.find(day => day.id === dayId);
+    if (!targetDay) {
+      console.error("Target day not found for activity deletion");
+      return;
+    }
+
+    const updatedDay = {
+      ...targetDay,
+      activities: (targetDay.activities || []).filter(activity => activity.id !== activityId)
+    };
+
+    const updatedTripDays = updateTripDay(tripDays, updatedDay);
+    updateTripDays(updatedTripDays);
+    console.log("Activity deleted:", activityId);
+  }, [tripDays, updateTripDays]);
+
   const handleCreateActivity = useCallback((newActivity: Omit<Activity, 'id'>, dayId: string) => {
     const activityWithId: Activity = {
       ...newActivity,
@@ -94,6 +112,7 @@ export const useTripState = () => {
     handleSaveDay,
     handleEditActivity,
     handleSaveActivity,
+    handleDeleteActivity,
     handleCreateActivity,
     setEditingDay,
     setEditingActivity
