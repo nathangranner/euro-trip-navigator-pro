@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
@@ -37,6 +36,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     formData.scheduledDate ? parseLocalDate(formData.scheduledDate) : undefined
   );
+  const [originalScheduledDate] = useState(activity.scheduledDate); // Store original date
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -56,9 +56,18 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
     setSelectedDate(date);
     if (date) {
       const dateString = format(date, "yyyy-MM-dd");
-      setFormData(prev => ({ ...prev, scheduledDate: dateString }));
+      const wasDateChanged = originalScheduledDate !== dateString;
+      setFormData(prev => ({ 
+        ...prev, 
+        scheduledDate: dateString,
+        wasRescheduled: wasDateChanged || prev.wasRescheduled // Mark as rescheduled if date changed
+      }));
     } else {
-      setFormData(prev => ({ ...prev, scheduledDate: undefined }));
+      setFormData(prev => ({ 
+        ...prev, 
+        scheduledDate: undefined,
+        wasRescheduled: !!originalScheduledDate || prev.wasRescheduled // Mark as rescheduled if had a date before
+      }));
     }
   };
 

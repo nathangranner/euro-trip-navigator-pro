@@ -41,6 +41,7 @@ export interface Activity {
   flightInfo?: string;
   importance?: string;
   scheduledDate?: string; // New field for custom scheduling
+  wasRescheduled?: boolean; // New field to track if activity was moved from original date
 }
 
 export interface Accommodation {

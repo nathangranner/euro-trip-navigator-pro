@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
@@ -69,7 +68,8 @@ export const CreateActivityModal: React.FC<CreateActivityModalProps> = ({
 
     const newActivity: Omit<Activity, 'id'> = {
       ...formData,
-      scheduledDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : undefined
+      scheduledDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : undefined,
+      wasRescheduled: false // Set to false for new activities
     };
 
     onSave(newActivity, selectedDayId || "default");

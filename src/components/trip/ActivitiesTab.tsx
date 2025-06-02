@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,8 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
         dayId: day.id
       },
       actualDate: activity.scheduledDate || day.date,
-      isRescheduled: !!activity.scheduledDate && activity.scheduledDate !== day.date
+      isRescheduled: activity.wasRescheduled === true, // Use the wasRescheduled flag
+      isCustomScheduled: !!activity.scheduledDate && activity.scheduledDate !== day.date && !activity.wasRescheduled
     }))
   );
 
@@ -80,13 +80,22 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
       return {
         displayDate: formatDisplayDate(activity.actualDate),
         originalDate: formatDisplayDate(activity.dayInfo.date),
-        isCustom: true
+        isCustom: true,
+        badgeText: 'Rescheduled'
+      };
+    } else if (activity.isCustomScheduled) {
+      return {
+        displayDate: formatDisplayDate(activity.actualDate),
+        originalDate: null,
+        isCustom: true,
+        badgeText: 'Scheduled'
       };
     }
     return {
       displayDate: `Day ${activity.dayInfo.dayNumber} - ${formatDisplayDate(activity.dayInfo.date)}`,
       originalDate: null,
-      isCustom: false
+      isCustom: false,
+      badgeText: null
     };
   };
 
@@ -138,7 +147,10 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                       {dateInfo.isCustom && (
                         <div className="flex items-center text-xs text-amber-600">
                           <CalendarDays className="h-3 w-3 mr-1" />
-                          Rescheduled from Day {activity.dayInfo.dayNumber}
+                          {activity.isRescheduled 
+                            ? `Rescheduled from Day ${activity.dayInfo.dayNumber}`
+                            : `Originally Day ${activity.dayInfo.dayNumber}`
+                          }
                         </div>
                       )}
                       <div className="flex items-center text-sm text-slate-600">
@@ -232,9 +244,16 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                         Must Do!
                       </Badge>
                     )}
-                    {activity.isRescheduled && (
-                      <Badge variant="outline" className="text-xs border-amber-500 text-amber-700">
-                        Rescheduled
+                    {dateInfo.badgeText && (
+                      <Badge 
+                        variant="outline" 
+                        className={`text-xs ${
+                          dateInfo.badgeText === 'Rescheduled' 
+                            ? 'border-amber-500 text-amber-700' 
+                            : 'border-blue-500 text-blue-700'
+                        }`}
+                      >
+                        {dateInfo.badgeText}
                       </Badge>
                     )}
                   </div>
