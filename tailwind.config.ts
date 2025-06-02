@@ -74,8 +74,31 @@ export default {
 					orange: '#e67e22',
 					red: '#e74c3c'
 				},
-				gold: '#C29149',
-				'gold-dark': '#A07A3A'
+				gold: {
+					50: '#fefdf8',
+					100: '#fdf9e8',
+					200: '#faf0c5',
+					300: '#f4e197',
+					400: '#eccc67',
+					500: '#C29149',
+					600: '#A07A3A',
+					700: '#7d5f2d',
+					800: '#5c452e',
+					900: '#4a3a28'
+				},
+				'gold-dark': '#A07A3A',
+				sophisticated: {
+					gold: {
+						light: 'hsl(var(--gold-light))',
+						medium: 'hsl(var(--gold-medium))',
+						dark: 'hsl(var(--gold-dark))'
+					},
+					blue: {
+						light: 'hsl(var(--blue-light))',
+						medium: 'hsl(var(--blue-medium))',
+						dark: 'hsl(var(--blue-dark))'
+					}
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -111,6 +134,11 @@ export default {
 			},
 			lineHeight: {
 				'relaxed': '1.6'
+			},
+			backgroundImage: {
+				'gradient-gold': 'linear-gradient(135deg, #fdf9e8 0%, #f4e197 50%, #eccc67 100%)',
+				'gradient-blue': 'linear-gradient(135deg, #e6f2ff 0%, #cce7ff 50%, #99d6ff 100%)',
+				'gradient-sophisticated': 'linear-gradient(135deg, #fdf9e8 0%, #e6f2ff 100%)'
 			}
 		}
 	},

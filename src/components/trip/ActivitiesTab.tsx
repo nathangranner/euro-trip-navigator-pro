@@ -147,21 +147,22 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <h2 className="text-2xl font-bold text-slate-800">Activities & Attractions</h2>
+        <h2 className="text-2xl font-bold text-slate-700">Activities & Attractions</h2>
         <div className="flex items-center gap-3">
           <Button
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"
+            variant="gold"
           >
             <Plus className="h-4 w-4" />
             Add Activity
           </Button>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Sort by:</label>
+            <label className="text-sm font-medium text-slate-600">Sort by:</label>
             <select 
               value={sortBy} 
               onChange={(e) => setSortBy(e.target.value as 'original' | 'scheduled')}
-              className="text-sm border rounded px-2 py-1"
+              className="text-sm border border-gold-300 bg-gradient-to-r from-gold-50 to-gold-100 rounded px-2 py-1 text-slate-700"
             >
               <option value="scheduled">Scheduled Date</option>
               <option value="original">Original Day</option>
@@ -177,11 +178,11 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
         {sortedActivities.map((activity, index) => {
           const dateInfo = getDateDisplayInfo(activity);
           return (
-            <Card key={`${activity.dayInfo.dayId}-${activity.id}-${index}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card key={`${activity.dayInfo.dayId}-${activity.id}-${index}`} className="overflow-hidden hover:shadow-lg transition-shadow border-gold-200">
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-800 mb-2">
+                    <CardTitle className="text-lg text-slate-700 mb-2">
                       {activity.activity}
                     </CardTitle>
                     <div className="space-y-1">
@@ -190,7 +191,7 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                         {dateInfo.displayDate}
                       </div>
                       {dateInfo.isCustom && (
-                        <div className="flex items-center text-xs text-amber-600">
+                        <div className="flex items-center text-xs text-amber-700">
                           <CalendarDays className="h-3 w-3 mr-1" />
                           {activity.isRescheduled 
                             ? `Rescheduled from Day ${activity.dayInfo.dayNumber}`
@@ -216,6 +217,7 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => onEditActivity(activity, activity.dayInfo.dayId)}
+                        className="text-slate-600 hover:text-slate-700"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -225,7 +227,7 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteClick(activity.id, activity.dayInfo.dayId)}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -244,8 +246,8 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                         alt={activity.activity}
                         className="w-full h-40 object-cover rounded-lg"
                       />
-                      <label className="absolute top-2 right-2 bg-white/80 hover:bg-white p-1 rounded-full cursor-pointer transition-colors">
-                        <Camera className="h-4 w-4" />
+                      <label className="absolute top-2 right-2 bg-gold-100/90 hover:bg-gold-200/90 p-1 rounded-full cursor-pointer transition-colors border border-gold-300">
+                        <Camera className="h-4 w-4 text-slate-600" />
                         <input
                           type="file"
                           accept="image/*"
@@ -256,9 +258,9 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                       </label>
                     </div>
                   ) : (
-                    <label className={`w-full h-32 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-slate-400 transition-colors bg-slate-50 ${uploading ? 'opacity-50' : ''}`}>
-                      <Camera className="h-6 w-6 text-slate-400 mb-2" />
-                      <span className="text-sm text-slate-500">
+                    <label className={`w-full h-32 border-2 border-dashed border-gold-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gold-400 transition-colors bg-gradient-to-br from-gold-50 to-gold-100 ${uploading ? 'opacity-50' : ''}`}>
+                      <Camera className="h-6 w-6 text-gold-500 mb-2" />
+                      <span className="text-sm text-slate-600">
                         {uploading ? 'Uploading...' : 'Add photo'}
                       </span>
                       <input
@@ -298,8 +300,8 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
                         variant="outline" 
                         className={`text-xs ${
                           dateInfo.badgeText === 'Rescheduled' 
-                            ? 'border-amber-500 text-amber-700' 
-                            : 'border-blue-500 text-blue-700'
+                            ? 'border-amber-400 text-amber-700 bg-gradient-to-r from-amber-50 to-amber-100' 
+                            : 'border-blue-400 text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100'
                         }`}
                       >
                         {dateInfo.badgeText}
@@ -315,9 +317,9 @@ export const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
 
       {allActivities.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-slate-400 text-lg mb-2">No activities planned yet</div>
-          <p className="text-slate-500 mb-4">Activities will appear here as you add them to your itinerary</p>
-          <Button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 mx-auto">
+          <div className="text-slate-500 text-lg mb-2">No activities planned yet</div>
+          <p className="text-slate-600 mb-4">Activities will appear here as you add them to your itinerary</p>
+          <Button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 mx-auto" variant="gold">
             <Plus className="h-4 w-4" />
             Add Your First Activity
           </Button>
