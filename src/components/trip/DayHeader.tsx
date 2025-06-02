@@ -1,8 +1,8 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Map, Edit } from "lucide-react";
 import { DatabaseTripDay } from "@/hooks/useTripData";
+import { formatDisplayDate } from "@/utils/dateUtils";
 
 interface DayHeaderProps {
   tripDay: DatabaseTripDay;
@@ -20,12 +20,7 @@ export default function DayHeader({ tripDay, onEditDay, onViewMap }: DayHeaderPr
           </h3>
           <p className="text-sm text-gray-600">{tripDay.title}</p>
           <p className="text-sm text-gray-500">
-            {new Date(tripDay.date).toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+            {formatDisplayDate(tripDay.date)}
           </p>
         </div>
         <div className="flex gap-2">

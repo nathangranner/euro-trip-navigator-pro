@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { TripDay, Activity } from "@/types/trip";
 import { Map } from "lucide-react";
 import { DayMemento } from "./DayMemento";
 import { loadDayMementoImages, saveDayMementoImage } from "@/utils/mementoUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 
 interface DayCardProps {
   day: TripDay;
@@ -59,12 +59,7 @@ export const DayCard: React.FC<DayCardProps> = ({
               <p className="text-sm text-gray-300">{day.title}</p>
               {day.date && (
                 <p className="text-sm text-gray-400">
-                  {new Date(day.date).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
+                  {formatDisplayDate(day.date)}
                 </p>
               )}
             </div>
