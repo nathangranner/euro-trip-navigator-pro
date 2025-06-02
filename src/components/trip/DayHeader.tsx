@@ -1,34 +1,39 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Map, Edit } from "lucide-react";
-import { DatabaseTripDay } from "@/hooks/useTripData";
+import { TripDay } from "@/types/trip";
 import { formatDisplayDate } from "@/utils/dateUtils";
 
 interface DayHeaderProps {
-  tripDay: DatabaseTripDay;
-  onEditDay?: (day: DatabaseTripDay) => void;
-  onViewMap?: (day: DatabaseTripDay) => void;
+  day: TripDay;
+  onEditDay?: (day: TripDay) => void;
+  onViewMap?: (day: TripDay) => void;
 }
 
-export default function DayHeader({ tripDay, onEditDay, onViewMap }: DayHeaderProps) {
+export default function DayHeader({ day, onEditDay, onViewMap }: DayHeaderProps) {
+  if (!day) {
+    return null;
+  }
+
   return (
     <div className="bg-slate-50 p-4">
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-bold">
-            Day {tripDay.day_number}: {tripDay.city}
+            Day {day.dayNumber}: {day.city}
           </h3>
-          <p className="text-sm text-gray-600">{tripDay.title}</p>
+          <p className="text-sm text-gray-600">{day.title}</p>
           <p className="text-sm text-gray-500">
-            {formatDisplayDate(tripDay.date)}
+            {formatDisplayDate(day.date)}
           </p>
         </div>
         <div className="flex gap-2">
-          {onViewMap && tripDay.accommodation_address && (
+          {onViewMap && (day.accommodationAddress || day.accommodation?.address) && (
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => onViewMap(tripDay)}
+              onClick={() => onViewMap(day)}
               className="flex items-center gap-2"
             >
               <Map className="h-4 w-4" />
@@ -39,7 +44,7 @@ export default function DayHeader({ tripDay, onEditDay, onViewMap }: DayHeaderPr
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => onEditDay(tripDay)}
+              onClick={() => onEditDay(day)}
               className="flex items-center gap-2"
             >
               <Edit className="h-4 w-4" />

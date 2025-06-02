@@ -1,26 +1,24 @@
 
 import React from "react";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DatabaseTripDay } from "@/hooks/useTripData";
+import { TabsTrigger } from "@/components/ui/tabs";
+import { TripDay } from "@/types/trip";
 
 interface DayTabsProps {
-  tripDays: DatabaseTripDay[];
-  current: string;
-  onChange: (value: string) => void;
+  tripDays: TripDay[];
 }
 
-export default function DayTabs({ tripDays, current, onChange }: DayTabsProps) {
+export default function DayTabs({ tripDays }: DayTabsProps) {
   return (
-    <TabsList className="mb-4">
+    <>
       {tripDays.map((day, idx) => (
         <TabsTrigger
-          key={`tab-${day.id}-${day.day_number}-${idx}`}
+          key={`tab-${day.id}-${day.dayNumber}-${idx}`}
           value={day.id}
           className="text-sm"
         >
-          Day {day.day_number}: {day.city}
+          Day {day.dayNumber}: {day.city}
         </TabsTrigger>
       ))}
-    </TabsList>
+    </>
   );
 }
