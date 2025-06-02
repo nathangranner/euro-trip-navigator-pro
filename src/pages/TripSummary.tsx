@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -87,7 +88,7 @@ const TripSummary: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
+      <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
         <div className="flex justify-center items-center h-64">
           <p className="text-white">Loading trip data...</p>
         </div>
@@ -97,9 +98,9 @@ const TripSummary: React.FC = () => {
 
   if (!selectedTrip && displayTripDays.length === 0) {
     return (
-      <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
+      <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
         <div className="flex justify-center items-center h-64">
-          <div className="text-center">
+          <div className="text-center px-4">
             <p className="text-white mb-4">No trip data available.</p>
             <Button onClick={() => navigate("/planner")} className="bg-blue-800 hover:bg-blue-900">
               Go to Planner
@@ -111,79 +112,88 @@ const TripSummary: React.FC = () => {
   }
 
   return (
-    <div className="container bg-blue-600 mx-0 my-0 py-[27px] rounded font-futura">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-light tracking-wide text-white bg-yellow-600">
+    <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 px-3 sm:px-0 gap-3 sm:gap-0">
+        <h1 className="text-2xl sm:text-3xl font-light tracking-wide text-white bg-yellow-600 px-2 py-1 rounded">
           {selectedTrip?.name || "Europe Trip 2025"}
         </h1>
-        <div className="flex space-x-2">
-          <Button onClick={() => navigate("/planner")} className="flex items-center gap-2 bg-blue-800 hover:bg-blue-900 font-light">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+          <Button 
+            onClick={() => navigate("/planner")} 
+            className="flex items-center justify-center gap-2 bg-blue-800 hover:bg-blue-900 font-light text-sm w-full sm:w-auto"
+          >
             <Calendar className="h-4 w-4" />
             Trip Planner
           </Button>
-          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center gap-2 border-blue-300 text-white hover:bg-blue-700 font-light">
+          <Button 
+            onClick={() => navigate("/")} 
+            variant="outline" 
+            className="flex items-center justify-center gap-2 border-blue-300 text-white hover:bg-blue-700 font-light text-sm w-full sm:w-auto"
+          >
             <Compass className="h-4 w-4" />
             Home
           </Button>
         </div>
       </div>
 
-      <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
+      <div className="px-3 sm:px-0">
+        <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <TripDurationCard 
-          daysCount={displayTripDays.length} 
-          startDate={selectedTrip?.start_date || "2025-06-15"} 
-          endDate={selectedTrip?.end_date || "2025-07-15"} 
-        />
-        <TripCompletionCard tripDays={displayTripDays} />
-        <ExpenseDisplay totals={totalExpenses} title="Total Expenses" />
-        <ExpenseDisplay totals={totalPurchases} title="Customs Declarations" />
-      </div>
-
-      <Tabs defaultValue="itinerary" className="mb-8" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4 bg-gradient-to-r from-blue-800 to-blue-900 p-1">
-          <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Day by Day</TabsTrigger>
-          <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">City View</TabsTrigger>
-          <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Accommodations</TabsTrigger>
-          <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Expenses</TabsTrigger>
-          <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Purchases</TabsTrigger>
-          <TabsTrigger value="reference" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide">Reference</TabsTrigger>
-        </TabsList>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <TabsContent value="itinerary">
-            <ItineraryContainer 
-              tripDays={displayTripDays} 
-              onEditDay={handleEditDay}
-              onEditActivity={handleEditActivity}
-              onViewMap={handleViewMap}
-            />
-          </TabsContent>
-          
-          <TabsContent value="cityview">
-            <CityViewTab tripDays={displayTripDays} onViewMap={handleViewMap} />
-          </TabsContent>
-          
-          <TabsContent value="accommodations">
-            <AccommodationsTab tripDays={displayTripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
-          </TabsContent>
-          
-          <TabsContent value="expenses">
-            <ExpensesTab expensesByDay={{}} tripDays={displayTripDays} />
-          </TabsContent>
-          
-          <TabsContent value="purchases">
-            <PurchasesTab purchasesByDay={{}} tripDays={displayTripDays} />
-          </TabsContent>
-          
-          <TabsContent value="reference">
-            <TravelReferenceSection />
-          </TabsContent>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <TripDurationCard 
+            daysCount={displayTripDays.length} 
+            startDate={selectedTrip?.start_date || "2025-06-15"} 
+            endDate={selectedTrip?.end_date || "2025-07-15"} 
+          />
+          <TripCompletionCard tripDays={displayTripDays} />
+          <ExpenseDisplay totals={totalExpenses} title="Total Expenses" />
+          <ExpenseDisplay totals={totalPurchases} title="Customs Declarations" />
         </div>
-      </Tabs>
-      
-      <TravelBuddySection />
+
+        <Tabs defaultValue="itinerary" className="mb-6 sm:mb-8" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4 bg-gradient-to-r from-blue-800 to-blue-900 p-1 w-full overflow-x-auto flex-nowrap">
+            <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Day by Day</TabsTrigger>
+            <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">City View</TabsTrigger>
+            <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Hotels</TabsTrigger>
+            <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Expenses</TabsTrigger>
+            <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Purchases</TabsTrigger>
+            <TabsTrigger value="reference" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap">Reference</TabsTrigger>
+          </TabsList>
+          
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+            <TabsContent value="itinerary">
+              <ItineraryContainer 
+                tripDays={displayTripDays} 
+                onEditDay={handleEditDay}
+                onEditActivity={handleEditActivity}
+                onViewMap={handleViewMap}
+              />
+            </TabsContent>
+            
+            <TabsContent value="cityview">
+              <CityViewTab tripDays={displayTripDays} onViewMap={handleViewMap} />
+            </TabsContent>
+            
+            <TabsContent value="accommodations">
+              <AccommodationsTab tripDays={displayTripDays} onViewMap={handleViewMap} onEditLocation={handleEditLocation} />
+            </TabsContent>
+            
+            <TabsContent value="expenses">
+              <ExpensesTab expensesByDay={{}} tripDays={displayTripDays} />
+            </TabsContent>
+            
+            <TabsContent value="purchases">
+              <PurchasesTab purchasesByDay={{}} tripDays={displayTripDays} />
+            </TabsContent>
+            
+            <TabsContent value="reference">
+              <TravelReferenceSection />
+            </TabsContent>
+          </div>
+        </Tabs>
+        
+        <TravelBuddySection />
+      </div>
 
       {/* Edit Modals */}
       <TripModals
