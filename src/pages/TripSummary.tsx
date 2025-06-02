@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,8 @@ import { CityViewTab } from "@/components/trip/CityViewTab";
 import { AccommodationsTab } from "@/components/trip/AccommodationsTab";
 import { ExpensesTab } from "@/components/trip/ExpensesTab";
 import { PurchasesTab } from "@/components/trip/PurchasesTab";
+import { ActivitiesTab } from "@/components/trip/ActivitiesTab";
+import { DiningTab } from "@/components/trip/DiningTab";
 import { TravelBuddySection } from "@/components/trip/TravelBuddySection";
 import { TripBanner } from "@/components/trip/TripBanner";
 import { TripModals } from "@/components/trip/TripModals";
