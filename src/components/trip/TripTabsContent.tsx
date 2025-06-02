@@ -2,6 +2,8 @@
 import React from "react";
 import { TripDay } from "@/types/trip";
 import { ItineraryTab } from "./ItineraryTab";
+import { ActivitiesTab } from "./ActivitiesTab";
+import { DiningTab } from "./DiningTab";
 import { HotelsTab } from "./HotelsTab";
 import { ExpenseTracker } from "@/components/ExpenseTracker";
 import { PurchaseTracker } from "@/components/PurchaseTracker";
@@ -26,6 +28,20 @@ export const TripTabsContent: React.FC<TripTabsContentProps> = ({
         <ItineraryTab 
           tripDays={tripDays}
           onEditDay={onEditDay}
+          onEditActivity={onEditActivity}
+        />
+      </TabsContent>
+
+      <TabsContent value="activities">
+        <ActivitiesTab 
+          tripDays={tripDays}
+          onEditActivity={onEditActivity}
+        />
+      </TabsContent>
+
+      <TabsContent value="dining">
+        <DiningTab 
+          tripDays={tripDays}
           onEditActivity={onEditActivity}
         />
       </TabsContent>
