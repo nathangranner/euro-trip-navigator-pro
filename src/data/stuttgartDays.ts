@@ -1,23 +1,24 @@
+
 import { TripDay } from "@/types/trip";
 
 export const stuttgartDays: TripDay[] = [
   {
-    id: "day-13",
-    dayNumber: 13,
-    date: "2025-06-17",
+    id: "day-15",
+    dayNumber: 15,
+    date: "2025-06-19",
     city: "Stuttgart",
     country: "Germany",
-    description: "Travel from Zürich to Stuttgart",
-    title: "Zürich to Stuttgart",
+    description: "Travel from Baden to Stuttgart",
+    title: "Baden to Stuttgart",
     activities: [
       {
-        id: "depart-zurich",
+        id: "depart-baden",
         time: "11:00 AM",
-        activity: "Depart Zürich by car",
+        activity: "Depart Baden by car",
         type: "travel",
         icon: "🚗",
         completed: false,
-        location: "Zürich",
+        location: "Baden",
         note: "220 km drive to Stuttgart, approximately 3 hours via A1 toward Winterthur"
       },
       {
@@ -96,9 +97,9 @@ export const stuttgartDays: TripDay[] = [
     ]
   },
   {
-    id: "day-14",
-    dayNumber: 14,
-    date: "2025-06-18",
+    id: "day-16",
+    dayNumber: 16,
+    date: "2025-06-20",
     city: "Stuttgart",
     country: "Germany",
     description: "Full day exploring Stuttgart museums",
@@ -166,9 +167,9 @@ export const stuttgartDays: TripDay[] = [
     ]
   },
   {
-    id: "day-15",
-    dayNumber: 15,
-    date: "2025-06-19",
+    id: "day-17",
+    dayNumber: 17,
+    date: "2025-06-21",
     city: "Stuttgart",
     country: "Germany",
     description: "Pre-audition preparation day",
@@ -246,9 +247,9 @@ export const stuttgartDays: TripDay[] = [
     ]
   },
   {
-    id: "day-16",
-    dayNumber: 16,
-    date: "2025-06-20",
+    id: "day-18",
+    dayNumber: 18,
+    date: "2025-06-22",
     city: "Stuttgart",
     country: "Germany", 
     description: "Opera audition day at Staatsoper Stuttgart",
@@ -321,7 +322,7 @@ export const stuttgartDays: TripDay[] = [
       address: "Kopenhagener Strasse 3, Stuttgart, Baden-Württemberg 70173",
       contactPhone: "+49-711-4909290",
       confirmationNumber: "CI5EKCQU",
-      checkout: "June 21, 11:00 AM"
+      checkout: "June 23, 11:00 AM"
     },
     warnings: [
       {

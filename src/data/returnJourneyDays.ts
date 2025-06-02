@@ -3,9 +3,9 @@ import { TripDay } from "@/types/trip";
 
 export const returnJourneyDays: TripDay[] = [
   {
-    id: "day-19",
-    dayNumber: 19,
-    date: "2025-06-23",
+    id: "day-21",
+    dayNumber: 21,
+    date: "2025-06-25",
     city: "Black Forest to Milan",
     country: "Germany/Italy",
     description: "Begin return journey toward Milan",
@@ -73,116 +73,9 @@ export const returnJourneyDays: TripDay[] = [
     ]
   },
   {
-    id: "day-20",
-    dayNumber: 20,
-    date: "2025-06-24",
-    city: "Milan",
-    country: "Italy",
-    description: "Return to Milan via Lucerne",
-    title: "Return to Milan via Lucerne",
-    activities: [
-      {
-        id: "morning-departure",
-        time: "9:00 AM",
-        activity: "Depart for Lucerne",
-        type: "travel",
-        icon: "🚗",
-        completed: false,
-        location: "En route to Lucerne",
-        note: "A2 south through Switzerland to Milan"
-      },
-      {
-        id: "lucerne-arrival",
-        time: "12:00 PM",
-        activity: "Arrive in Lucerne",
-        type: "travel",
-        icon: "🚗",
-        completed: false,
-        location: "Lucerne, Switzerland"
-      },
-      {
-        id: "chapel-bridge",
-        time: "12:30 PM",
-        activity: "Chapel Bridge visit",
-        type: "sightseeing",
-        icon: "🌉",
-        completed: false,
-        location: "Chapel Bridge, Lucerne",
-        mustTry: true
-      },
-      {
-        id: "lucerne-oldtown",
-        time: "1:00 PM",
-        activity: "Lucerne Old Town exploration",
-        type: "sightseeing",
-        icon: "🏘️",
-        completed: false,
-        location: "Lucerne Old Town",
-        mustTry: true
-      },
-      {
-        id: "lucerne-lunch",
-        time: "1:30 PM",
-        activity: "Quick lunch in Lucerne",
-        type: "dining",
-        icon: "🍽️",
-        completed: false,
-        location: "Lucerne restaurant"
-      },
-      {
-        id: "depart-lucerne",
-        time: "2:00 PM",
-        activity: "Depart Lucerne for Milan",
-        type: "travel",
-        icon: "🚗",
-        completed: false,
-        location: "Lucerne",
-        note: "Continue A2 south to Milan"
-      },
-      {
-        id: "arrive-milan",
-        time: "Evening",
-        activity: "Arrive Milan area",
-        type: "travel",
-        icon: "🚗",
-        completed: false,
-        location: "Near Milan airport"
-      },
-      {
-        id: "pack-prepare",
-        time: "8:00 PM",
-        activity: "Pack and prepare for departure",
-        type: "travel",
-        icon: "🧳",
-        completed: false,
-        location: "Milan hotel"
-      },
-      {
-        id: "milan-dinner",
-        time: "9:00 PM",
-        activity: "Final dinner in Milan",
-        type: "dining",
-        icon: "🍽️",
-        completed: false,
-        location: "Milan restaurant",
-        mustTry: true
-      }
-    ],
-    accommodation: {
-      name: "NEEDS BOOKING",
-      address: "Near Milan airport"
-    },
-    warnings: [
-      {
-        type: "warning",
-        message: "Allow extra time for border crossing and traffic. Book hotel near MXP"
-      }
-    ]
-  },
-  {
-    id: "day-21",
-    dayNumber: 21,
-    date: "2025-06-25",
+    id: "day-22",
+    dayNumber: 22,
+    date: "2025-06-26",
     city: "Milan",
     country: "Italy",
     description: "Milan departure - Return to USA",

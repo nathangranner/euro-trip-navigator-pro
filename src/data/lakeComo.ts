@@ -3,8 +3,8 @@ import { TripDay } from "@/types/trip";
 
 export const lakeComoDays: TripDay[] = [
   {
-    id: "day-9",
-    dayNumber: 9,
+    id: "day-10",
+    dayNumber: 10,
     date: "2025-06-14",
     city: "Lake Como/Vezio",
     country: "Italy",
@@ -58,8 +58,8 @@ export const lakeComoDays: TripDay[] = [
     }
   },
   {
-    id: "day-10",
-    dayNumber: 10,
+    id: "day-11",
+    dayNumber: 11,
     date: "2025-06-15",
     city: "Lake Como",
     country: "Italy",
@@ -136,8 +136,8 @@ export const lakeComoDays: TripDay[] = [
     ]
   },
   {
-    id: "day-11",
-    dayNumber: 11,
+    id: "day-12",
+    dayNumber: 12,
     date: "2025-06-16",
     city: "Baden",
     country: "Switzerland", 
@@ -212,8 +212,8 @@ export const lakeComoDays: TripDay[] = [
     }
   },
   {
-    id: "day-12", 
-    dayNumber: 12,
+    id: "day-13", 
+    dayNumber: 13,
     date: "2025-06-17",
     city: "Baden",
     country: "Switzerland",
@@ -287,8 +287,8 @@ export const lakeComoDays: TripDay[] = [
     ]
   },
   {
-    id: "day-13",
-    dayNumber: 13,
+    id: "day-14",
+    dayNumber: 14,
     date: "2025-06-18",
     city: "Baden",
     country: "Switzerland",

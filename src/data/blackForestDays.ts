@@ -3,9 +3,9 @@ import { TripDay } from "@/types/trip";
 
 export const blackForestDays: TripDay[] = [
   {
-    id: "day-17",
-    dayNumber: 17,
-    date: "2025-06-21",
+    id: "day-19",
+    dayNumber: 19,
+    date: "2025-06-23",
     city: "Black Forest",
     country: "Germany",
     description: "Stuttgart to Black Forest - Begin exploration",
@@ -94,9 +94,9 @@ export const blackForestDays: TripDay[] = [
     ]
   },
   {
-    id: "day-18",
-    dayNumber: 18,
-    date: "2025-06-22",
+    id: "day-20",
+    dayNumber: 20,
+    date: "2025-06-24",
     city: "Black Forest",
     country: "Germany",
     description: "Full day exploring Black Forest attractions",
