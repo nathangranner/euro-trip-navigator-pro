@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { TripDay, Activity } from "@/types/trip";
 import { Button } from "@/components/ui/button";
@@ -26,10 +25,10 @@ export const ItineraryTab: React.FC<ItineraryTabProps> = ({
   };
   return <div>
       <div className="flex space-x-2 mb-4">
-        <Button onClick={() => setView("tabs")} variant={view === "tabs" ? "default" : "outline"} size="sm" className="bg-blue-900 hover:bg-blue-800 text-white">
+        <Button onClick={() => setView("tabs")} variant={view === "tabs" ? "default" : "outline"} size="sm" className="text-white bg-sky-950 hover:bg-sky-800">
           Tabs View
         </Button>
-        <Button onClick={() => setView("list")} variant={view === "list" ? "default" : "outline"} size="sm" className="bg-cyan-900 hover:bg-cyan-800 text-gray-50">
+        <Button onClick={() => setView("list")} variant={view === "list" ? "default" : "outline"} size="sm" className="text-gray-50 bg-sky-950 hover:bg-sky-800">
           List View
         </Button>
       </div>

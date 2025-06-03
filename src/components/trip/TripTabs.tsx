@@ -1,9 +1,9 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const TripTabs: React.FC = () => {
-  return <div className="mb-4 sm:mb-6 bg-amber-600 p-1 rounded-2xl">
+  return <div className="mb-4 sm:mb-6 p-1 rounded-2xl bg-amber-700">
       <TabsList className="w-full bg-transparent p-0 h-auto grid-cols-none flex overflow-x-auto scrollbar-hide">
-        <TabsTrigger value="itinerary" className="font-futura tracking-wide uppercase text-sm sm:text-base whitespace-nowrap px-3 sm:px-4 py-2 flex-shrink-0 min-w-fit text-gray-200 bg-amber-700 hover:bg-amber-600">
+        <TabsTrigger value="itinerary" className="font-futura tracking-wide uppercase text-sm sm:text-base whitespace-nowrap px-3 sm:px-4 py-2 flex-shrink-0 min-w-fit bg-amber-700 hover:bg-amber-600 text-gray-900">
           Itinerary
         </TabsTrigger>
         <TabsTrigger value="activities" className="font-futura text-sm sm:text-base tracking-wide uppercase text-slate-100 whitespace-nowrap px-3 sm:px-4 py-2 flex-shrink-0 min-w-fit bg-amber-700 hover:bg-amber-600">

@@ -28,11 +28,11 @@ export default function DayHeader({
           </p>
         </div>
         <div className="flex gap-2">
-          {onViewMap && (day.accommodationAddress || day.accommodation?.address) && <Button variant="outline" size="sm" onClick={() => onViewMap(day)} className="flex items-center gap-2 bg-emerald-300 hover:bg-emerald-200">
+          {onViewMap && (day.accommodationAddress || day.accommodation?.address) && <Button variant="outline" size="sm" onClick={() => onViewMap(day)} className="flex items-center gap-2 bg-cyan-800 hover:bg-cyan-700 text-amber-500">
               <Map className="h-4 w-4" />
               View Map
             </Button>}
-          {onEditDay && <Button variant="outline" size="sm" onClick={() => onEditDay(day)} className="flex items-center gap-2 text-green-300">
+          {onEditDay && <Button variant="outline" size="sm" onClick={() => onEditDay(day)} className="flex items-center gap-2 bg-cyan-950 hover:bg-cyan-800 text-amber-500">
               <Edit className="h-4 w-4" />
               Edit Day
             </Button>}

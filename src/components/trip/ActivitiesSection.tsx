@@ -36,7 +36,7 @@ export default function ActivitiesSection({
       <div className="space-y-3">
         {activities.map((activity, activityIdx) => <div key={`activity-${activity.id}-${activityIdx}`} className="flex justify-between items-start group border p-3 px-[6px] rounded-none bg-gray-900">
             <div className="flex-1">
-              <div className="flex items-center gap-2 bg-[#084e6e]/65">
+              <div className="flex items-center gap-2 bg-slate-900">
                 <span className="font-medium text-sm text-orange-400">{activity.time}</span>
                 <span className="text-sm font-medium text-orange-400">{activity.activity}</span>
                 {activity.completed && <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
