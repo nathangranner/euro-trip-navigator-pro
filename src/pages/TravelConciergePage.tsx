@@ -7,13 +7,17 @@ import { TranslationTool } from "@/components/TranslationTool";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 import NavHome from "@/components/NavHome";
+
 const TravelConciergePage: React.FC = () => {
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
+
   const handleOpenChat = () => {
     setIsChatOpen(true);
   };
-  return <div className="min-h-screen bg-slate-800">
+
+  return (
+    <div className="min-h-screen bg-slate-800">
       {/* Home navigation button */}
       <NavHome />
       
@@ -78,13 +82,13 @@ const TravelConciergePage: React.FC = () => {
               </Card>
             </TabsContent>
             <TabsContent value="translator">
-              <Card className="bg-slate-700 border-slate-600">
-                <TranslationTool />
-              </Card>
+              <TranslationTool />
             </TabsContent>
           </Tabs>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TravelConciergePage;

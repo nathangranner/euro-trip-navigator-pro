@@ -10,19 +10,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-md",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-gold-300 bg-gradient-to-r from-gold-50 to-gold-100 text-slate-700 hover:from-gold-100 hover:to-gold-200",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-gradient-to-r from-gold-200 to-gold-300 text-slate-700 hover:from-gold-300 hover:to-gold-400",
-        ghost: "hover:bg-gold-100 hover:text-slate-700",
-        link: "text-blue-600 underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
         cursive: "cursive-button relative text-white",
         envelope: "envelope-container relative cursor-pointer",
         gold: "bg-gradient-to-r from-gold-400 to-gold-500 text-slate-800 hover:from-gold-500 hover:to-gold-600 shadow-md",
-        blue: "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-md",
+        blue: "bg-blue-600 text-white hover:bg-blue-700 shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",
