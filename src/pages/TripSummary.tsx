@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -28,16 +26,19 @@ import { convertDatabaseTripDayToTripDay } from "@/utils/typeConverters";
 import { useTripState } from "@/hooks/useTripState";
 import { TripDay, Activity } from "@/types/trip";
 import { TravelReferenceSection } from "@/components/trip/TravelReferenceSection";
-
 const TripSummary: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("itinerary");
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-  
-  const { trips, loading } = useTrips();
+  const {
+    trips,
+    loading
+  } = useTrips();
   const selectedTrip = trips[0]; // Use first trip for summary
-  const { tripDays } = useTripData(selectedTrip?.id || null);
-  
+  const {
+    tripDays
+  } = useTripData(selectedTrip?.id || null);
+
   // Use the trip state hook for editing functionality
   const {
     tripDays: editableTripDays,
@@ -52,18 +53,16 @@ const TripSummary: React.FC = () => {
     setEditingDay,
     setEditingActivity
   } = useTripState();
-  
+
   // Convert database trip days to legacy format for components that need it
   const legacyTripDays = tripDays.map(convertDatabaseTripDayToTripDay);
-  
+
   // Use editable trip days if available, otherwise fall back to converted legacy days
   const displayTripDays = editableTripDays.length > 0 ? editableTripDays : legacyTripDays;
-  
   const {
     totalExpenses,
     totalPurchases
   } = useTripCalculations(displayTripDays);
-
   useEffect(() => {
     const savedBanner = loadBannerImage();
     if (savedBanner) {
@@ -90,20 +89,15 @@ const TripSummary: React.FC = () => {
   const handleEditLocation = (dayIndex: number) => {
     navigate(`/planner?day=${dayIndex}`);
   };
-
   if (loading) {
-    return (
-      <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
+    return <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
         <div className="flex justify-center items-center h-64">
           <p className="text-white">Loading trip data...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!selectedTrip && displayTripDays.length === 0) {
-    return (
-      <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
+    return <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
         <div className="flex justify-center items-center h-64">
           <div className="text-center px-4">
             <p className="text-white mb-4">No trip data available.</p>
@@ -112,29 +106,19 @@ const TripSummary: React.FC = () => {
             </Button>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="container bg-blue-600 mx-0 my-0 py-4 sm:py-[27px] rounded font-futura">
+  return <div className="container mx-0 my-0 py-4 sm:py-[27px] rounded font-futura bg-sky-950">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 px-3 sm:px-0 gap-3 sm:gap-0">
-        <h1 className="text-2xl sm:text-3xl font-light tracking-wide text-white bg-yellow-600 px-2 py-1 rounded">
+        <h1 className="text-2xl sm:text-3xl font-light tracking-wide bg-yellow-600 px-2 py-1 rounded text-sky-50">
           {selectedTrip?.name || "Europe Trip 2025"}
         </h1>
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-          <Button 
-            onClick={() => navigate("/planner")} 
-            className="flex items-center justify-center gap-2 bg-blue-800 hover:bg-blue-900 font-light text-sm w-full sm:w-auto"
-          >
+          <Button onClick={() => navigate("/planner")} className="flex items-center justify-center gap-2 bg-blue-800 hover:bg-blue-900 font-light text-sm w-full sm:w-auto">
             <Calendar className="h-4 w-4" />
             Trip Planner
           </Button>
-          <Button 
-            onClick={() => navigate("/")} 
-            variant="outline" 
-            className="flex items-center justify-center gap-2 border-blue-300 text-white hover:bg-blue-700 font-light text-sm w-full sm:w-auto"
-          >
+          <Button onClick={() => navigate("/")} variant="outline" className="flex items-center justify-center gap-2 border-blue-300 text-white font-light text-sm w-full sm:w-auto bg-sky-900 hover:bg-sky-800">
             <Compass className="h-4 w-4" />
             Home
           </Button>
@@ -145,11 +129,7 @@ const TripSummary: React.FC = () => {
         <TripBanner bannerImage={bannerImage} onBannerChange={handleBannerChange} />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <TripDurationCard 
-            daysCount={displayTripDays.length} 
-            startDate={selectedTrip?.start_date || "2025-06-15"} 
-            endDate={selectedTrip?.end_date || "2025-07-15"} 
-          />
+          <TripDurationCard daysCount={displayTripDays.length} startDate={selectedTrip?.start_date || "2025-06-15"} endDate={selectedTrip?.end_date || "2025-07-15"} />
           <TripCompletionCard tripDays={displayTripDays} />
           <ExpenseDisplay totals={totalExpenses} title="Total Expenses" />
           <ExpenseDisplay totals={totalPurchases} title="Customs Declarations" />
@@ -158,40 +138,22 @@ const TripSummary: React.FC = () => {
         <Tabs defaultValue="itinerary" className="mb-6 sm:mb-8" value={activeTab} onValueChange={setActiveTab}>
           <div className="mb-4 bg-gradient-to-r from-blue-800 to-blue-900 p-1 rounded-lg">
             <TabsList className="w-full bg-transparent p-0 h-auto grid-cols-none flex overflow-x-auto scrollbar-hide">
-              <TabsTrigger 
-                value="itinerary" 
-                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
-              >
+              <TabsTrigger value="itinerary" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit">
                 Day by Day
               </TabsTrigger>
-              <TabsTrigger 
-                value="cityview" 
-                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
-              >
+              <TabsTrigger value="cityview" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit">
                 City View
               </TabsTrigger>
-              <TabsTrigger 
-                value="accommodations" 
-                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
-              >
+              <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit">
                 Hotels
               </TabsTrigger>
-              <TabsTrigger 
-                value="expenses" 
-                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
-              >
+              <TabsTrigger value="expenses" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit">
                 Expenses
               </TabsTrigger>
-              <TabsTrigger 
-                value="purchases" 
-                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
-              >
+              <TabsTrigger value="purchases" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit">
                 Purchases
               </TabsTrigger>
-              <TabsTrigger 
-                value="reference" 
-                className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit"
-              >
+              <TabsTrigger value="reference" className="data-[state=active]:bg-white data-[state=active]:text-blue-800 text-white font-light tracking-wide text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-2 flex-shrink-0 min-w-fit">
                 Reference
               </TabsTrigger>
             </TabsList>
@@ -199,30 +161,15 @@ const TripSummary: React.FC = () => {
           
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
             <TabsContent value="itinerary">
-              <ItineraryContainer 
-                tripDays={displayTripDays} 
-                onEditDay={handleEditDay}
-                onEditActivity={handleEditActivity}
-                onViewMap={handleViewMap}
-              />
+              <ItineraryContainer tripDays={displayTripDays} onEditDay={handleEditDay} onEditActivity={handleEditActivity} onViewMap={handleViewMap} />
             </TabsContent>
             
             <TabsContent value="activities">
-              <ActivitiesTab 
-                tripDays={displayTripDays}
-                onEditActivity={handleEditActivity}
-                onDeleteActivity={handleDeleteActivity}
-                onCreateActivity={handleCreateActivity}
-              />
+              <ActivitiesTab tripDays={displayTripDays} onEditActivity={handleEditActivity} onDeleteActivity={handleDeleteActivity} onCreateActivity={handleCreateActivity} />
             </TabsContent>
             
             <TabsContent value="dining">
-              <DiningTab 
-                tripDays={displayTripDays}
-                onEditActivity={handleEditActivity}
-                onDeleteActivity={handleDeleteActivity}
-                onCreateActivity={handleCreateActivity}
-              />
+              <DiningTab tripDays={displayTripDays} onEditActivity={handleEditActivity} onDeleteActivity={handleDeleteActivity} onCreateActivity={handleCreateActivity} />
             </TabsContent>
             
             <TabsContent value="accommodations">
@@ -247,16 +194,7 @@ const TripSummary: React.FC = () => {
       </div>
 
       {/* Edit Modals */}
-      <TripModals
-        editingDay={editingDay}
-        editingActivity={editingActivity}
-        onSaveDay={handleSaveDay}
-        onSaveActivity={handleSaveActivity}
-        onCloseDay={() => setEditingDay(null)}
-        onCloseActivity={() => setEditingActivity(null)}
-      />
-    </div>
-  );
+      <TripModals editingDay={editingDay} editingActivity={editingActivity} onSaveDay={handleSaveDay} onSaveActivity={handleSaveActivity} onCloseDay={() => setEditingDay(null)} onCloseActivity={() => setEditingActivity(null)} />
+    </div>;
 };
-
 export default TripSummary;
