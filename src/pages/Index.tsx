@@ -1,9 +1,12 @@
+
 import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Mail, MailOpen, ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import DateProgress from "@/components/DateProgress";
+import { europeTrip } from "@/data/europeTrip";
+
 const Index = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -23,12 +26,33 @@ const Index = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   const handleNavigate = (path: string) => {
     navigate(path);
   };
+
   const scrollToItinerary = () => {
     navigate("/planner");
   };
+
+  // Group days by city for the travel localities display
+  const travelLocalities = europeTrip.days.reduce((acc, day) => {
+    const existing = acc.find(item => item.city === day.city);
+    if (existing) {
+      existing.days.push(day.dayNumber);
+      existing.endDate = day.date;
+    } else {
+      acc.push({
+        city: day.city,
+        country: day.country,
+        days: [day.dayNumber],
+        startDate: day.date,
+        endDate: day.date
+      });
+    }
+    return acc;
+  }, [] as Array<{city: string, country: string, days: number[], startDate: string, endDate: string}>);
+
   return <div className="relative min-h-screen overflow-hidden bg-black text-white font-body">
       {/* Header */}
       <Header />
@@ -92,13 +116,30 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Sections for navigation anchors */}
+        {/* Daily Travel and Localities Section */}
         <div id="dates" className="mb-8 sm:mb-12 md:mb-24 py-8 sm:py-12 md:py-24">
           <div className="text-center px-3 sm:px-4">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-light font-heading uppercase tracking-wider mb-4 sm:mb-6 md:mb-8">Travel Dates</h2>
-            <div className="max-w-2xl mx-auto">
-              <p className="text-base sm:text-lg md:text-xl text-white/80 mb-3 sm:mb-4 leading-relaxed">June 5-26, 2025</p>
-              <p className="text-sm sm:text-base md:text-lg text-white/70 leading-relaxed">21 days across 7 European destinations</p>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-light font-heading uppercase tracking-wider mb-4 sm:mb-6 md:mb-8">Daily Travel & Localities</h2>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 sm:mb-8 leading-relaxed">June 5-26, 2025 • 21 days across Europe</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {travelLocalities.map((location, index) => (
+                  <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-4 sm:p-6 border border-white/20">
+                    <h3 className="text-lg sm:text-xl font-semibold text-amber-400 mb-2">{location.city}</h3>
+                    <p className="text-sm sm:text-base text-white/70 mb-3">{location.country}</p>
+                    <div className="text-xs sm:text-sm text-white/60">
+                      <p>Days {location.days.length > 1 ? `${Math.min(...location.days)}-${Math.max(...location.days)}` : location.days[0]}</p>
+                      <p className="mt-1">
+                        {new Date(location.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {location.startDate !== location.endDate && (
+                          <> - {new Date(location.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -161,4 +202,5 @@ const Index = () => {
       <div className="absolute bottom-[20vh] left-0 w-full h-[1px] bg-gradient-to-r from-white from-opacity-0 via-white via-opacity-30 to-white to-opacity-0"></div>
     </div>;
 };
+
 export default Index;
