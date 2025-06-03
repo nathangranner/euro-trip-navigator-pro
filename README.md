@@ -1,75 +1,91 @@
-# Welcome to your Lovable project
 
-[![CI](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/CI/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions)
+# Europe Trip 2025 - Travel Planning App
 
-## Project info
+A comprehensive travel planning application for Nathan & Jamie Granner's 23-day European adventure through Italy, Switzerland, and Germany.
 
-**URL**: https://lovable.dev/projects/4bcbc648-1524-4aeb-8368-0a3883ce7a37
+## 🌍 About This Trip
 
-## How can I edit this code?
+**Duration**: June 5-25, 2025 (23 days)  
+**Destinations**: Florence, Bologna, Lake Como, Stuttgart, Black Forest, Locarno  
+**Countries**: Italy, Switzerland, Germany
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+- **Day-by-Day Itinerary**: Complete daily schedules with activities, dining, and accommodations
+- **Multiple View Modes**: Switch between list view and tabbed view for different perspectives
+- **Accommodation Management**: Hotel details, check-in/out times, and contact information
+- **Activity Tracking**: Mark activities as completed and add personal notes
+- **Expense Tracking**: Monitor spending across different categories
+- **City Overview**: Organized view of destinations and key highlights
+- **Travel Reference**: Important documents, insurance info, and emergency contacts
+- **Offline Support**: Works without internet connection for on-the-go access
+- **Responsive Design**: Optimized for both desktop and mobile devices
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4bcbc648-1524-4aeb-8368-0a3883ce7a37) and start prompting.
+## 🚀 Live Application
 
-Changes made via Lovable will be committed automatically to this repo.
+This application is built with modern web technologies and deployed for easy access during travel.
 
-**Use your preferred IDE**
+## 🛠 Technology Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS with custom themes
+- **UI Components**: Shadcn/ui component library
+- **Icons**: Lucide React
+- **Charts**: Recharts for data visualization
+- **Build Tool**: Vite for fast development and building
+- **Backend**: Supabase for data persistence and authentication
+- **Deployment**: Optimized for modern hosting platforms
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📱 Usage
 
-Follow these steps:
+The app provides several tabs for different aspects of trip planning:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Itinerary**: Day-by-day schedule and activities
+- **Activities**: All planned activities across the trip
+- **Dining**: Restaurant reservations and meal plans
+- **Hotels**: Accommodation details and bookings
+- **Expenses**: Budget tracking and expense management
+- **Purchases**: Shopping and customs declarations
+- **City View**: Destination overview and highlights
+- **Translation**: Language assistance tools
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🔧 Development
 
-# Step 3: Install the necessary dependencies.
-npm i
+This project uses:
+- Node.js & npm for package management
+- Vite for development server and building
+- TypeScript for type safety
+- ESLint for code quality
+- Supabase for backend services
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+To run locally:
+```bash
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 📋 Trip Highlights
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+**Italy (Days 1-10)**
+- Florence: Renaissance art, Duomo, Uffizi Gallery
+- Bologna: Culinary capital, historic university town
 
-**Use GitHub Codespaces**
+**Switzerland (Days 11-16)**
+- Lake Como: Alpine lakes, luxury resorts, scenic beauty
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**Germany (Days 17-23)**
+- Stuttgart: Mercedes-Benz Museum, modern city culture
+- Black Forest: Traditional villages, scenic drives
+- Return via Locarno: Lake Maggiore relaxation
 
-## What technologies are used for this project?
+## 🏨 Accommodations
 
-This project is built with:
+The trip features carefully selected accommodations ranging from boutique hotels in Florence to lakeside apartments in Switzerland, each chosen for location, amenities, and authentic local experience.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📞 Support
 
-## How can I deploy this project?
+This application was built to enhance the travel experience with offline capabilities, detailed planning features, and easy access to all trip information in one place.
 
-Simply open [Lovable](https://lovable.dev/projects/4bcbc648-1524-4aeb-8368-0a3883ce7a37) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**Built for travelers, by travelers** 🧳✈️
