@@ -6,7 +6,6 @@ import { TranslationForm } from './translation/TranslationForm';
 import { TranslationResult as TranslationResultComponent } from './translation/TranslationResult';
 import { TranslationHistory } from './translation/TranslationHistory';
 import { TranslationHistory as TranslationHistoryType } from './translation/types';
-
 export const TranslationTool: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [sourceLanguage, setSourceLanguage] = useState("Auto-detect");
@@ -18,16 +17,13 @@ export const TranslationTool: React.FC = () => {
     const stored = localStorage.getItem('translation-history');
     return stored ? JSON.parse(stored) : [];
   });
-  
   const languages = getSupportedLanguages();
   const sourceLanguages = ["Auto-detect", ...languages];
-  
   const handleTranslate = async () => {
     if (!inputText.trim()) {
       toast.error("Please enter text to translate");
       return;
     }
-    
     setLoading(true);
     try {
       const result = await translateText({
@@ -35,20 +31,19 @@ export const TranslationTool: React.FC = () => {
         sourceLanguage: sourceLanguage === "Auto-detect" ? undefined : sourceLanguage,
         targetLanguage: targetLanguage
       });
-      
       setTranslation(result);
-      
+
       // Save to recent translations (limited to 5)
-      const newTranslations = [
-        { input: inputText, result, source: sourceLanguage, target: targetLanguage },
-        ...recentTranslations
-      ].slice(0, 5);
-      
+      const newTranslations = [{
+        input: inputText,
+        result,
+        source: sourceLanguage,
+        target: targetLanguage
+      }, ...recentTranslations].slice(0, 5);
       setRecentTranslations(newTranslations);
-      
+
       // Save to localStorage
       localStorage.setItem('translation-history', JSON.stringify(newTranslations));
-      
     } catch (error) {
       console.error("Translation error:", error);
       toast.error("Translation failed. Please try again.");
@@ -56,7 +51,6 @@ export const TranslationTool: React.FC = () => {
       setLoading(false);
     }
   };
-
   const swapLanguages = () => {
     if (sourceLanguage !== "Auto-detect") {
       setSourceLanguage(targetLanguage);
@@ -65,11 +59,10 @@ export const TranslationTool: React.FC = () => {
       setTranslation(null);
     }
   };
-  
   const speak = (text: string, lang: string) => {
     try {
       const utterance = new SpeechSynthesisUtterance(text);
-      
+
       // Map our language names to BCP 47 language tags for speech synthesis
       const langMap: Record<string, string> = {
         "Italian": "it-IT",
@@ -81,7 +74,6 @@ export const TranslationTool: React.FC = () => {
         "Portuguese": "pt-PT"
         // Add more mappings as needed
       };
-      
       utterance.lang = langMap[lang] || lang;
       window.speechSynthesis.speak(utterance);
     } catch (error) {
@@ -89,45 +81,20 @@ export const TranslationTool: React.FC = () => {
       toast.error("Speech synthesis not supported in this browser");
     }
   };
-
   const handleSelectTranslation = (historyItem: TranslationHistoryType) => {
     setInputText(historyItem.input);
     setSourceLanguage(historyItem.source);
     setTargetLanguage(historyItem.target);
     setTranslation(historyItem.result);
   };
-  
-  return (
-    <Card className="p-6 bg-slate-700 border-slate-600">
-      <h2 className="text-2xl font-semibold mb-4 text-white">Travel Translator</h2>
-      <p className="text-gray-300 mb-6">Translate phrases during your European adventure</p>
+  return <Card className="p-6 border-slate-600 bg-slate-400">
+      <h2 className="text-2xl font-semibold mb-4 text-sky-900">Travel Translator</h2>
+      <p className="mb-6 text-cyan-700">Translate phrases during your European adventure</p>
       
-      <TranslationForm
-        inputText={inputText}
-        setInputText={setInputText}
-        sourceLanguage={sourceLanguage}
-        setSourceLanguage={setSourceLanguage}
-        targetLanguage={targetLanguage}
-        setTargetLanguage={setTargetLanguage}
-        onTranslate={handleTranslate}
-        loading={loading}
-        sourceLanguages={sourceLanguages}
-        targetLanguages={languages}
-        onSwapLanguages={swapLanguages}
-      />
+      <TranslationForm inputText={inputText} setInputText={setInputText} sourceLanguage={sourceLanguage} setSourceLanguage={setSourceLanguage} targetLanguage={targetLanguage} setTargetLanguage={setTargetLanguage} onTranslate={handleTranslate} loading={loading} sourceLanguages={sourceLanguages} targetLanguages={languages} onSwapLanguages={swapLanguages} />
       
-      {translation && (
-        <TranslationResultComponent
-          translation={translation}
-          targetLanguage={targetLanguage}
-          onSpeak={speak}
-        />
-      )}
+      {translation && <TranslationResultComponent translation={translation} targetLanguage={targetLanguage} onSpeak={speak} />}
       
-      <TranslationHistory
-        recentTranslations={recentTranslations}
-        onSelectTranslation={handleSelectTranslation}
-      />
-    </Card>
-  );
+      <TranslationHistory recentTranslations={recentTranslations} onSelectTranslation={handleSelectTranslation} />
+    </Card>;
 };
