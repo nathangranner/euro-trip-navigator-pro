@@ -7,17 +7,13 @@ import { TranslationTool } from "@/components/TranslationTool";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 import NavHome from "@/components/NavHome";
-
 const TravelConciergePage: React.FC = () => {
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
-
   const handleOpenChat = () => {
     setIsChatOpen(true);
   };
-
-  return (
-    <div className="min-h-screen bg-slate-800">
+  return <div className="min-h-screen bg-slate-800">
       {/* Home navigation button */}
       <NavHome />
       
@@ -54,7 +50,7 @@ const TravelConciergePage: React.FC = () => {
               <p className="text-xs sm:text-sm text-gray-300">Get help with directions, road signs, and mileage calculations</p>
             </Card>
             
-            <Card className="p-3 sm:p-4 border-slate-600  transition-colors bg-cyan-900">
+            <Card className="p-3 sm:p-4 border-slate-600 transition-colors bg-slate-700">
               <div className="flex items-center mb-2">
                 <Languages className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-amber-400" />
                 <h3 className="font-futura text-base sm:text-lg tracking-wide text-white">Language Translation</h3>
@@ -73,8 +69,8 @@ const TravelConciergePage: React.FC = () => {
           
           <Tabs defaultValue="assistant" className="mb-6 sm:mb-8">
             <TabsList className="grid w-full grid-cols-2 mx-[3px] my-px py-[3px] px-[23px] rounded-2xl bg-amber-600">
-              <TabsTrigger value="assistant" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-amber-50">Travel Assistant</TabsTrigger>
-              <TabsTrigger value="translator" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-orange-100">Translator</TabsTrigger>
+              <TabsTrigger value="assistant" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-stone-100">Travel Assistant</TabsTrigger>
+              <TabsTrigger value="translator" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-stone-100">Translator</TabsTrigger>
             </TabsList>
             <TabsContent value="assistant">
               <Card className="p-4 sm:p-6 bg-slate-700 border-slate-600">
@@ -87,8 +83,6 @@ const TravelConciergePage: React.FC = () => {
           </Tabs>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TravelConciergePage;
