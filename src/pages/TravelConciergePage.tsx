@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -8,17 +7,13 @@ import { TranslationTool } from "@/components/TranslationTool";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Route, Navigation, Map, MessageCircle, Ambulance, Languages } from "lucide-react";
 import NavHome from "@/components/NavHome";
-
 const TravelConciergePage: React.FC = () => {
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
-
   const handleOpenChat = () => {
     setIsChatOpen(true);
   };
-
-  return (
-    <div className="min-h-screen bg-slate-800">
+  return <div className="min-h-screen bg-slate-800">
       {/* Home navigation button */}
       <NavHome />
       
@@ -26,10 +21,10 @@ const TravelConciergePage: React.FC = () => {
       <div className="container mx-auto py-6 sm:py-8 space-y-4 sm:space-y-6 px-3 sm:px-0">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-amber-400 font-futura tracking-wider uppercase">
+            <h1 className="text-2xl font-bold text-amber-400 font-futura tracking-wider uppercase py-[32px] px-[32px] sm:text-2xl my-0 mx-[12px]">
               Travel Concierge
             </h1>
-            <p className="mt-1 text-amber-400 text-sm sm:text-base">Your AI travel companion for European adventures</p>
+            <p className="mt-1 text-amber-400 text-sm sm:text-base my-0 mx-[42px] py-0">Your AI travel companion for European adventures</p>
           </div>
         </div>
 
@@ -55,7 +50,7 @@ const TravelConciergePage: React.FC = () => {
               <p className="text-xs sm:text-sm text-gray-300">Get help with directions, road signs, and mileage calculations</p>
             </Card>
             
-            <Card className="p-3 sm:p-4 bg-slate-700 border-slate-600 shadow-lg hover:bg-slate-600 transition-colors">
+            <Card className="p-3 sm:p-4 border-slate-600  transition-colors bg-cyan-900">
               <div className="flex items-center mb-2">
                 <Languages className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-amber-400" />
                 <h3 className="font-futura text-base sm:text-lg tracking-wide text-white">Language Translation</h3>
@@ -73,9 +68,9 @@ const TravelConciergePage: React.FC = () => {
           </div>
           
           <Tabs defaultValue="assistant" className="mb-6 sm:mb-8">
-            <TabsList className="grid w-full grid-cols-2 bg-amber-600 mx-[3px] my-px py-[3px] px-[23px] rounded-2xl">
-              <TabsTrigger value="assistant" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-slate-300">Travel Assistant</TabsTrigger>
-              <TabsTrigger value="translator" className="font-futura text-sm sm:text-lg tracking-wide uppercase text-slate-100 bg-amber-700 hover:bg-amber-600">Translator</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 mx-[3px] my-px py-[3px] px-[23px] rounded-2xl bg-amber-600">
+              <TabsTrigger value="assistant" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-amber-50">Travel Assistant</TabsTrigger>
+              <TabsTrigger value="translator" className="font-futura text-sm sm:text-lg tracking-wide uppercase bg-amber-700 hover:bg-amber-600 text-orange-100">Translator</TabsTrigger>
             </TabsList>
             <TabsContent value="assistant">
               <Card className="p-4 sm:p-6 bg-slate-700 border-slate-600">
@@ -90,8 +85,6 @@ const TravelConciergePage: React.FC = () => {
           </Tabs>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TravelConciergePage;
