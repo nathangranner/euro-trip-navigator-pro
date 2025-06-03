@@ -5,90 +5,179 @@ export const returnJourneyDays: TripDay[] = [
   {
     id: "day-21",
     dayNumber: 21,
-    date: "2025-06-25",
-    city: "Black Forest to Milan",
-    country: "Germany/Italy",
-    description: "Begin return journey toward Milan",
-    title: "Black Forest to Milan",
+    date: "2025-06-23",
+    city: "Locarno",
+    country: "Switzerland",
+    description: "Travel to Locarno, Switzerland - Lake Maggiore region",
+    title: "Black Forest to Locarno",
     activities: [
       {
-        id: "lichtenstein-castle",
-        time: "9:00 AM",
-        activity: "Lichtenstein Castle",
-        type: "sightseeing",
-        icon: "🏰",
-        completed: false,
-        location: "Lichtenstein Castle",
-        mustTry: true
-      },
-      {
-        id: "ritter-sport",
-        time: "11:30 AM",
-        activity: "Waldenbuch Ritter Sport factory",
-        type: "culture",
-        icon: "🍫",
-        completed: false,
-        location: "Waldenbuch",
-        mustTry: true
-      },
-      {
-        id: "drive-milan",
-        time: "1:00 PM",
-        activity: "Drive toward Milan",
+        id: "travel-locarno",
+        time: "10:00 AM",
+        activity: "Drive from Black Forest to Locarno",
         type: "travel",
         icon: "🚗",
         completed: false,
-        location: "En route to Milan",
-        note: "Via Switzerland toward Milan - long driving day"
+        location: "En route to Locarno",
+        note: "Scenic drive through Switzerland to Lake Maggiore"
       },
       {
-        id: "lindau-stop",
+        id: "apartment-checkin",
         time: "3:00 PM",
-        activity: "Possible stop: Lindau on Bodensee",
-        type: "sightseeing",
-        icon: "🏞️",
+        activity: "Check-in to IVANA Apartment",
+        type: "accommodation",
+        icon: "🏠",
         completed: false,
-        location: "Lindau, Bodensee",
-        note: "Optional scenic stop if time permits"
+        location: "Vicolo Belforte 2 nr 6, Minusio",
+        note: "Self check-in via lockbox. Access via Via San Gottardo opposite Denner"
       },
       {
-        id: "highway-dining",
-        time: "6:00 PM",
-        activity: "Dinner at highway rest stops",
+        id: "explore-locarno",
+        time: "5:00 PM",
+        activity: "Explore Locarno town center",
+        type: "sightseeing",
+        icon: "🚶",
+        completed: false,
+        location: "Locarno",
+        note: "10 min walk to Locarno FFS station, shops nearby"
+      },
+      {
+        id: "lake-maggiore-dinner",
+        time: "7:00 PM",
+        activity: "Dinner with lake view",
         type: "dining",
         icon: "🍽️",
         completed: false,
-        location: "Highway rest stop"
+        location: "Locarno lakefront",
+        note: "Enjoy Lake Maggiore views"
       }
     ],
     accommodation: {
-      name: "NEEDS BOOKING",
-      address: "En route to Milan"
+      name: "IVANA Apartment, Minusio",
+      address: "Vicolo Belforte 2 nr 6, 6648 Minusio TI, Switzerland",
+      checkin: "15:00",
+      checkout: "11:00",
+      contactPhone: "Host: Renzo",
+      confirmationNumber: "#HM2HSKZYNQ",
+      wifi: "Free Wi-Fi included",
+      parking: "Covered parking available (height 1.90m max)"
     },
+    accommodationName: "IVANA Apartment, Minusio",
+    accommodationAddress: "Vicolo Belforte 2 nr 6, 6648 Minusio TI, Switzerland",
+    accommodationCheckIn: "15:00 Jun 23",
+    accommodationCheckOut: "11:00 Jun 25",
+    accommodationContact: "Host: Renzo",
+    accommodationConfirmation: "#HM2HSKZYNQ",
+    accommodationWifi: "Free Wi-Fi included",
+    accommodationNotes: "Self check-in via lockbox. Access via Via San Gottardo opposite Denner. AC available CHF 5/day. EV charging on-site.",
     warnings: [
       {
         type: "warning",
-        message: "Long driving day - plan rest stops. Swiss vignette still required"
+        message: "Narrow lane access - notify host if bringing larger vehicle. Quiet hours 22:00-07:00"
       }
     ]
   },
   {
     id: "day-22",
     dayNumber: 22,
-    date: "2025-06-26",
-    city: "Milan",
-    country: "Italy",
-    description: "Milan departure - Return to USA",
-    title: "Milan Departure",
+    date: "2025-06-24",
+    city: "Locarno",
+    country: "Switzerland",
+    description: "Full day exploring Locarno and Lake Maggiore",
+    title: "Locarno & Lake Maggiore",
     activities: [
       {
-        id: "hotel-checkout",
-        time: "12:00 PM",
-        activity: "Hotel check-out",
-        type: "travel",
-        icon: "🏨",
+        id: "balcony-breakfast",
+        time: "8:00 AM",
+        activity: "Breakfast on apartment balcony",
+        type: "dining",
+        icon: "☕",
         completed: false,
-        location: "Milan hotel"
+        location: "IVANA Apartment balcony",
+        note: "Lake & mountain views from balcony - perfect for breakfast"
+      },
+      {
+        id: "lake-maggiore-boat",
+        time: "10:00 AM",
+        activity: "Lake Maggiore boat trip",
+        type: "sightseeing",
+        icon: "⛵",
+        completed: false,
+        location: "Lake Maggiore",
+        mustTry: true
+      },
+      {
+        id: "locarno-old-town",
+        time: "2:00 PM",
+        activity: "Explore Locarno Old Town",
+        type: "sightseeing",
+        icon: "🏛️",
+        completed: false,
+        location: "Locarno Old Town",
+        note: "Historic town center and Piazza Grande"
+      },
+      {
+        id: "shopping-local",
+        time: "4:00 PM",
+        activity: "Local shopping",
+        type: "shopping",
+        icon: "🛍️",
+        completed: false,
+        location: "Migros, Denner, Coop nearby",
+        note: "Shops within 1 min walk from apartment"
+      },
+      {
+        id: "swiss-dinner",
+        time: "7:00 PM",
+        activity: "Swiss cuisine dinner",
+        type: "dining",
+        icon: "🫕",
+        completed: false,
+        location: "Local restaurant",
+        mustTry: true
+      }
+    ],
+    accommodationName: "IVANA Apartment, Minusio",
+    accommodationAddress: "Vicolo Belforte 2 nr 6, 6648 Minusio TI, Switzerland",
+    accommodationCheckIn: "15:00 Jun 23",
+    accommodationCheckOut: "11:00 Jun 25",
+    accommodationContact: "Host: Renzo",
+    accommodationConfirmation: "#HM2HSKZYNQ"
+  },
+  {
+    id: "day-23",
+    dayNumber: 23,
+    date: "2025-06-25",
+    city: "Locarno to Milan",
+    country: "Switzerland/Italy",
+    description: "Departure from Locarno to Milan for flight home",
+    title: "Locarno to Milan Departure",
+    activities: [
+      {
+        id: "apartment-checkout",
+        time: "10:30 AM",
+        activity: "Check out of IVANA Apartment",
+        type: "accommodation",
+        icon: "🏠",
+        completed: false,
+        location: "IVANA Apartment",
+        note: "Gather towels, dispose trash at Migros container, leave keys on table",
+        checklist: [
+          "Gather used towels",
+          "Trash to container near Migros",
+          "Recycling to stairwell bins", 
+          "Keys on table or return to lockbox"
+        ]
+      },
+      {
+        id: "drive-milan",
+        time: "11:00 AM",
+        activity: "Drive to Milan Malpensa Airport",
+        type: "travel",
+        icon: "🚗",
+        completed: false,
+        location: "En route to MXP",
+        note: "Return rental car and prepare for departure"
       },
       {
         id: "car-return",

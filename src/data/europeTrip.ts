@@ -7,13 +7,12 @@ import { lakeComoDays } from "./lakeComo";
 import { stuttgartDays } from "./stuttgartDays";
 import { blackForestDays } from "./blackForestDays";
 import { returnJourneyDays } from "./returnJourneyDays";
-import { returnDay } from "./returnDay";
 
 export const europeTrip: Trip = {
   name: "Europe Trip 2025",
-  description: "Nathan & Jamie Granner's European Adventure - A 22-day journey through Italy, Switzerland, and Germany",
+  description: "Nathan & Jamie Granner's European Adventure - A 23-day journey through Italy, Switzerland, and Germany",
   startDate: "2025-06-05",
-  endDate: "2025-06-26",
+  endDate: "2025-06-25",
   days: [
     ...departureDays,
     ...florenceDays,
@@ -21,8 +20,7 @@ export const europeTrip: Trip = {
     ...lakeComoDays,
     ...stuttgartDays,
     ...blackForestDays,
-    ...returnJourneyDays,
-    ...returnDay
+    ...returnJourneyDays
   ]
 };
 
